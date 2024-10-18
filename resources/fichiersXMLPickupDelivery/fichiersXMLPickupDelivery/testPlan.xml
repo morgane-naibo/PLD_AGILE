@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<reseau>
+    <!--A CHANGER-->
+    <noeud id="25175791" latitude="45.75406" longitude="4.857418"/>
+    <noeud id="2129259178" latitude="45.750404" longitude="4.8744674"/>
+    <troncon destination="208769457" longueur="106.73056" nomRue="Rue Frédéric Passy" origine="208769499"/>
+    <troncon destination="55474978" longueur="79.801414" nomRue="Rue Édouard Aynard" origine="208769499"/>
+</reseau>
