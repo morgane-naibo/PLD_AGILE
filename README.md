@@ -1,7 +1,7 @@
 # PLD_AGILE
 
 ## Description
-Notre projet vise à développer une application pour optimiser les tournées de livraison dans des villes en utilisant des vélos.
+Notre projet vise à développer une application pour optimiser les tournées de livraison à vélo dans des villes.
 
 L'application permet de :
 - Charger un fichier XML décrivant une carte de la ville (intersections, segments de route, entrepôt).
