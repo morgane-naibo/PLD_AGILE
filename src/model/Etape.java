@@ -1,15 +1,14 @@
 package model;
 
 public class Etape {
-    private String description;
-    private String heure;
-    private PointDeLivraison point;
+    private List<Troncon> listeTroncons;
+    private Intersection arrivee;
+    private Intersection depart;
 
-    // Constructeur
-    public Etape(String description, String heure, PointDeLivraison point) {
-        this.description = description;
-        this.heure = heure;
-        this.point = point;
+    public Etape(List<Troncon> listeTroncons, Intersection arrivee, Intersection depart) {
+        this.listeTroncons = listeTroncons;
+        this.arrivee = arrivee;
+         this.depart = depart;
     }
 
 }

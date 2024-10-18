@@ -1,17 +1,17 @@
 package model;
 
 public class Troncon {
-    private Intersection intersectionDepart;
-    private Intersection intersectionArrivee;
-    private double longueur;
-    private String nomRue;
+    private Intersection origine;
+    private Intersection destination;
+    private float distance;
+    private String rue;
 
     // Constructeur
-    public Troncon(Intersection intersectionDepart, Intersection intersectionArrivee, double longueur, String nomRue) {
-        this.intersectionDepart = intersectionDepart;
-        this.intersectionArrivee = intersectionArrivee;
-        this.longueur = longueur;
-        this.nomRue = nomRue;
+    public Troncon(Intersection origine, Intersection destination, float distance, String rue) {
+        this.origine = origine;
+        this.destination = destination;
+        this.distance = distance;
+        this.rue = rue;
     }
 
 }

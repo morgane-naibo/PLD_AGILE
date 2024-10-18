@@ -1,14 +1,14 @@
 package model;
 
 
-public class Tournee {
+public class Tournee extends Trajet{
     private Livreur livreur;
-    private List<Etape> etapes;
+    
 
     // Constructeur
-    public Tournee(Livreur livreur, List<Etape> etapes) {
+    public Tournee(Livreur livreur, List<Etape> listeEtapes) {
         this.livreur = livreur;
-        this.etapes = etapes;
+       super(listeEtapes);
     }
 
 }

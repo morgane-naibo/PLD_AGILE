@@ -1,13 +1,12 @@
 package model;
 
 public class Livreur {
-    private String nom;
-    private String identifiant;
+    private Long id;
 
     // Constructeur
-    public Livreur(String nom, String identifiant) {
-        this.nom = nom;
-        this.identifiant = identifiant;
+    public Livreur(Long id) {
+        this.id=id;
+      
     }
 
 }

@@ -1,14 +1,13 @@
 package model;
 
 
-public class PointDeLivraison {
-    private Intersection intersection;
-    private String adresse;
+public class PointDeLivraison extends Intersection{
+    private Livraison livraison;
 
     // Constructeur
-    public PointDeLivraison(Intersection intersection, String adresse) {
-        this.intersection = intersection;
-        this.adresse = adresse;
+    public PointDeLivraison(Livraison livraison, Long id, float latitude, float longitude) {
+        this.livraison=livraison;
+        super(id, latitude, longitude);
     }
 
 }

@@ -1,18 +1,12 @@
 package model;
 
 
-public class Entrepot {
-    private String nom;
-    private String adresse;
-    private double latitude;
-    private double longitude;
+public class Entrepot extends Intersection{
+   
 
     // Constructeur
-    public Entrepot(String nom, String adresse, double latitude, double longitude) {
-        this.nom = nom;
-        this.adresse = adresse;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public Entrepot(long id, double latitude, double longitude) {
+     super(id, latitude, longitude;)
     }
 
 }

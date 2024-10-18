@@ -1,15 +1,12 @@
 package model;
 
 public class Livraison {
-    private String destinataire;
-    private String adresse;
-    private PointDeLivraison point;
+    private float temps_livraison;
+    private Livreur livreur;
 
-    // Constructeur
-    public Livraison(String destinataire, String adresse, PointDeLivraison point) {
-        this.destinataire = destinataire;
-        this.adresse = adresse;
-        this.point = point;
+    public Livraison(float temps_livraison, Livreur livreur) {
+        this.tempsLivraison = tempsLivraison;
+        this.livreur = livreur;
     }
 
 }
