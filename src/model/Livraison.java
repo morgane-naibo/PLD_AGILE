@@ -1,12 +1,31 @@
 package model;
 
 public class Livraison {
-    private float temps_livraison;
+    private double tempsLivraison;
     private Livreur livreur;
 
-    public Livraison(float temps_livraison, Livreur livreur) {
+    //constructeur
+    public Livraison(float tempsLivraison, Livreur livreur) {
         this.tempsLivraison = tempsLivraison;
         this.livreur = livreur;
+    }
+
+    //getters
+    public double getTempsLivraison() {
+        return this.tempsLivraison;
+    }
+
+    public Livreur getLivreur() {
+        return this.livreur;
+    }
+
+    //setters
+    public void setTempsLivraison(double newTempsLivraison){
+        this.tempsLivraison = newTempsLivraison;
+    }
+
+    public void setLivreur(Livreur newLivreur) {
+        this.livreur = newLivreur;
     }
 
 }

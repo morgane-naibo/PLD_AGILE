@@ -9,4 +9,14 @@ public class Livreur {
       
     }
 
+    //getter
+    public long getId() {
+        return this.id;
+    }
+
+    //setter
+    public void setId(long newId) {
+        this.id = newId;
+    }
+
 }

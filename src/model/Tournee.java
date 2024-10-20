@@ -1,14 +1,24 @@
 package model;
 
+import java.util.List;
 
 public class Tournee extends Trajet{
     private Livreur livreur;
     
-
     // Constructeur
-    public Tournee(Livreur livreur, List<Etape> listeEtapes) {
+    public Tournee(List<Etape> listeEtapes, Livreur livreur) {
+        super(listeEtapes);
         this.livreur = livreur;
-       super(listeEtapes);
+    }
+
+    //getters
+    public Livreur getLivreur() {
+        return this.livreur;
+    }
+
+    //setters
+    public void setLivreur(Livreur newLivreur) {
+        this.livreur = newLivreur;
     }
 
 }
