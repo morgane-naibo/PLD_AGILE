@@ -6,7 +6,6 @@ public class Livreur {
     // Constructeur
     public Livreur(Long id) {
         this.id=id;
-      
     }
 
     //getter
@@ -18,5 +17,14 @@ public class Livreur {
     public void setId(long newId) {
         this.id = newId;
     }
+
+    //toString
+    @Override
+    public String toString() {
+        return "Livreur [ID: " + id + "]";
+    }
+
+
+    //autres methodes
 
 }

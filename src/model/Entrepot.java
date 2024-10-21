@@ -13,5 +13,17 @@ public class Entrepot extends Intersection{
         super() ;
     }
 
+    //getters
+
+    //setters
+
+    //toString
+    @Override
+    public String toString() {
+        return "Entrepôt: " + super.toString();
+    }
+
+    //autres methodes
+
 }
 

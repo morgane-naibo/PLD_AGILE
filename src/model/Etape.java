@@ -1,6 +1,7 @@
 package model;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class Etape {
     private List<Troncon> listeTroncons;
@@ -18,6 +19,13 @@ public class Etape {
             this.longueur += t.getLongueur();
         }
 
+    }
+
+    public Etape() {
+        this.listeTroncons = new ArrayList<Troncon>() ;
+        this.depart = new Intersection() ;
+        this.arrivee = new Intersection() ;
+        this.longueur = 0 ;
     }
 
     //getters
@@ -53,5 +61,25 @@ public class Etape {
     public void setLongueur(double newLongueur) {
         this.longueur = newLongueur;
     }
+
+    //toString
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Etape:\n");
+        sb.append("Départ: ").append(depart).append("\n");
+        sb.append("Arrivée: ").append(arrivee).append("\n");
+        sb.append("Longueur totale: ").append(longueur).append(" km\n");
+        sb.append("Tronçons:\n");
+
+        for (Troncon troncon : listeTroncons) {
+            sb.append(troncon).append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    //autres methodes
+
 
 }

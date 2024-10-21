@@ -48,4 +48,14 @@ public class Troncon {
         this.nomRue = newNomRue;
     }
 
+    //toString
+    @Override
+    public String toString() {
+        return "Troncon [Origine: " + origine + ", Destination: " + destination + 
+            ", Longueur: " + longueur + " km, Rue: " + nomRue + "]";
+    }
+
+    //autres methodes
+
+
 }

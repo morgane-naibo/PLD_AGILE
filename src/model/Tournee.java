@@ -21,5 +21,14 @@ public class Tournee extends Trajet{
         this.livreur = newLivreur;
     }
 
+    //toString
+    @Override
+    public String toString() {
+        return "Tournée: [Livreur: " + livreur + ", Étapes: " + super.toString() + "]";
+    }
+
+
+    //autres methodes
+
 }
 

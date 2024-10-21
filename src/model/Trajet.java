@@ -25,6 +25,8 @@ public class Trajet {
         this.listeEtapes = newListeEtapes;
     }
 
+    //toString
+
     //autres methodes
     public void ajouterEtape(Etape etape) {
         this.listeEtapes.add(etape);

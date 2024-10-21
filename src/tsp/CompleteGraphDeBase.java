@@ -1,26 +1,27 @@
 package tsp;
 
-import model.Plan;
-import model.Etape;
-import model.Intersection;
-import java.util.List;
-
-public class CompleteGraph implements Graph {
+public class CompleteGraphDeBase implements Graph {
+	private static final int MAX_COST = 40;
+	private static final int MIN_COST = 10;
 	int nbVertices;
-	Etape[][] cost;
+	int[][] cost;
 	
 	/**
 	 * Create a complete directed graph such that each edge has a weight within [MIN_COST,MAX_COST]
 	 * @param nbVertices
 	 */
-	public CompleteGraph(int nbVertices, Plan plan, List<Intersection> listeIntersections){
+	public CompleteGraphDeBase(int nbVertices){
 		this.nbVertices = nbVertices;
-		cost = new Etape[nbVertices][nbVertices];
+		int iseed = 1;
+		cost = new int[nbVertices][nbVertices];
 		for (int i=0; i<nbVertices; i++){
 		    for (int j=0; j<nbVertices; j++){
-		        if (i == j) cost[i][j] = null;
+		        if (i == j) cost[i][j] = -1;
 		        else {
-		           cost[i][j] = plan.chercherPlusCourtChemin(listeIntersections.get(i), listeIntersections.get(j));
+		            int it = 16807 * (iseed % 127773) - 2836 * (iseed / 127773);
+		            if (it > 0)	iseed = it;
+		            else iseed = 2147483647 + it;
+		            cost[i][j] = MIN_COST + iseed % (MAX_COST-MIN_COST+1);
 		        }
 		    }
 		}

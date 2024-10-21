@@ -51,6 +51,31 @@ public class Demande {
         this.tournee = newTournee;
     }
 
+    //toString
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Demande:\n");
+        sb.append("Entrepôt: ").append(entrepot).append("\n");
+        sb.append("Points de livraison:\n");
+
+        for (PointDeLivraison point : listePointDeLivraison) {
+            sb.append(point).append("\n");
+        }
+
+        sb.append("Matrice d'adjacence (Etapes):\n");
+        for (List<Etape> listeEtapes : matriceAdjacence) {
+            sb.append("[ ");
+            for (Etape etape : listeEtapes) {
+                sb.append(etape).append(" ");
+            }
+            sb.append("]\n");
+        }
+
+        sb.append("Tournée: ").append(tournee).append("\n");
+        return sb.toString();
+    }
+
     //autres methodes
     
 

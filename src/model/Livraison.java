@@ -28,4 +28,12 @@ public class Livraison {
         this.livreur = newLivreur;
     }
 
+    //toString
+    @Override
+    public String toString() {
+        return "Livraison [Temps: " + tempsLivraison + " min, Livreur: " + livreur + "]";
+    }
+
+    //autres methodes
+
 }
