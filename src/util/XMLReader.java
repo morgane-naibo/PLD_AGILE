@@ -1,9 +1,11 @@
+package util;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import java.io.File;
 
-public abstract class XML_Reader {
+public abstract class XMLReader {
 
     // Méthode commune pour charger un document XML
     protected Document loadDocument(String filePath) {
@@ -25,5 +27,5 @@ public abstract class XML_Reader {
     }
 
     // Méthode abstraite que les classes dérivées doivent implémenter
-    public abstract void parse(String filePath);
+    public abstract <T> T parse(String filePath);
 }

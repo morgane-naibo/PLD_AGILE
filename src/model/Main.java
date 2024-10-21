@@ -1,8 +1,14 @@
 package model;
 
+import java.nio.file.Paths;
+import java.nio.file.Path;
+
+import util.XMLPlan;
+
 public class Main {
 
     public static void main(String[] args) {
+        /* TEST PLUS COURT CHEMIN 
         Plan plan = new Plan() ;
         Intersection i1 = new Intersection(1, 45.75406, 4.857418) ;
         Intersection i2 = new Intersection(2, 45.75343, 4.857465) ;
@@ -50,7 +56,12 @@ public class Main {
         plusCourtChemin2to3 = plan.chercherPlusCourtChemin(i2, i3);
 
         System.out.println(plusCourtChemin2to3.toString());
+        */
 
+        String mapPath = "PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
+        XMLPlan planReader = new XMLPlan();
+        Plan plan = planReader.parse(mapPath);
+        System.out.print(plan);
     }
 
 }

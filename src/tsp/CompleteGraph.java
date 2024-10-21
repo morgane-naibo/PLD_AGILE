@@ -35,7 +35,8 @@ public class CompleteGraph implements Graph {
 	public int getCost(int i, int j) {
 		if (i<0 || i>=nbVertices || j<0 || j>=nbVertices)
 			return -1;
-		return cost[i][j];
+		// return (cost[i][j]);
+		return 1;
 	}
 
 	@Override
