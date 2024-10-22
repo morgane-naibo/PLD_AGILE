@@ -72,14 +72,12 @@ public class Plan {
     }
 
     public Intersection chercherIntersectionParId(long id){
-        Intersection inter = new Intersection();
         for(Intersection iteratorIntersection : this.listeIntersections){
             if (iteratorIntersection.getId() == id) {
-                inter = iteratorIntersection;
-                break;
+                return iteratorIntersection;
             }
         }
-        return inter;
+        return null;
     }
 
     public Etape chercherPlusCourtChemin(Intersection intersection1, Intersection intersection2) {
@@ -138,6 +136,47 @@ public class Plan {
             }
         }
     }
+
+    public double trouverLatitudeMin(){
+        double latitudeMin = 100;
+        for(Intersection iteratorIntersection : this.listeIntersections){
+            if (iteratorIntersection.getLatitude() < latitudeMin) {
+                latitudeMin = iteratorIntersection.getLatitude();
+            }
+        }
+        return latitudeMin;
+    }
+
+    public double trouverLongitudeMin(){
+        double longitudeMin = 100;
+        for(Intersection iteratorIntersection : this.listeIntersections){
+            if (iteratorIntersection.getLongitude() < longitudeMin) {
+                longitudeMin = iteratorIntersection.getLongitude();
+            }
+        }
+        return longitudeMin;
+    }
+
+    public double trouverLatitudeMax(){
+        double latitudeMax = -100;
+        for(Intersection iteratorIntersection : this.listeIntersections){
+            if (iteratorIntersection.getLatitude() > latitudeMax) {
+                latitudeMax = iteratorIntersection.getLatitude();
+            }
+        }
+        return latitudeMax;
+    }
+
+    public double trouverLongitudeMax(){
+        double longitudeMax = -100;
+        for(Intersection iteratorIntersection : this.listeIntersections){
+            if (iteratorIntersection.getLongitude() > longitudeMax) {
+                longitudeMax = iteratorIntersection.getLongitude();
+            }
+        }
+        return longitudeMax;
+    }
+
     
 
 }
