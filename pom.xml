@@ -11,8 +11,9 @@
         <!-- JavaFX version -->
         <javafx.version>23.0.1</javafx.version>
         <!-- Version du JDK utilisé -->
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
     </properties>
 
     <dependencies>
@@ -41,15 +42,18 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>openjfx</id>
-            <url>https://maven.pkg.github.com/openjfx/javafx-maven</url>
-        </repository>
-    </repositories>
-
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.release}</release>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -62,11 +66,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>Main</mainClass> <!-- Remplacez par le nom de votre classe principale sans .java -->
-                    <modulepath>true</modulepath>
-                    <systemPropertyVariables>
-                        <javafx-sdk>/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib</javafx-sdk> <!-- Chemin vers le répertoire lib de JavaFX -->
-                    </systemPropertyVariables>
+                    <mainClass>main.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

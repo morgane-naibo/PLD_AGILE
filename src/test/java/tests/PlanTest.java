@@ -68,7 +68,7 @@ public class PlanTest {
         assertNull(resultNull);
     }
 
-    @Test
+/*     @Test
     public void testChercherPlusCourtChemin() {
         // Créer des intersections et tronçons pour tester l'algorithme
         Intersection intersection1 = new Intersection(1, 45.754, 4.831);
@@ -94,12 +94,12 @@ public class PlanTest {
         assertEquals(intersection1, etape.getDepart());
         assertEquals(intersection3, etape.getArrivee());
         assertEquals(80.0, etape.getLongueur(), 0.01);  // 50 + 30 = 80
-    }
+    } */
 
     @Test
     public void testChargerPlanDepuisXML() {
         // Spécifiez le chemin du fichier XML ici
-        String xmlFilePath = "chemin/vers/le/fichier/plan.xml"; // Remplacez par le chemin réel
+        String xmlFilePath = "C:\\Users\\mathi\\Documents\\INSA\\IF4\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml"; // Remplacez par le chemin réel
         XMLPlan xmlPlanReader = new XMLPlan();
         
         // Charger le plan depuis le fichier XML

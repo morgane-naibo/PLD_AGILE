@@ -1,0 +1,11 @@
+.round-button {
+    -fx-background-color: #3498db; /* Background color */
+    -fx-text-fill: white; /* Text color */
+    -fx-border-color: #2980b9; /* Border color */
+    -fx-border-radius: 50; /* Round borders */
+    -fx-background-radius: 50; /* Round background */
+    -fx-left-padding: 15; /* Padding inside the button */
+    -fx-right-padding: 15; /* Padding inside the button */
+    -fx-font-size: 20px; /* Font size */
+
+}
