@@ -12,4 +12,4 @@ L'application permet de :
 
 Le projet suit une approche agile avec plusieurs itérations visibles dans l'onglet projet de github. Chaque itération apporte des fonctionnalités supplémentaires.
 
-Bonne journée :)
+A bientôt! :)

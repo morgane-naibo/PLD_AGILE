@@ -1,13 +1,15 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.base.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.controls.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.fxml.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.graphics.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.media.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.swing.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.web.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx-swt.jar"
-    ]
+        "/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib/javafx.base.jar",
+        "/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib/javafx.controls.jar",
+        "/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib/javafx.fxml.jar",
+        "/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib/javafx.graphics.jar",
+        "/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib/javafx.media.jar",
+        "/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib/javafx.swing.jar",
+        "/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib/javafx.web.jar",
+        "/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib/javafx-swt.jar"
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
+
