@@ -38,6 +38,10 @@ public class Intersection {
         return this.listeTroncons;
     }
 
+    public int getNumero(){
+        return this.numero;
+    }
+
     //setters
     public void setLatitude(double newLatitude) {
         this.latitude = newLatitude;

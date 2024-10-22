@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Plan {
@@ -83,10 +85,53 @@ public class Plan {
 
 
     public Etape chercherPlusCourtChemin(Intersection origine, Intersection destination){
-        Etape plusCourtChemin = new Etape();
         Intersection actuel = new Intersection();
         actuel = origine;
         double[] distance = new double[this.listeIntersections.size()];
+        for (int i=0 ; i<this.listeIntersections.size(); i++){
+            distance[i] = 100000000;
+        }
+        distance[origine.getNumero()] = 0;
+        Troncon[] predecesseurs = new Troncon[this.listeIntersections.size()];
+        predecesseurs[origine.getNumero()] = null;
+
+        List<Integer> sommetsGris = new ArrayList<Integer>();
+        sommetsGris.add(origine.getNumero());
+
+        while (sommetsGris.size() != 0){
+            // Trouver le sommet gris tel que la distance soit minimale
+            double dist_min = 10000000;
+            int posMin = 0;
+            for (int i=0 ; i<this.listeIntersections.size(); i++){
+                if (distance[i]<dist_min){
+                    posMin = i;
+                    dist_min = distance[i];
+                }
+            }
+            actuel = this.listeIntersections.get(posMin);
+            //pour les successeurs de ce sommet
+            for (Troncon iteratorTroncon : actuel.getListeTroncons()){
+                if (iteratorTroncon.getLongueur()+distance[actuel.getNumero()] < distance[iteratorTroncon.getDestination().getNumero()]){
+                    distance[iteratorTroncon.getDestination().getNumero()]= iteratorTroncon.getLongueur()+distance[actuel.getNumero()];
+                    predecesseurs[iteratorTroncon.getDestination().getNumero()] = iteratorTroncon;
+                    if (! sommetsGris.contains(iteratorTroncon.getDestination().getNumero())){
+                        sommetsGris.add(iteratorTroncon.getDestination().getNumero());
+                    }
+                }
+            }
+            // enlever actuel des gris
+            sommetsGris.remove(Integer.valueOf(actuel.getNumero()));
+
+        }
+        List<Troncon> troncons = new ArrayList<Troncon>();
+        Troncon tronconActuel = predecesseurs[destination.getNumero()];
+        troncons.add(tronconActuel);
+        while (predecesseurs[tronconActuel.getOrigine().getNumero()] != null){
+            tronconActuel = predecesseurs[tronconActuel.getOrigine().getNumero()];
+            troncons.add(tronconActuel);
+        }
+        Collections.reverse(troncons);
+        Etape plusCourtChemin = new Etape(troncons,origine,destination);
         return plusCourtChemin;
     }
 
@@ -129,6 +174,7 @@ public class Plan {
         }
         return longitudeMax;
     }
+
 
     
 

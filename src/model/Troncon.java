@@ -57,5 +57,4 @@ public class Troncon {
 
     //autres methodes
 
-
 }
