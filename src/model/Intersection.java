@@ -8,6 +8,7 @@ public class Intersection {
     private double longitude;
     private long id;
     private List<Troncon> listeTroncons;
+    protected int numero;
 
     // Constructeurs
     public Intersection(long id, double latitude, double longitude) {
@@ -52,6 +53,10 @@ public class Intersection {
 
     public void setListeTroncons(List<Troncon> newListeTroncons) {
         this.listeTroncons = newListeTroncons;
+    }
+
+    public void setNumero(int num){
+        this.numero = num;
     }
 
     //toString
