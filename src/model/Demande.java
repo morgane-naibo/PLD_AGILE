@@ -51,6 +51,15 @@ public class Demande {
         this.tournee = newTournee;
     }
 
+    // ajout point de livraison
+    public void ajouterPointDeLivraison(PointDeLivraison point) {
+        if (point != null) {
+            this.listePointDeLivraison.add(point);
+        } else {
+            System.out.println("Le point de livraison est nul et ne peut pas être ajouté.");
+        }
+    }
+
     //toString
     @Override
     public String toString() {

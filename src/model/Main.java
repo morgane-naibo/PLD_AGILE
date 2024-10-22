@@ -1,8 +1,6 @@
 package model;
 
-import java.nio.file.Paths;
-import java.nio.file.Path;
-
+import util.XMLDemande;
 import util.XMLPlan;
 
 public class Main {
@@ -58,11 +56,16 @@ public class Main {
         System.out.println(plusCourtChemin2to3.toString());
         */
 
-        String mapPath = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
+        String planPath = "PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
+        String demandePath = "PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\demandeMoyen5.xml";
+
         XMLPlan planReader = new XMLPlan();
-        Plan plan = planReader.parse(mapPath);
-        System.out.print(plan);
+        Plan plan = planReader.parse(planPath);
+        //System.out.print(plan);
         
+        XMLDemande demandeReader= new XMLDemande();
+        Demande demande = demandeReader.parse(demandePath);
+        System.out.println(demande);
     }
 
 }
