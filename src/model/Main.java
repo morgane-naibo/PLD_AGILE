@@ -56,8 +56,8 @@ public class Main {
         System.out.println(plusCourtChemin2to3.toString());
         */
 
-        String planPath = "PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
-        String demandePath = "PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\demandeMoyen5.xml";
+        String planPath = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
+        String demandePath = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\demandeMoyen5.xml";
 
         XMLPlan planReader = new XMLPlan();
         Plan plan = planReader.parse(planPath);
