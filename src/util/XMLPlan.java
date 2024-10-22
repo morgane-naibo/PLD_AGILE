@@ -43,9 +43,6 @@ public class XMLPlan extends XMLReader {
             long idDestination = Long.parseLong(tronconElement.getAttribute("destination"));
             double longueur = Double.parseDouble(tronconElement.getAttribute("longueur"));
             String nomRue = tronconElement.getAttribute("nomRue");
-
-            //System.out.println("Tronçon: " + idOrigine + " -> " + idDestination + ", Longueur: " + longueur + "m, Rue: " + nomRue);
-
             Intersection interOrigine = plan.chercherIntersectionParId(idOrigine);
             Intersection interDestination = plan.chercherIntersectionParId(idDestination);
             Troncon troncon = new Troncon(interOrigine,interDestination,longueur,nomRue);

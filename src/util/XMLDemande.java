@@ -5,8 +5,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import model.Demande;
 import model.Entrepot;
-import model.Intersection;
 import model.Livraison;
+import model.PointDeLivraison;
 
 public class XMLDemande extends XMLReader {
 
@@ -33,21 +33,22 @@ public class XMLDemande extends XMLReader {
             Entrepot entrepot = new Entrepot(adresseEntrepot, heureDepart);
             demande.setEntrepot(entrepot);
         }
-        /*
+        
         // Lire les éléments livraison
         NodeList livraisonList = doc.getElementsByTagName("livraison");
         for (int i = 0; i < livraisonList.getLength(); i++) {
             Element livraisonElement = (Element) livraisonList.item(i);
             long adresseEnlevement = Long.parseLong(livraisonElement.getAttribute("adresseEnlevement"));
             long adresseLivraison = Long.parseLong(livraisonElement.getAttribute("adresseLivraison"));
-            int dureeEnlevement = Integer.parseInt(livraisonElement.getAttribute("dureeEnlevement"));
-            int dureeLivraison = Integer.parseInt(livraisonElement.getAttribute("dureeLivraison"));
+            double dureeEnlevement = Double.parseDouble(livraisonElement.getAttribute("dureeEnlevement"));
+            double dureeLivraison = Double.parseDouble(livraisonElement.getAttribute("dureeLivraison"));
 
             // Créer un objet Livraison et l'ajouter à la demande
             Livraison livraison = new Livraison(adresseEnlevement, adresseLivraison, dureeEnlevement, dureeLivraison);
-            demande.ajouterLivraison(livraison);
+            PointDeLivraison point = new PointDeLivraison(adresseLivraison, livraison);
+            demande.ajouterPointDeLivraison(point);
         }
-        */
+        
         return demande;
     }
 }
