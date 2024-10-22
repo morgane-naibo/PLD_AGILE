@@ -104,7 +104,7 @@ public class Plan {
         // Cas de base : si on atteint la destination
         if (courant.equals(destination)) {
             if (coutActuel < meilleurCout) {
-                meilleurCout = coutActuel; // Mise à jour du meilleur coût
+                meilleurCout = coutActuel;
                 meilleurChemin.setListeTroncons(new ArrayList<Troncon>(cheminActuel));
                 meilleurChemin.setDepart(cheminActuel.get(0).getOrigine());
                 meilleurChemin.setArrivee(courant);

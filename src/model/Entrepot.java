@@ -2,7 +2,6 @@ package model;
 
 
 public class Entrepot extends Intersection{
-   
 
     // Constructeur
     public Entrepot(long id, double latitude, double longitude) {
