@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import util.XMLPlan;
 
-import java.io.File;
 import java.util.List;
 
 public class PlanTest {
@@ -98,8 +97,8 @@ public class PlanTest {
 
     @Test
     public void testChargerPlanDepuisXML() {
-        // Spécifiez le chemin du fichier XML ici
-        String xmlFilePath = "chemin/vers/le/fichier/plan.xml"; // Remplacez par le chemin réel
+        String xmlFilePath = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
+
         XMLPlan xmlPlanReader = new XMLPlan();
         
         // Charger le plan depuis le fichier XML
@@ -108,7 +107,6 @@ public class PlanTest {
         assertNotNull(planCharge);
         assertTrue(planCharge.getListeIntersections().size() > 0);
         assertTrue(planCharge.getListeTroncons().size() > 0);
-        
-        // Vous pouvez ajouter d'autres assertions pour vérifier les détails spécifiques du plan chargé
     }
+    
 }

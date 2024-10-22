@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Plan {
@@ -52,6 +54,7 @@ public class Plan {
 
     //autres methodes
     public void ajouterIntersection(Intersection intersection){
+        intersection.setNumero(this.listeIntersections.size());
         this.listeIntersections.add(intersection);
     }
 
@@ -80,57 +83,65 @@ public class Plan {
         return null;
     }
 
-    public Etape chercherPlusCourtChemin(Intersection intersection1, Intersection intersection2) {
-        Etape meilleurChemin = new Etape();
-        double meilleurCout = Double.MAX_VALUE; 
-        List<Troncon> cheminActuel = new ArrayList<Troncon>();
-        double coutActuel = 0;
 
-        if (intersection1 == null || intersection2 == null) {
-            return null; 
+    public Etape chercherPlusCourtChemin(Intersection origine, Intersection destination){
+        Intersection actuel = new Intersection();
+        actuel = origine;
+        double[] distance = new double[this.listeIntersections.size()];
+        for (int i=0 ; i<this.listeIntersections.size(); i++){
+            distance[i] = 100000000;
         }
-    
-        branchAndBound(intersection1, intersection2, cheminActuel, coutActuel, meilleurCout, meilleurChemin);
-    
-        if (meilleurChemin.getListeTroncons().isEmpty()) {
-            System.out.println("Aucun chemin trouvé entre " + intersection1.getId() + " et " + intersection2.getId());
-            return null;
-        }
-    
-        return meilleurChemin;
-    }
-    
-    private void branchAndBound(Intersection courant, Intersection destination, List<Troncon> cheminActuel, double coutActuel, double meilleurCout, Etape meilleurChemin) {
-        // Cas de base : si on atteint la destination
-        if (courant.equals(destination)) {
-            if (coutActuel < meilleurCout) {
-                meilleurCout = coutActuel;
-                meilleurChemin.setListeTroncons(new ArrayList<Troncon>(cheminActuel));
-                meilleurChemin.setDepart(cheminActuel.get(0).getOrigine());
-                meilleurChemin.setArrivee(courant);
-                meilleurChemin.setLongueur(coutActuel);
-            }
-            return;
-        }
-    
-        // Parcours des tronçons à partir de l'intersection courante
-        for (Troncon troncon : this.listeTroncons) {
-            if (troncon.getOrigine().equals(courant)) {
-                // Si ce tronçon mène à un nouveau sommet (pour éviter des cycles)
-                if (!cheminActuel.contains(troncon)) {
-                    cheminActuel.add(troncon);
-                    double nouveauCout = coutActuel + troncon.getLongueur();
-    
-                    // Si le coût est inférieur au meilleur coût actuel, continuer l'exploration
-                    if (nouveauCout < meilleurCout) {
-                        branchAndBound(troncon.getDestination(), destination, cheminActuel, nouveauCout, meilleurCout, meilleurChemin);
-                    }
-    
-                    // Backtracking : retirer le tronçon après exploration
-                    cheminActuel.remove(cheminActuel.size() - 1);
+        distance[origine.getNumero()] = 0;
+        Troncon[] predecesseurs = new Troncon[this.listeIntersections.size()];
+        predecesseurs[origine.getNumero()] = null;
+
+        List<Integer> sommetsGris = new ArrayList<Integer>();
+        sommetsGris.add(origine.getNumero());
+        List<Integer> sommetsNoirs = new ArrayList<Integer>();
+        while (sommetsGris.size() != 0){
+            double dist_min = 10000000;
+            int posMin = 0;
+            for (int i=0 ; i<this.listeIntersections.size(); i++){
+                if (distance[i]<dist_min && sommetsGris.contains(i)){
+                    posMin = i;
+                    dist_min = distance[i];
                 }
             }
+            actuel = this.listeIntersections.get(posMin);
+
+            
+
+            //pour les successeurs de ce sommet
+            for (Troncon iteratorTroncon : actuel.getListeTroncons()){
+                if (! sommetsNoirs.contains(iteratorTroncon.getDestination().getNumero())){
+                    
+                    if (iteratorTroncon.getLongueur()+distance[actuel.getNumero()] < distance[iteratorTroncon.getDestination().getNumero()]){
+                        distance[iteratorTroncon.getDestination().getNumero()]= iteratorTroncon.getLongueur()+distance[actuel.getNumero()];
+                        System.out.println(iteratorTroncon.getDestination().getNumero());
+                        System.out.println(iteratorTroncon.getDestination().toString());
+                        predecesseurs[iteratorTroncon.getDestination().getNumero()] = iteratorTroncon;
+                        if (! sommetsGris.contains(iteratorTroncon.getDestination().getNumero())){
+                            sommetsGris.add(iteratorTroncon.getDestination().getNumero());
+                        }
+                    }
+                }
+            }
+            // enlever actuel des gris
+            sommetsGris.remove(Integer.valueOf(actuel.getNumero()));
+            sommetsNoirs.add(actuel.getNumero());
+
         }
+        List<Troncon> troncons = new ArrayList<Troncon>();
+        Troncon tronconActuel = predecesseurs[destination.getNumero()];
+        troncons.add(tronconActuel);
+        while (predecesseurs[tronconActuel.getOrigine().getNumero()] != null){
+            tronconActuel = predecesseurs[tronconActuel.getOrigine().getNumero()];
+            troncons.add(tronconActuel);
+        }
+        Collections.reverse(troncons);
+        double longueur = distance[destination.getNumero()];
+        Etape plusCourtChemin = new Etape(troncons,origine,destination, longueur);
+        return plusCourtChemin;
     }
 
     public double trouverLatitudeMin(){
@@ -172,6 +183,7 @@ public class Plan {
         }
         return longitudeMax;
     }
+
 
     
 

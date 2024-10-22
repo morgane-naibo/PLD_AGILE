@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="tests.PlanTest" time="0.05" tests="5" errors="0" skipped="0" failures="2">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="tests.PlanTest" time="0.059" tests="5" errors="1" skipped="0" failures="1">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="GB"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire/surefirebooter-20241022111352378_3.jar /Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire 2024-10-22T11-13-51_812-jvmRun1 surefire-20241022111352378_1tmp surefire_0-20241022111352378_2tmp"/>
+    <property name="sun.java.command" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire/surefirebooter-20241022165345000_3.jar /Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire 2024-10-22T16-53-44_959-jvmRun1 surefire-20241022165345000_1tmp surefire_0-20241022165345000_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/test-classes:/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/classes:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-controls/23.0.1/javafx-controls-23.0.1.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-controls/23.0.1/javafx-controls-23.0.1-mac-aarch64.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-graphics/23.0.1/javafx-graphics-23.0.1.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-graphics/23.0.1/javafx-graphics-23.0.1-mac-aarch64.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-base/23.0.1/javafx-base-23.0.1.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-base/23.0.1/javafx-base-23.0.1-mac-aarch64.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-fxml/23.0.1/javafx-fxml-23.0.1.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-fxml/23.0.1/javafx-fxml-23.0.1-mac-aarch64.jar:/Users/morganenaibo/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/Users/morganenaibo/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/Users/morganenaibo/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/Users/morganenaibo/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/morganenaibo/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/Users/morganenaibo/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:"/>
@@ -29,7 +29,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire/surefirebooter-20241022111352378_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire/surefirebooter-20241022165345000_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="23"/>
@@ -58,18 +58,13 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="testAjouterTroncon" classname="tests.PlanTest" time="0.012"/>
+  <testcase name="testAjouterTroncon" classname="tests.PlanTest" time="0.016"/>
   <testcase name="testAjouterIntersection" classname="tests.PlanTest" time="0.0"/>
-  <testcase name="testChercherIntersectionParId" classname="tests.PlanTest" time="0.0"/>
+  <testcase name="testChercherIntersectionParId" classname="tests.PlanTest" time="0.001"/>
   <testcase name="testChercherPlusCourtChemin" classname="tests.PlanTest" time="0.002">
-    <failure message="expected: &lt;80.0&gt; but was: &lt;100.0&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <80.0> but was: <100.0>
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:86)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:81)
-	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1011)
-	at tests.PlanTest.testChercherPlusCourtChemin(PlanTest.java:96)
+    <error message="Cannot invoke &quot;model.Troncon.getOrigine()&quot; because &quot;tronconActuel&quot; is null" type="java.lang.NullPointerException"><![CDATA[java.lang.NullPointerException: Cannot invoke "model.Troncon.getOrigine()" because "tronconActuel" is null
+	at model.Plan.chercherPlusCourtChemin(Plan.java:137)
+	at tests.PlanTest.testChercherPlusCourtChemin(PlanTest.java:90)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
@@ -139,9 +134,9 @@
 	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
 	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-]]></failure>
+]]></error>
   </testcase>
-  <testcase name="testChargerPlanDepuisXML" classname="tests.PlanTest" time="0.024">
+  <testcase name="testChargerPlanDepuisXML" classname="tests.PlanTest" time="0.026">
     <failure message="expected: not &lt;null&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: not <null>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
 	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -149,7 +144,7 @@
 	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:35)
 	at org.junit.jupiter.api.AssertNotNull.assertNotNull(AssertNotNull.java:30)
 	at org.junit.jupiter.api.Assertions.assertNotNull(Assertions.java:301)
-	at tests.PlanTest.testChargerPlanDepuisXML(PlanTest.java:108)
+	at tests.PlanTest.testChargerPlanDepuisXML(PlanTest.java:107)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
@@ -222,7 +217,7 @@
 ]]></failure>
     <system-out><![CDATA[Erreur lors du chargement du fichier XML de plan de ville.
 ]]></system-out>
-    <system-err><![CDATA[java.io.FileNotFoundException: /Users/morganenaibo/4IF/AGILE/PLD_AGILE/chemin/vers/le/fichier/plan.xml (No such file or directory)
+    <system-err><![CDATA[java.io.FileNotFoundException: /Users/morganenaibo/4IF/AGILE/PLD_AGILE/resources\fichiersXMLPickupDelivery\fichiersXMLPickupDelivery\testPlan.xml (No such file or directory)
 	at java.base/java.io.FileInputStream.open0(Native Method)
 	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
 	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:159)
@@ -239,7 +234,7 @@
 	at java.xml/javax.xml.parsers.DocumentBuilder.parse(DocumentBuilder.java:206)
 	at util.XMLReader.loadDocument(XMLReader.java:16)
 	at util.XMLPlan.parse(XMLPlan.java:16)
-	at tests.PlanTest.testChargerPlanDepuisXML(PlanTest.java:106)
+	at tests.PlanTest.testChargerPlanDepuisXML(PlanTest.java:105)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
 	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
