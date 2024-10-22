@@ -72,14 +72,12 @@ public class Plan {
     }
 
     public Intersection chercherIntersectionParId(long id){
-        Intersection inter = new Intersection();
         for(Intersection iteratorIntersection : this.listeIntersections){
             if (iteratorIntersection.getId() == id) {
-                inter = iteratorIntersection;
-                break;
+                return iteratorIntersection;
             }
         }
-        return inter;
+        return null;
     }
 
     public Etape chercherPlusCourtChemin(Intersection intersection1, Intersection intersection2) {
