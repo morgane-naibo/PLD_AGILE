@@ -62,6 +62,7 @@ public class Main {
         XMLPlan planReader = new XMLPlan();
         Plan plan = planReader.parse(mapPath);
         System.out.print(plan);
+        
     }
 
 }
