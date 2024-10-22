@@ -52,7 +52,7 @@ public class Troncon {
     @Override
     public String toString() {
         return "Troncon [Origine: " + origine + ", Destination: " + destination + 
-            ", Longueur: " + longueur + " km, Rue: " + nomRue + "]";
+            ", Longueur: " + longueur + " m, Rue: " + nomRue + "]";
     }
 
     //autres methodes

@@ -8,7 +8,8 @@ import util.XMLPlan;
 public class Main {
 
     public static void main(String[] args) {
-        /* TEST PLUS COURT CHEMIN 
+        //TEST PLUS COURT CHEMIN 
+        /*
         Plan plan = new Plan() ;
         Intersection i1 = new Intersection(1, 45.75406, 4.857418) ;
         Intersection i2 = new Intersection(2, 45.75343, 4.857465) ;
@@ -58,10 +59,13 @@ public class Main {
         System.out.println(plusCourtChemin2to3.toString());
         */
 
-        String mapPath = "PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
+        //TEST LECTURE PLAN
+        
+        String mapPath = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
         XMLPlan planReader = new XMLPlan();
         Plan plan = planReader.parse(mapPath);
         System.out.print(plan);
+        
     }
 
 }
