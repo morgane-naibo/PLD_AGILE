@@ -61,7 +61,9 @@ public class Intersection {
     }
 
     //autres methodes
-
+    public void ajouterTroncon(Troncon troncon) {
+        this.listeTroncons.add(troncon);
+    }
 
 }
 
