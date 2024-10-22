@@ -51,7 +51,7 @@ public class XMLPlan extends XMLReader {
             Troncon troncon = new Troncon(interOrigine,interDestination,longueur,nomRue);
             
             plan.ajouterTroncon(troncon);
-            //interOrigine.ajouterTroncon(troncon);
+            interOrigine.ajouterTroncon(troncon);
         }
         return plan;   
         

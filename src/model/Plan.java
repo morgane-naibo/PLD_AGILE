@@ -81,21 +81,17 @@ public class Plan {
     }
 
     public Etape chercherPlusCourtChemin(Intersection intersection1, Intersection intersection2) {
-        // Initialiser un nouvel objet Etape pour stocker le meilleur chemin
         Etape meilleurChemin = new Etape();
-        double meilleurCout = Double.MAX_VALUE; // On commence avec un coût maximum
-        List<Troncon> cheminActuel = new ArrayList<>(); // Chemin en cours d'exploration
-        double coutActuel = 0; // Coût actuel du chemin
-    
-        // Vérification des intersections de départ et d'arrivée
+        double meilleurCout = Double.MAX_VALUE; 
+        List<Troncon> cheminActuel = new ArrayList<Troncon>();
+        double coutActuel = 0;
+
         if (intersection1 == null || intersection2 == null) {
-            return null; // Si l'une des intersections est nulle, pas de chemin possible
+            return null; 
         }
     
-        // Appel à la méthode branch and bound
         branchAndBound(intersection1, intersection2, cheminActuel, coutActuel, meilleurCout, meilleurChemin);
     
-        // Si aucun chemin n'a été trouvé, retourner null
         if (meilleurChemin.getListeTroncons().isEmpty()) {
             System.out.println("Aucun chemin trouvé entre " + intersection1.getId() + " et " + intersection2.getId());
             return null;
@@ -108,8 +104,8 @@ public class Plan {
         // Cas de base : si on atteint la destination
         if (courant.equals(destination)) {
             if (coutActuel < meilleurCout) {
-                meilleurCout = coutActuel; // Mise à jour du meilleur coût
-                meilleurChemin.setListeTroncons(new ArrayList<>(cheminActuel)); // Copier le chemin actuel
+                meilleurCout = coutActuel;
+                meilleurChemin.setListeTroncons(new ArrayList<Troncon>(cheminActuel));
                 meilleurChemin.setDepart(cheminActuel.get(0).getOrigine());
                 meilleurChemin.setArrivee(courant);
                 meilleurChemin.setLongueur(coutActuel);
