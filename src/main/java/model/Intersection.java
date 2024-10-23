@@ -57,7 +57,7 @@ public class Intersection {
     //toString
     @Override
     public String toString() {
-        return "Intersection [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + "]";
+        return "Intersection [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + "]" ;
     }
 
     //autres methodes

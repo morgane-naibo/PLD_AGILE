@@ -21,6 +21,14 @@ public class Etape {
 
     }
 
+    public Etape(List<Troncon> listeTroncons, Intersection depart, Intersection arrivee, double longueur) {
+        this.listeTroncons = listeTroncons;
+        this.depart = depart;
+        this.arrivee = arrivee;
+        this.longueur = longueur;
+
+    }
+
     public Etape() {
         this.listeTroncons = new ArrayList<Troncon>() ;
         this.depart = new Intersection() ;
