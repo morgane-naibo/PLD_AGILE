@@ -1,4 +1,4 @@
-package util;
+package main.java.util;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

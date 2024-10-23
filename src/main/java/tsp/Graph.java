@@ -1,4 +1,4 @@
-package tsp;
+package main.java.tsp;
 
 public interface Graph {
 	/**

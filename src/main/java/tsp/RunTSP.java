@@ -1,4 +1,4 @@
-package tsp;
+package main.java.tsp;
 
 public class RunTSP {
 	public static void main(String[] args) {

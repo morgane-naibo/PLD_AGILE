@@ -1,6 +1,8 @@
-package model;
+package main.java.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Plan {
@@ -52,6 +54,7 @@ public class Plan {
 
     //autres methodes
     public void ajouterIntersection(Intersection intersection){
+        intersection.setNumero(this.listeIntersections.size());
         this.listeIntersections.add(intersection);
     }
 
@@ -80,52 +83,14 @@ public class Plan {
         return null;
     }
 
-    public Etape chercherPlusCourtChemin(Intersection intersection1, Intersection intersection2) {
-        Etape meilleurChemin = new Etape();
-        double meilleurCout = Double.MAX_VALUE; 
-        List<Troncon> cheminActuel = new ArrayList<Troncon>();
-        double coutActuel = 0;
 
-        if (intersection1 == null || intersection2 == null) {
-            return null; 
+    public Etape chercherPlusCourtChemin(Intersection origine, Intersection destination){
+        Intersection actuel = new Intersection();
+        actuel = origine;
+        double[] distance = new double[this.listeIntersections.size()];
+        for (int i=0 ; i<this.listeIntersections.size(); i++){
+            distance[i] = 100000000;
         }
-<<<<<<<< HEAD:src/main/java/model/Plan.java
-    
-        branchAndBound(intersection1, intersection2, cheminActuel, coutActuel, meilleurCout, meilleurChemin);
-    
-        if (meilleurChemin.getListeTroncons().isEmpty()) {
-            System.out.println("Aucun chemin trouvé entre " + intersection1.getId() + " et " + intersection2.getId());
-            return null;
-        }
-    
-        return meilleurChemin;
-    }
-    
-    private void branchAndBound(Intersection courant, Intersection destination, List<Troncon> cheminActuel, double coutActuel, double meilleurCout, Etape meilleurChemin) {
-        // Cas de base : si on atteint la destination
-        if (courant.equals(destination)) {
-            if (coutActuel < meilleurCout) {
-                meilleurCout = coutActuel;
-                meilleurChemin.setListeTroncons(new ArrayList<Troncon>(cheminActuel));
-                meilleurChemin.setDepart(cheminActuel.get(0).getOrigine());
-                meilleurChemin.setArrivee(courant);
-                meilleurChemin.setLongueur(coutActuel);
-            }
-            return;
-        }
-    
-        // Parcours des tronçons à partir de l'intersection courante
-        for (Troncon troncon : this.listeTroncons) {
-            if (troncon.getOrigine().equals(courant)) {
-                // Si ce tronçon mène à un nouveau sommet (pour éviter des cycles)
-                if (!cheminActuel.contains(troncon)) {
-                    cheminActuel.add(troncon);
-                    double nouveauCout = coutActuel + troncon.getLongueur();
-    
-                    // Si le coût est inférieur au meilleur coût actuel, continuer l'exploration
-                    if (nouveauCout < meilleurCout) {
-                        branchAndBound(troncon.getDestination(), destination, cheminActuel, nouveauCout, meilleurCout, meilleurChemin);
-========
         distance[origine.getNumero()] = 0;
         Troncon[] predecesseurs = new Troncon[this.listeIntersections.size()];
         predecesseurs[origine.getNumero()] = null;
@@ -158,16 +123,9 @@ public class Plan {
                         if (! sommetsGris.contains(iteratorTroncon.getDestination().getNumero())){
                             sommetsGris.add(iteratorTroncon.getDestination().getNumero());
                         }
->>>>>>>> 6e977dffede03bf082bc5b73c3929b29382c619f:src/model/Plan.java
                     }
-    
-                    // Backtracking : retirer le tronçon après exploration
-                    cheminActuel.remove(cheminActuel.size() - 1);
                 }
             }
-<<<<<<<< HEAD:src/main/java/model/Plan.java
-        }
-========
             // enlever actuel des gris
             sommetsGris.remove(Integer.valueOf(actuel.getNumero()));
             sommetsNoirs.add(actuel.getNumero());
@@ -184,7 +142,6 @@ public class Plan {
         double longueur = distance[destination.getNumero()];
         Etape plusCourtChemin = new Etape(troncons,origine,destination, longueur);
         return plusCourtChemin;
->>>>>>>> 6e977dffede03bf082bc5b73c3929b29382c619f:src/model/Plan.java
     }
 
     public double trouverLatitudeMin(){
@@ -227,6 +184,29 @@ public class Plan {
         return longitudeMax;
     }
 
+    public Intersection chercherIntersectionLaPlusProche(double latitude, double longitude) {
+        if (listeIntersections.isEmpty()) {
+            return null;
+        }
     
+        Intersection intersectionLaPlusProche = null;
+        double distanceMin = Double.MAX_VALUE;
+    
+        // boucle pour trouver l'intersection la plus proche
+        for (Intersection intersection : listeIntersections) {
+            double distance = calculerDistance(latitude, longitude, intersection.getLatitude(), intersection.getLongitude());
+            
+            if (distance < distanceMin) {
+                distanceMin = distance;
+                intersectionLaPlusProche = intersection;
+            }
+        }
+    
+        return intersectionLaPlusProche;
+    }
+    
+    private double calculerDistance(double lat1, double lon1, double lat2, double lon2) {
+        return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
+    }
 
 }

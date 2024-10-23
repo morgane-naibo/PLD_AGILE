@@ -1,9 +1,9 @@
-package tests;
+package test.java.tests;
 
-import model.Plan;
-import model.Intersection;
-import model.Troncon;
-import model.Etape;
+import main.java.model.Plan;
+import main.java.model.Intersection;
+import main.java.model.Troncon;
+import main.java.model.Etape;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import util.XMLPlan;
+import main.java.util.XMLPlan;
 
 import java.io.File;
 import java.util.List;

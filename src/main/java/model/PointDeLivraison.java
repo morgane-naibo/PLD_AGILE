@@ -1,12 +1,13 @@
-package model;
+package main.java.model;
 
 
 public class PointDeLivraison extends Intersection{
     private Livraison livraison;
 
     // Constructeur
-    public PointDeLivraison(Long id, double latitude, double longitude, Livraison livraison) {
-        super(id, latitude, longitude);
+    // Constructeur
+    public PointDeLivraison(Long id, Livraison livraison) {
+        this.setId(id);;
         this.livraison=livraison;
         
     }

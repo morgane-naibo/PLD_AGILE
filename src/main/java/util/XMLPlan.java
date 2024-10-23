@@ -1,12 +1,12 @@
-package util;
+package main.java.util;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import model.Intersection;
-import model.Plan;
-import model.Troncon;
+import main.java.model.Intersection;
+import main.java.model.Plan;
+import main.java.model.Troncon;
 
 public class XMLPlan extends XMLReader {
 

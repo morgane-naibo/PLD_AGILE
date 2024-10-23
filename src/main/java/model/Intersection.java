@@ -1,4 +1,4 @@
-package model;
+package main.java.model;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ public class Intersection {
     private double longitude;
     private long id;
     private List<Troncon> listeTroncons;
+    protected int numero;
 
     // Constructeurs
     public Intersection(long id, double latitude, double longitude) {
@@ -37,6 +38,10 @@ public class Intersection {
         return this.listeTroncons;
     }
 
+    public int getNumero(){
+        return this.numero;
+    }
+
     //setters
     public void setLatitude(double newLatitude) {
         this.latitude = newLatitude;
@@ -54,6 +59,10 @@ public class Intersection {
         this.listeTroncons = newListeTroncons;
     }
 
+    public void setNumero(int num){
+        this.numero = num;
+    }
+
     //toString
     @Override
     public String toString() {
@@ -66,4 +75,3 @@ public class Intersection {
     }
 
 }
-

@@ -11,8 +11,8 @@
         <!-- JavaFX version -->
         <javafx.version>23.0.1</javafx.version>
         <!-- Version du JDK utilisé -->
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>23</maven.compiler.source>
+        <maven.compiler.target>23</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -62,10 +62,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>Main</mainClass> <!-- Remplacez par le nom de votre classe principale sans .java -->
+                    <mainClass>main.java.Main</mainClass> <!-- Remplacez par le nom de votre classe principale sans .java -->
                     <modulepath>true</modulepath>
                     <systemPropertyVariables>
-                        <javafx-sdk>/Users/morganenaibo/Downloads/javafx-sdk-23.0.1/lib</javafx-sdk> <!-- Chemin vers le répertoire lib de JavaFX -->
+                        <javafx-sdk>C:Program Files/Javafx/javafx-sdk-23.0.1/lib</javafx-sdk> <!-- Chemin vers le répertoire lib de JavaFX -->
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

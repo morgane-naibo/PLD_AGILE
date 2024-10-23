@@ -1,18 +1,35 @@
-package model;
+package main.java.model;
 
 public class Livraison {
-    private double tempsLivraison;
+    private double dureeLivraison;
+    private double dureeEnlevement;
+    private long adresseEnlevement;
+    private long adresseLivraison;
     private Livreur livreur;
 
     //constructeur
-    public Livraison(float tempsLivraison, Livreur livreur) {
-        this.tempsLivraison = tempsLivraison;
-        this.livreur = livreur;
+    public Livraison(long adresseEnlevement, long adresseLivraison, double dureeEnlevement, double dureeLivraison) {
+        this.dureeLivraison = dureeLivraison;
+        this.dureeEnlevement = dureeEnlevement;
+        this.adresseEnlevement = adresseEnlevement;
+        this.adresseLivraison = adresseLivraison;
     }
 
     //getters
     public double getTempsLivraison() {
-        return this.tempsLivraison;
+        return this.dureeLivraison;
+    }
+
+    public double getTempsEnlevement() {
+        return this.dureeEnlevement;
+    }
+
+    public long getAdresseLivraison() {
+        return this.adresseLivraison;
+    }
+
+    public long getAdresseEnelevement() {
+        return this.adresseEnlevement;
     }
 
     public Livreur getLivreur() {
@@ -21,7 +38,7 @@ public class Livraison {
 
     //setters
     public void setTempsLivraison(double newTempsLivraison){
-        this.tempsLivraison = newTempsLivraison;
+        this.dureeLivraison = newTempsLivraison;
     }
 
     public void setLivreur(Livreur newLivreur) {
@@ -31,7 +48,7 @@ public class Livraison {
     //toString
     @Override
     public String toString() {
-        return "Livraison [Temps: " + tempsLivraison + " min, Livreur: " + livreur + "]";
+        return "Livraison [Temps: " + dureeLivraison + " min, Livreur: " + livreur + "]";
     }
 
     //autres methodes

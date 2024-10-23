@@ -1,4 +1,4 @@
-package model;
+package main.java.model;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -49,6 +49,15 @@ public class Demande {
 
     public void setTournee(Trajet newTournee) {
         this.tournee = newTournee;
+    }
+
+    // ajout point de livraison
+    public void ajouterPointDeLivraison(PointDeLivraison point) {
+        if (point != null) {
+            this.listePointDeLivraison.add(point);
+        } else {
+            System.out.println("Le point de livraison est nul et ne peut pas être ajouté.");
+        }
     }
 
     //toString
