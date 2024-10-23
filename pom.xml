@@ -62,10 +62,10 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>main.java.Main</mainClass> <!-- Remplacez par le nom de votre classe principale sans .java -->
+                    <mainClass>view.Main</mainClass> <!-- Remplacez par le nom de votre classe principale sans .java -->
                     <modulepath>true</modulepath>
                     <systemPropertyVariables>
-                        <javafx-sdk>C:Program Files/Javafx/javafx-sdk-23.0.1/lib</javafx-sdk> <!-- Chemin vers le répertoire lib de JavaFX -->
+                        <javafx-sdk>C:/Program Files/Javafx/javafx-sdk-23.0.1/lib</javafx-sdk> <!-- Chemin vers le répertoire lib de JavaFX -->
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

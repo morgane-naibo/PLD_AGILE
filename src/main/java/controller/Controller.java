@@ -1,4 +1,4 @@
-package main.java.controller;
+package controller;
 
 import java.io.File;
 
@@ -14,16 +14,16 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.scene.layout.AnchorPane;
-import main.java.util.XMLPlan;
-import main.java.model.Intersection;
-import main.java.model.Livraison;
-import main.java.model.Plan;
-import main.java.model.PointDeLivraison;
-import main.java.model.Troncon;
-import main.java.util.XMLDemande;
-import main.java.model.Demande;
-import main.java.model.Entrepot;
-import main.java.model.Livraison;
+import util.XMLPlan;
+import model.Intersection;
+import model.Livraison;
+import model.Plan;
+import model.PointDeLivraison;
+import model.Troncon;
+import util.XMLDemande;
+import model.Demande;
+import model.Entrepot;
+import model.Livraison;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 

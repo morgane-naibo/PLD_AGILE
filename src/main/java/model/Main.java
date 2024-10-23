@@ -1,9 +1,9 @@
-package main.java.model;
+package model;
 
 import java.nio.file.Paths;
 import java.nio.file.Path;
 
-import main.java.util.XMLPlan;
+import util.XMLPlan;
 
 public class Main {
 

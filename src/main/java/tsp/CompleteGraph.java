@@ -1,8 +1,8 @@
-package main.java.tsp;
+package tsp;
 
-import main.java.model.Plan;
-import main.java.model.Etape;
-import main.java.model.Intersection;
+import model.Plan;
+import model.Etape;
+import model.Intersection;
 import java.util.List;
 
 public class CompleteGraph implements Graph {

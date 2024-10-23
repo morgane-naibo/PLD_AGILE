@@ -1,12 +1,12 @@
-package main.java.util;
+package util;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import main.java.model.Demande;
-import main.java.model.Entrepot;
-import main.java.model.Livraison;
-import main.java.model.PointDeLivraison;
+import model.Demande;
+import model.Entrepot;
+import model.Livraison;
+import model.PointDeLivraison;
 
 public class XMLDemande extends XMLReader {
 
