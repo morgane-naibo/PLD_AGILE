@@ -48,6 +48,7 @@ public class Plan {
         for (Troncon troncon : listeTroncons) {
             sb.append(troncon).append("\n");
         }
+        sb.append("\n");
 
         return sb.toString();
     }
@@ -83,10 +84,9 @@ public class Plan {
         return null;
     }
 
-
     public Etape chercherPlusCourtChemin(Intersection origine, Intersection destination){
-        Intersection actuel = new Intersection();
-        actuel = origine;
+        //initialisation
+        Intersection actuel = origine;
         double[] distance = new double[this.listeIntersections.size()];
         for (int i=0 ; i<this.listeIntersections.size(); i++){
             distance[i] = 100000000;
@@ -94,13 +94,16 @@ public class Plan {
         distance[origine.getNumero()] = 0;
         Troncon[] predecesseurs = new Troncon[this.listeIntersections.size()];
         predecesseurs[origine.getNumero()] = null;
-
         List<Integer> sommetsGris = new ArrayList<Integer>();
         sommetsGris.add(origine.getNumero());
         List<Integer> sommetsNoirs = new ArrayList<Integer>();
+
+        //tant qu'il y a encore des sommets (intersections) à visiter
         while (sommetsGris.size() != 0){
-            double dist_min = 10000000;
+            double dist_min = Double.MAX_VALUE;
             int posMin = 0;
+
+            //chercher le sommet gris (intersection) minimisant la ditance
             for (int i=0 ; i<this.listeIntersections.size(); i++){
                 if (distance[i]<dist_min && sommetsGris.contains(i)){
                     posMin = i;
@@ -109,9 +112,7 @@ public class Plan {
             }
             actuel = this.listeIntersections.get(posMin);
 
-            
-
-            //pour les successeurs de ce sommet
+            //pour les successeurs de ce sommet, relâcher les arcs (troncons)
             for (Troncon iteratorTroncon : actuel.getListeTroncons()){
                 if (! sommetsNoirs.contains(iteratorTroncon.getDestination().getNumero())){
                     
@@ -126,11 +127,14 @@ public class Plan {
                     }
                 }
             }
+
             // enlever actuel des gris
             sommetsGris.remove(Integer.valueOf(actuel.getNumero()));
             sommetsNoirs.add(actuel.getNumero());
 
         }
+
+        //remettre les troncons dans l'ordre et créer l'étape à retourner
         List<Troncon> troncons = new ArrayList<Troncon>();
         Troncon tronconActuel = predecesseurs[destination.getNumero()];
         troncons.add(tronconActuel);
@@ -206,7 +210,26 @@ public class Plan {
     }
     
     private double calculerDistance(double lat1, double lon1, double lat2, double lon2) {
-        return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
+        //distance cartésienne
+        //return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
+
+        //avec la formule de Harsevine pour calculer des distances sur Terre
+        double lat1Rad = Math.toRadians(lat1);
+        double lat2Rad = Math.toRadians(lat2);
+        double lon1Rad = Math.toRadians(lon1);
+        double lon2Rad = Math.toRadians(lon2);
+
+        double rayonTerreMetre = 6371000.0 ;
+        double dLat = lat2Rad-lat1Rad;
+        double dLong = lon2Rad - lon1Rad;
+
+        return 2 * rayonTerreMetre * Math.asin(
+            Math.sqrt(
+                (Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLong / 2) * Math.sin(dLong / 2)
+                )
+                )
+            );
     }
 
 }
