@@ -16,8 +16,14 @@ public class Entrepot extends Intersection{
     }
 
     //getters
+    public String getHeureDepart() {
+        return this.heureDepart;
+    }
 
     //setters
+    public void setHeureDepart(String newHeureDepart){
+        this.heureDepart = newHeureDepart;
+    }
 
     //toString
     @Override
