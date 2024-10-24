@@ -78,6 +78,10 @@ public class PlanTest {
         Troncon troncon1 = new Troncon(intersection1, intersection2, 50.0, "Rue A");
         Troncon troncon2 = new Troncon(intersection2, intersection3, 30.0, "Rue B");
         Troncon troncon3 = new Troncon(intersection1, intersection3, 100.0, "Rue C");
+
+        intersection1.ajouterTroncon(troncon1);
+        intersection1.ajouterTroncon(troncon3);
+        intersection2.ajouterTroncon(troncon2);
         
         plan.ajouterIntersection(intersection1);
         plan.ajouterIntersection(intersection2);
@@ -99,7 +103,7 @@ public class PlanTest {
     @Test
     public void testChargerPlanDepuisXML() {
         // Spécifiez le chemin du fichier XML ici
-        String xmlFilePath = "chemin/vers/le/fichier/plan.xml"; // Remplacez par le chemin réel
+        String xmlFilePath = "resources\\\\fichiersXMLPickupDelivery\\\\fichiersXMLPickupDelivery\\\\testPlan.xml"; // Remplacez par le chemin réel
         XMLPlan xmlPlanReader = new XMLPlan();
         
         // Charger le plan depuis le fichier XML
