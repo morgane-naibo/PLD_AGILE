@@ -431,7 +431,6 @@ public void handleLineClick(MouseEvent event) {
 
         if (inter.getId() == entrepot.getId()) {
             entrepotExiste = false;
-            entrepot = null;
             entrepotCircle = null;
             deliveryInfoVBox.getChildren().remove(labelEntrepot);
             pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
@@ -452,12 +451,12 @@ public void handleLineClick(MouseEvent event) {
     
     // Méthode pour convertir la latitude en position Y dans le Pane
     private double latitudeToY(double latitude) {
-        return ((latitude - (latMin)) / (latMax - latMin)) * (paneHeight);    }
+        return paneHeight - ((latitude - (latMin)) / (latMax - latMin)) * (paneHeight);    }
 
 
     // Convertit les coordonnées Y en latitude
     private double yToLatitude(double y) {
-        return (y / paneHeight) * (latMax - latMin) + latMin;
+        return ((paneHeight - y) / paneHeight) * (latMax - latMin) + latMin;    
     }
 
     // Convertit les coordonnées X en longitude
