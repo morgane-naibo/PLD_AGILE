@@ -14,7 +14,6 @@
     <StackPane prefHeight="600.0" prefWidth="800.0">
         <Button fx:id="chargerPlan" text="Charger un plan" styleClass="plan-button" onAction="#handleLoadPlan" />
     </StackPane>
-    
         <Button fx:id="boutonPlus" text="+" styleClass="plus-button" onAction="#handleButtonClick" visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10"/>
         <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton"
             visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="60"/>

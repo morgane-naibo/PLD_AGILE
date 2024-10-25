@@ -111,6 +111,7 @@ public class Controller {
     // Affiche le plan sur l'interface graphique
     private void displayPlan(Plan plan) {
         // Réinitialise l'interface graphique
+        demande = null;
         entrepotExiste = false;
         pane.getChildren().clear();
         deliveryInfoVBox.getChildren().clear();
@@ -156,6 +157,7 @@ public class Controller {
         // Affiche ou masque les boutons
         if (!button_visible) {
             boutonPlus.setText("x");
+            boutonPlus.setStyle("-fx-background-color:GRAY");
             chargerFichierButton.setVisible(true);
             selectionnerPointButton.setVisible(true);
             chargerNouveauPlan.setVisible(true);
@@ -163,6 +165,7 @@ public class Controller {
         }
         else {
             boutonPlus.setText("+");
+            boutonPlus.setStyle("-fx-background-color:#3498db");
             chargerFichierButton.setVisible(false);
             selectionnerPointButton.setVisible(false);
             chargerNouveauPlan.setVisible(false);
@@ -222,39 +225,39 @@ public void handleLineClick(MouseEvent event) {
         labelEntrepot.setOnMouseClicked(event2 -> handleLabelClick(intersection));
 
         System.out.println("Entrepôt sélectionné à (" + intersection.getLongitude() + ", " + intersection.getLatitude() + ")");
-    } else {
-        // Sinon on crée un point de livraison
-        Livraison livraison = new Livraison(0, intersection.getId(), 5.0, 5.0);
-        PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), livraison);
-        if (demande == null) {
-            // Crée une nouvelle demande si elle n'existe pas
-            demande = new Demande();
+        } else {
+            // Sinon on crée un point de livraison
+            Livraison livraison = new Livraison(0, intersection.getId(), 5.0, 5.0);
+            PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), livraison);
+            if (demande == null) {
+                // Crée une nouvelle demande si elle n'existe pas
+                demande = new Demande();
+            }
+            // Ajoute le point de livraison à la demande
+            demande.ajouterPointDeLivraison(pdl);
+            deliveryInfoVBox.setVisible(true);
+
+            // Affiche le point de livraison sur le plan
+            Intersection inter = plan.chercherIntersectionParId(pdl.getId());
+
+            double startX = longitudeToX(inter.getLongitude());
+            double startY = latitudeToY(inter.getLatitude());
+
+            // Crée un cerlce pour représenter le point de livraison
+            Circle newPdl= new Circle(startX, startY, 5, Color.RED);
+            newPdl.setOnMouseClicked(event2 -> handleLabelClick(inter));
+
+            System.out.println("Point de Livraison: (" + startX + ", " + startY + ")");
+
+            Label pdLabel = new Label("Point de Livraison: (" + inter.getLongitude() + ", " + inter.getLatitude() + ")");
+
+            deliveryInfoVBox.getChildren().add(pdLabel);
+            pane.getChildren().add(newPdl);
+
+            // Ajoute un événement de clic sur le label
+            pdLabel.setOnMouseClicked(event2 -> handleLabelClick(inter));
         }
-        // Ajoute le point de livraison à la demande
-        demande.ajouterPointDeLivraison(pdl);
-        deliveryInfoVBox.setVisible(true);
-
-        // Affiche le point de livraison sur le plan
-        Intersection inter = plan.chercherIntersectionParId(pdl.getId());
-
-        double startX = longitudeToX(inter.getLongitude());
-        double startY = latitudeToY(inter.getLatitude());
-
-        // Crée un cerlce pour représenter le point de livraison
-        Circle newPdl= new Circle(startX, startY, 5, Color.RED);
-        newPdl.setOnMouseClicked(event2 -> handleLabelClick(inter));
-
-        System.out.println("Point de Livraison: (" + startX + ", " + startY + ")");
-
-        Label pdLabel = new Label("Point de Livraison: (" + inter.getLongitude() + ", " + inter.getLatitude() + ")");
-
-        deliveryInfoVBox.getChildren().add(pdLabel);
-        pane.getChildren().add(newPdl);
-
-        // Ajoute un événement de clic sur le label
-        pdLabel.setOnMouseClicked(event2 -> handleLabelClick(inter));
     }
-}
 
 
 
