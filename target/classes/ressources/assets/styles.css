@@ -38,3 +38,8 @@
     -fx-right-padding: 35; /* Padding inside the button */
     -fx-font-size: 20px; /* Font size */
 }
+
+.message-pane {
+    -fx-border-color: BLACK; /* Border color */
+    -fx-border-width: 1; /* Border width */
+}
