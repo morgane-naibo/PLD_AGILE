@@ -13,6 +13,7 @@ import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import util.XMLPlan;
@@ -73,6 +74,7 @@ public class Controller {
     private boolean button_visible = false;
     private boolean selectionModeEnabled = false;
     private boolean entrepotExiste = false;
+    private boolean popupOuverte = false;
 
     // Variables pour afficher l'entrepôt
     private Circle entrepotCircle;
@@ -212,10 +214,12 @@ public void handleLineClick(MouseEvent event) {
         // Afficher l'entrepôt sur le plan
         entrepotCircle = new Circle(longitudeToX(intersection.getLongitude()), latitudeToY(intersection.getLatitude()), 5, Color.BLUE);
         pane.getChildren().add(entrepotCircle);
+        entrepotCircle.setOnMouseClicked(event2 -> handleLabelClick(intersection));
 
         // Afficher l'entrepôt dans la vue textuelle
         labelEntrepot = new Label("Entrepôt: (" + intersection.getLongitude() + ", " + intersection.getLatitude() + ")");
         deliveryInfoVBox.getChildren().add(labelEntrepot);
+        labelEntrepot.setOnMouseClicked(event2 -> handleLabelClick(intersection));
 
         System.out.println("Entrepôt sélectionné à (" + intersection.getLongitude() + ", " + intersection.getLatitude() + ")");
     } else {
@@ -305,12 +309,14 @@ public void handleLineClick(MouseEvent event) {
 
         entrepotCircle = new Circle(lon, lat, 5, Color.BLUE);
         pane.getChildren().add(entrepotCircle);
+        entrepotCircle.setOnMouseClicked(event -> handleLabelClick(intersection));
 
         System.out.println("Entrepot Point: (" + lon + ", " + lat + ")");
 
         labelEntrepot = new Label("Entrepôt: (" + intersection.getLongitude() + ", " + intersection.getLatitude() + ")");
 
         deliveryInfoVBox.getChildren().add(labelEntrepot);
+        labelEntrepot.setOnMouseClicked(event -> handleLabelClick(intersection));
 
 
         // Affiche les points de livraison
@@ -337,22 +343,35 @@ public void handleLineClick(MouseEvent event) {
     }
 
 
-    // Click sur un point de livraison textuel
+    // Click sur un point de livraison
     public void handleLabelClick(Intersection inter) {
         double startX = longitudeToX(inter.getLongitude());
         double startY = latitudeToY(inter.getLatitude());
     
         // Met en surbrillance le point de livraison sélectionné
-        Circle newPdl= new Circle(startX, startY, 8, Color.RED);
-        newPdl.setStrokeWidth(5);
-        newPdl.setStroke(Color.CORAL);
-        pane.getChildren().add(newPdl);
-
-        popupDelete(startX, startY, inter, newPdl);
+        if (!popupOuverte) {
+            if (inter.getId() == entrepot.getId()) {
+                entrepotCircle = new Circle(startX, startY, 8, Color.BLUE);
+                entrepotCircle.setStrokeWidth(5);
+                entrepotCircle.setStroke(Color.LIGHTBLUE);
+                pane.getChildren().add(entrepotCircle);
+                popupDelete(startX, startY, inter, entrepotCircle);
+            }
+            else {
+                Circle newPdl= new Circle(startX, startY, 8, Color.RED);
+                newPdl.setStrokeWidth(5);
+                newPdl.setStroke(Color.CORAL);
+                pane.getChildren().add(newPdl);
+                popupDelete(startX, startY, inter, newPdl);
+            }
+        } else {
+            return;
+        }
 
     }
 
     public void popupDelete(Double x, Double y, Intersection inter, Circle newPdl) {
+
         Popup popup = new Popup();
 
         // Créer le contenu de la pop-up
@@ -363,6 +382,7 @@ public void handleLineClick(MouseEvent event) {
         Button deleteButton = new Button("Supprimer");
         deleteButton.setOnAction (e ->  { supprimerPointDeLivraison(inter);
             popup.hide();
+            popupOuverte = false;
         });
 
         Button closeButton = new Button("Annuler");
@@ -372,12 +392,18 @@ public void handleLineClick(MouseEvent event) {
             newPdl.setStrokeWidth(0);
             newPdl.setRadius(5);
             pane.getChildren().add(newPdl);
+            newPdl.setOnMouseClicked(event -> handleLabelClick(inter));
+            popupOuverte = false;
         });
 
+        // Utiliser un HBox pour aligner les boutons côte à côte
+        HBox buttonBox = new HBox(30); // 10 est l'espacement entre les boutons
+        buttonBox.getChildren().addAll(closeButton, deleteButton);
+
         // Ajouter les composants dans un VBox
-        VBox popupContent = new VBox(10);
+        VBox popupContent = new VBox(0);
         popupContent.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-padding: 10;");
-        popupContent.getChildren().addAll(label, closeButton, deleteButton);
+        popupContent.getChildren().addAll(label, buttonBox);
 
         // Ajouter le VBox à la pop-up
         popup.getContent().add(popupContent);
@@ -391,6 +417,8 @@ public void handleLineClick(MouseEvent event) {
         else popup.setX(x + 260);
         popup.setY(y);
 
+        popupOuverte = true;
+
         // Afficher la pop-up en relation avec la fenêtre principale
         popup.show(pane.getScene().getWindow());
     }
@@ -401,11 +429,21 @@ public void handleLineClick(MouseEvent event) {
         // Supprime le point de livraison de la demande
         //demande.supprimerPointDeLivraison(inter.getId());
 
-        // Supprime le point de livraison du plan
-        pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+        if (inter.getId() == entrepot.getId()) {
+            entrepotExiste = false;
+            entrepot = null;
+            entrepotCircle = null;
+            deliveryInfoVBox.getChildren().remove(labelEntrepot);
+            pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+        }
+        else {
+            // Supprime le point de livraison du plan
+            pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
 
-        // Supprime le label du point de livraison
-        deliveryInfoVBox.getChildren().removeIf(node -> node instanceof Label && ((Label) node).getText().contains(inter.getLongitude() + ", " + inter.getLatitude()));
+            // Supprime le label du point de livraison
+            deliveryInfoVBox.getChildren().removeIf(node -> node instanceof Label && ((Label) node).getText().contains(inter.getLongitude() + ", " + inter.getLatitude()));
+        }
+        
     }
 
     // Méthode pour convertir la longitude en position X dans le Pane
