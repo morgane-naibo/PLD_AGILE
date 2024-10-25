@@ -77,7 +77,7 @@ public class Etape {
         sb.append("Etape:\n");
         sb.append("Départ: ").append(depart).append("\n");
         sb.append("Arrivée: ").append(arrivee).append("\n");
-        sb.append("Longueur totale: ").append(longueur).append(" km\n");
+        sb.append("Longueur totale: ").append(longueur).append(" m\n");
         sb.append("Tronçons:\n");
 
         for (Troncon troncon : listeTroncons) {
