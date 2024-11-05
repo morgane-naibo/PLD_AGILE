@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - Morg_branch_2
-      - '*'  # Ceci permet de lancer des builds sur toutes les branches
+      # Ceci permet de lancer des builds sur toutes les branches
   pull_request:
     branches:
       - Morg_branch_2
@@ -26,11 +26,5 @@ jobs:
       - name: Installer les dépendances
         run: mvn clean install
 
-      - name: Exécuter les tests
-        run: mvn test
-
       - name: Exécuter l'application
         run: mvn javafx:run
-
-      - name: Exécuter les tests
-        run: mvn test -e -X
