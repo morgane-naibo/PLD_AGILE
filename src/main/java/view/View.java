@@ -213,7 +213,7 @@ public class View {
             newPdl.setStrokeWidth(5);
             newPdl.setStroke(inter.getId() == entrepot.getId() ? Color.LIGHTBLUE : Color.CORAL);
             pane.getChildren().add(newPdl);
-            popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox);
+            popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox, newPdl);
         }
     }
 
@@ -226,21 +226,76 @@ public class View {
         pane.getChildren().add(box);
     }
 
-    public void popupDelete(double x, double y, Intersection inter, Circle circle, Pane pane, VBox deliveryInfoVBox) {
+    public void popupDelete(double x, double y, Intersection inter, Circle circle, Pane pane, VBox deliveryInfoVBox, Circle newPdl) {
         Popup popup = new Popup();
-        Button button = new Button("Supprimer");
-        button.setOnAction(event -> {
-            demande.getListePointDeLivraison().removeIf(pdl -> pdl.getId() == inter.getId());
-            deliveryInfoVBox.getChildren().removeIf(label -> ((Label) label).getText().contains("(" + inter.getLongitude() + ", " + inter.getLatitude() + ")"));
-            pane.getChildren().remove(circle);
+
+        // Créer le contenu de la pop-up
+        Label label = new Label("Voulez-vous supprimer ce point de livraison ?");
+        label.setStyle("-fx-background-color: white; -fx-padding: 10;");
+
+        // Bouton pour fermer la pop-up
+        Button deleteButton = new Button("Supprimer");
+        deleteButton.setOnAction (e ->  { supprimerPointDeLivraison(inter, pane, deliveryInfoVBox);
             popup.hide();
+            popupOuverte = false;
         });
-        popup.getContent().add(button);
-        popup.setAnchorX(x);
-        popup.setAnchorY(y);
-        popup.show(circle.getScene().getWindow());
+
+        Button closeButton = new Button("Annuler");
+        closeButton.setOnAction(e -> {
+            popup.hide();
+            pane.getChildren().remove(newPdl);
+            newPdl.setStrokeWidth(0);
+            newPdl.setRadius(5);
+            pane.getChildren().add(newPdl);
+            newPdl.setOnMouseClicked(event -> handleLabelClick(inter, pane, deliveryInfoVBox));
+            popupOuverte = false;
+        });
+
+        // Utiliser un HBox pour aligner les boutons côte à côte
+        HBox buttonBox = new HBox(30); // 10 est l'espacement entre les boutons
+        buttonBox.getChildren().addAll(closeButton, deleteButton);
+
+        // Ajouter les composants dans un VBox
+        VBox popupContent = new VBox(0);
+        popupContent.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-padding: 10;");
+        popupContent.getChildren().addAll(label, buttonBox);
+
+        // Ajouter le VBox à la pop-up
+        popup.getContent().add(popupContent);
+
+        popup.setHeight(100);
+        popup.setWidth(200);
+
+        if (x > paneWidth / 2) {
+            popup.setX(x - 60);
+        }
+        else popup.setX(x + 260);
+        popup.setY(y);
+
         popupOuverte = true;
-        popup.setOnHiding(event -> popupOuverte = false);
+
+        // Afficher la pop-up en relation avec la fenêtre principale
+        popup.show(pane.getScene().getWindow());
+    }
+
+    public void supprimerPointDeLivraison(Intersection inter, Pane pane, VBox deliveryInfoVBox) {
+        // Supprime le point de livraison de la demande
+        //demande.supprimerPointDeLivraison(inter.getId());
+
+        if (inter.getId() == entrepot.getId()) {
+            entrepotExiste = false;
+            entrepotCircle = null;
+            deliveryInfoVBox.getChildren().remove(labelEntrepot);
+            pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+        }
+        else {
+            // Supprime le point de livraison du plan
+            pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+
+            // Supprime le label du point de livraison
+            deliveryInfoVBox.getChildren().removeIf(node -> node instanceof Label && ((Label) node).getText().contains(inter.getLongitude() + ", " + inter.getLatitude()));
+        }
+        
     }
 
     private double latitudeToY(double latitude) {

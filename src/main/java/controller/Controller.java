@@ -103,7 +103,6 @@ public class Controller {
             view.displayPlan(mapPane, deliveryInfoVBox, label); // Afficher le plan dans mapPane
             view.displayButtons(pane, deliveryInfoVBox, boutonPlus, chargerFichierButton, selectionnerPointButton, chargerNouveauPlan);
             boutonPlus.setVisible(true);
-            messageLabel.setVisible(true);
         }
     }
 
@@ -115,6 +114,7 @@ public class Controller {
 
     @FXML
     public void handleSelectButton() {
+        messageLabel.setVisible(true);
         view.toggleSelectionMode(messageLabel, selectionnerPointButton, chargerFichierButton, chargerNouveauPlan, deliveryInfoVBox);
     }
 
@@ -126,7 +126,7 @@ public class Controller {
     @FXML
     public void handleFileButton() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("C:\\Users\\PC\\source\\repos\\PLD-Agile\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
+        fileChooser.setInitialDirectory(new File("\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             loadDemande(file.getPath());
