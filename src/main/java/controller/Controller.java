@@ -103,7 +103,6 @@ public class Controller {
             view.displayPlan(mapPane, deliveryInfoVBox, label); // Afficher le plan dans mapPane
             view.displayButtons(pane, deliveryInfoVBox, boutonPlus, chargerFichierButton, selectionnerPointButton, chargerNouveauPlan);
             boutonPlus.setVisible(true);
-            messageLabel.setVisible(true);
         }
     }
 
@@ -115,6 +114,7 @@ public class Controller {
 
     @FXML
     public void handleSelectButton() {
+        messageLabel.setVisible(true);
         view.toggleSelectionMode(messageLabel, selectionnerPointButton, chargerFichierButton, chargerNouveauPlan, deliveryInfoVBox);
     }
 

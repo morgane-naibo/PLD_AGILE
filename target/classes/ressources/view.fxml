@@ -36,12 +36,12 @@
                 <!-- Boutons d'interface en dehors du mapPane pour qu'ils ne soient pas affectés par le zoom -->
                 <Button fx:id="boutonPlus" text="+" styleClass="plus-button" onAction="#handleButtonClick" visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10"/>
                 <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton"
-                        visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="120"/>
+                        visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="130"/>
                 <!-- Autres boutons ici si nécessaire -->
                 <Button fx:id="selectionnerPointButton" text="Selectionner un point sur la carte" styleClass="file-button" onAction="#handleSelectButton"
-                        visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="80"/>
+                        visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="90"/>
                 <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan"
-                        visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="40"/>
+                        visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="50"/>
             </children>
         </AnchorPane>
     </center>
