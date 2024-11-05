@@ -55,6 +55,9 @@ public class Controller {
     private Button chargerNouveauPlan;
 
     @FXML
+    private Button calculerChemin;
+
+    @FXML
     private Label label;
 
     @FXML 
@@ -100,7 +103,7 @@ public class Controller {
         Plan plan = xmlPlan.parse(filePath);
         if (plan != null) {
             view.setPlan(plan);
-            view.displayPlan(mapPane, deliveryInfoVBox, label); // Afficher le plan dans mapPane
+            view.displayPlan(mapPane, deliveryInfoVBox, label, messageLabel); // Afficher le plan dans mapPane
             view.displayButtons(pane, deliveryInfoVBox, boutonPlus, chargerFichierButton, selectionnerPointButton, chargerNouveauPlan);
             boutonPlus.setVisible(true);
         }
@@ -120,13 +123,13 @@ public class Controller {
 
     @FXML
     public void handleLineClick(MouseEvent event) {
-        view.handleLineClick(event, mapPane, deliveryInfoVBox, label);
+        view.handleLineClick(event, mapPane, deliveryInfoVBox, messageLabel);
     }
 
     @FXML
     public void handleFileButton() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
+        fileChooser.setInitialDirectory(new File("resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             loadDemande(file.getPath());
@@ -141,9 +144,12 @@ public class Controller {
         }
     }
 
-    public void handleLabelClick(Intersection inter) {
+    
+
+    /*public void handleLabelClick(Intersection inter) {
         view.handleLabelClick(inter, pane, deliveryInfoVBox);
-    }
+    }*/
+
 
     private void handleZoom(double deltaY) {
         double zoomFactor = 1.05;
@@ -161,6 +167,11 @@ public class Controller {
                 scale.setY(scale.getY() / zoomFactor);
             }
         }
+    }
+
+    @FXML
+    public void calculerChemin() {
+        view.calculerChemin(mapPane, deliveryInfoVBox, label);
     }
 
 }

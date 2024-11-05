@@ -43,3 +43,35 @@
     -fx-border-color: BLACK; /* Border color */
     -fx-border-width: 1; /* Border width */
 }
+
+
+.map-pane {
+    -fx-border-color: BLACK; /* Border color */
+    -fx-border-width: 1; /* Border width */
+    -fx-position: absolute; /* Positioning */
+    -fx-top: 0; /* Top position */
+    -fx-left: 0; /* Left position */
+    -fx-width: 550px; /* Fixed width */
+    -fx-height: 550px; /* Fixed height */
+}
+
+
+.border-pane {
+    -fx-border-color: rgb(0, 17, 255); /* Border color */
+    -fx-border-width: 1; /* Border width */
+}
+
+.anchor-pane {
+    -fx-border-color: rgb(255, 0, 0); /* Border color */
+    -fx-border-width: 1; /* Border width */
+}
+
+.stack-pane{
+    -fx-border-color: rgb(0, 255, 0); /* Border color */
+    -fx-border-width: 1; /* Border width */
+}
+
+.vbox {
+    -fx-border-color: rgb(255, 0, 255); /* Border color */
+    -fx-border-width: 1; /* Border width */
+}
