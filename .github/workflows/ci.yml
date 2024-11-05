@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest  # Exécute le job sur macOS
+    runs-on: ubuntu-latest  # Exécute le job sur macOS
 
     steps:
       - name: Vérifier le code
@@ -24,10 +24,13 @@ jobs:
           distribution: 'adopt' # Vous pouvez choisir d'autres distributions si nécessaire
 
       - name: Installer les dépendances
-        run: mvn install
+        run: mvn clean install
 
       - name: Exécuter les tests
         run: mvn test
 
       - name: Exécuter l'application
         run: mvn javafx:run
+
+      - name: Exécuter les tests
+        run: mvn test -e -X
