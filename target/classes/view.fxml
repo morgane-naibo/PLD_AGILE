@@ -12,48 +12,41 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.Group?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.Region?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller" prefHeight="600" prefWidth = "800" stylesheets="@/assets/styles.css" styleClass="border-pane">
+<BorderPane fx:id="pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller" prefHeight="600" prefWidth = "800" stylesheets="@/assets/styles.css" styleClass="border-pane">
     
     <!-- Message en haut -->
     <top>
-        <Label fx:id="messageLabel" visible="false" text="" prefHeight="50" />    
+        <Label fx:id="messageLabel" visible="false" text="" prefHeight="50" styleClass="message-label"/>    
         <!--<Button fx:id="calculerChemin" text="calculer un chemin" onAction="#calculerChemin" prefHeight="50" />-->
     </top>
 
     <!-- Plan au centre -->
-    <left>
-        <AnchorPane fx:id="pane" prefWidth="550" prefHeight="550" styleClass="anchor-pane">
-            <children>
-                <Pane fx:id="mapPane" prefWidth="550" prefHeight="550" styleClass="map-pane"> <!-- Nouveau Pane pour le plan -->
-                    <!-- Ajouter ici les éléments du plan -->
-                    <children>
-                        <StackPane prefHeight="500.0" prefWidth="800.0" styleClass="stack-pane">
-                            <Button fx:id="chargerPlan" text="Charger un plan" styleClass="plan-button" onAction="#handleLoadPlan" />
-                        </StackPane>
-                    </children>
-                </Pane>
-                <!-- Boutons d'interface en dehors du mapPane pour qu'ils ne soient pas affectés par le zoom -->
-                <Button fx:id="boutonPlus" text="+" styleClass="plus-button" onAction="#handleButtonClick" visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="10"/>
-                <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton"
-                        visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="130"/>
-                <!-- Autres boutons ici si nécessaire -->
-                <Button fx:id="selectionnerPointButton" text="Selectionner un point sur la carte" styleClass="file-button" onAction="#handleSelectButton"
-                        visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="90"/>
-                <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan"
-                        visible="false" AnchorPane.rightAnchor="10" AnchorPane.bottomAnchor="50"/>
-            </children>
-        </AnchorPane>
-    </left>
+    <center>
+       <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true">
+            <Pane fx:id="mapPane" prefWidth="500" prefHeight="500" styleClass="map-pane"> <!-- Nouveau Pane pour le plan -->
+                <!-- Ajouter ici les éléments du plan -->
+                <children>
+                    <StackPane prefHeight="450" prefWidth="700">
+                        <Button fx:id="chargerPlan" text="Charger un plan" styleClass="plan-button" onAction="#handleLoadPlan" />
+                    </StackPane>
+                    <Button fx:id="boutonPlus" text="+" styleClass="plus-button" onAction="#handleButtonClick" visible="false" layoutY="55" />
+                    <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton" visible="false" layoutY="95"/>
+                    <Button fx:id="selectionnerPointButton" text="Sélectionner un point sur la carte" styleClass="file-button" onAction="#handleSelectButton" visible="false" layoutY="135"/>
+                    <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan" visible="false" layoutY="175"/>
+                </children>
+            </Pane>
+        </ScrollPane>
+    </center>
     
     <!-- VBox d'information à droite -->
     <right>
-
-        <VBox fx:id="deliveryInfoVBox" visible="false" prefWidth ="250.0" spacing="0" styleClass="vbox">
-            <!-- Les informations des points de livraison s'afficheront ici -->
+        <VBox fx:id="deliveryInfoVBox" visible="false" prefWidth="250.0" spacing="0" maxWidth="Infinity" styleClass="vbox">
             <Label fx:id="label" text="Liste des Points de Livraison" />
-        </VBox>    
-        
+            <Label text="" />
+        </VBox>
    </right>
     
 </BorderPane>

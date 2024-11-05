@@ -2,6 +2,7 @@ package controller;
 
 import java.io.File;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.Group;
@@ -30,6 +32,7 @@ import util.XMLDemande;
 import model.Demande;
 import model.Entrepot;
 import view.View;
+import javafx.scene.layout.BorderPane;
 
 public class Controller {
 
@@ -37,7 +40,10 @@ public class Controller {
     private Button boutonPlus;
 
     @FXML
-    private AnchorPane pane;
+    private BorderPane pane;
+
+    @FXML
+    private AnchorPane anchorPane;
 
     @FXML
     private Button chargerFichierButton;
@@ -67,7 +73,7 @@ public class Controller {
     private Pane mapPane;
 
     @FXML
-    private Group zoomGroup;
+    private Group mapGroup;
 
     private View view;
 
@@ -80,6 +86,16 @@ public class Controller {
 
     // Méthode d'initialisation appelée après le chargement du FXML
     public void initialize() {
+        Platform.runLater(() -> {
+            Stage stage = (Stage) deliveryInfoVBox.getScene().getWindow();
+            stage.widthProperty().addListener((obs, oldVal, newVal) -> {
+                deliveryInfoVBox.setPrefWidth(newVal.doubleValue() * 0.4);
+            });
+
+            stage.heightProperty().addListener((obs, oldVal, newVal) -> {
+                deliveryInfoVBox.setPrefHeight(newVal.doubleValue());
+            });
+        });
         // Appliquer la transformation de zoom uniquement sur mapPane
         if (mapPane != null) {
             mapPane.getTransforms().add(scale);
@@ -140,7 +156,7 @@ public class Controller {
         XMLDemande xmlDemande = new XMLDemande();
         Demande demande = xmlDemande.parse(filePath);
         if (demande != null) {
-            view.displayDemande(demande, mapPane, deliveryInfoVBox);
+            view.displayDemande(demande, mapPane, deliveryInfoVBox, messageLabel);
         }
     }
 
@@ -153,7 +169,7 @@ public class Controller {
 
     private void handleZoom(double deltaY) {
         double zoomFactor = 1.05;
-        double minZoom = 0.5;
+        double minZoom = 1.0;
         double maxZoom = 3.0;
     
         if (deltaY > 0) { // Zoom avant

@@ -24,6 +24,7 @@ import model.Demande;
 import model.Entrepot;
 import model.Etape;
 import java.util.List;
+import javafx.scene.layout.BorderPane;
 
 public class View {
 
@@ -105,7 +106,7 @@ public class View {
         }
     }
 
-    public void displayButtons(AnchorPane pane, VBox deliveryInfoVBox, Button... buttons) {
+    public void displayButtons(BorderPane pane, VBox deliveryInfoVBox, Button... buttons) {
         for (Button button : buttons) {
             if (button != null && !pane.getChildren().contains(button)) {
                 pane.getChildren().add(button);
@@ -187,11 +188,14 @@ public class View {
         }
     }
 
-    public void displayDemande(Demande demande, Pane pane, VBox deliveryInfoVBox) {
+    public void displayDemande(Demande demande, Pane pane, VBox deliveryInfoVBox, Label label) {
         if (entrepotExiste) {
             pane.getChildren().remove(entrepotCircle);
             deliveryInfoVBox.getChildren().remove(labelEntrepot);
         }
+
+        label.setVisible(true);
+        label.setText("Selectionnez un point de livraison pour le supprimer.");
 
         button_visible = false;
         entrepotExiste = true;
@@ -233,6 +237,7 @@ public class View {
             newPdl.setOnMouseClicked(event -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
             pane.getChildren().add(newPdl);
         }
+
     }
 
 
