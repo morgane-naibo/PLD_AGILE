@@ -88,7 +88,7 @@ public class Controller {
     @FXML
     public void handleLoadPlan() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\mathi\\Documents\\INSA\\IF4\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             loadPlan(file.getPath());
@@ -126,7 +126,7 @@ public class Controller {
     @FXML
     public void handleFileButton() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\mathi\\Documents\\INSA\\IF4\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             loadDemande(file.getPath());

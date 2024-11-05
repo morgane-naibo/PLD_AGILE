@@ -1,13 +1,13 @@
 {
     "java.project.referencedLibraries": [
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.swing.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx-swt.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.graphics.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.media.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.base.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.web.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.controls.jar",
-        "c:\\Program Files\\JavaFX\\javafx-sdk-23.0.1\\lib\\javafx.fxml.jar"
+        "C:\\Users\\mathi\\Documents\\INSA\\IF4\\Extensions\\javafx-sdk-23.0.1\\lib\\javafx.swing.jar",
+        "C:\\Users\\mathi\\Documents\\INSA\\IF4\\Extensions\\javafx-sdk-23.0.1\\lib\\javafx-swt.jar",
+        "C:\\Users\\mathi\\Documents\\INSA\\IF4\\Extensions\\javafx-sdk-23.0.1\\lib\\javafx.graphics.jar",
+        "C:\\Users\\mathi\\Documents\\INSA\\IF4\\Extensions\\javafx-sdk-23.0.1\\lib\\javafx.media.jar",
+        "C:\\Users\\mathi\\Documents\\INSA\\IF4\\Extensions\\javafx-sdk-23.0.1\\lib\\javafx.base.jar",
+        "C:\\Users\\mathi\\Documents\\INSA\\IF4\\Extensions\\javafx-sdk-23.0.1\\lib\\javafx.web.jar",
+        "C:\\Users\\mathi\\Documents\\INSA\\IF4\\Extensions\\javafx-sdk-23.0.1\\lib\\javafx.controls.jar",
+        "C:\\Users\\mathi\\Documents\\INSA\\IF4\\Extensions\\javafx-sdk-23.0.1\\lib\\javafx.fxml.jar"
     ],
     "java.configuration.updateBuildConfiguration": "interactive",
     "java.project.sourcePaths": [

@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - Morg_branch_2
+      # Ceci permet de lancer des builds sur toutes les branches
+  pull_request:
+    branches:
+      - test_pr_morgane
+
+jobs:
+  build:
+    runs-on: macos-latest  # Exécute le job sur Mac
+
+    steps:
+      - name: Vérifier le code
+        uses: actions/checkout@v2
+
+      - name: Configurer JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '23'
+          distribution: 'adopt' # Choisir d'autres distributions si nécessaire
+
+      - name: Installer les dépendances
+        run: mvn clean install
+
+      - name: Exécuter les tests
+        run: mvn test
+
+      - name: Exécuter l'application
+        run: mvn javafx:run
