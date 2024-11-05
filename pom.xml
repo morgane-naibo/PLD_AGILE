@@ -49,6 +49,16 @@
     </repositories>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/java/ressources</directory>
+                <includes>
+                    <include>**/*.fxml</include>
+                    <include>**/*.properties</include>
+                    <include>**/*</include> <!-- Inclure tous les autres types de fichiers -->
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.openjfx</groupId>
