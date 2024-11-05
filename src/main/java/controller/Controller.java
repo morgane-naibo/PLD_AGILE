@@ -3,11 +3,9 @@ package controller;
 import java.io.File;
 
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -23,7 +21,6 @@ import model.Troncon;
 import util.XMLDemande;
 import model.Demande;
 import model.Entrepot;
-import model.Livraison;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -76,7 +73,7 @@ public class Controller {
     public void handleLoadPlan() {
         // Ouverture d'un sélecteur de fichier
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("C:\\Users\\PC\\source\\repos\\PLD-Agile\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
+        fileChooser.setInitialDirectory(new File("/Users/morganenaibo/4IF/AGILE/PLD_AGILE/resources/fichiersXMLPickupDelivery/fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             // Charge et parse le plan depuis le fichier sélectionné
@@ -122,7 +119,7 @@ public class Controller {
             line.setOnMouseClicked(event -> handleLineClick(event));
     
             // Ajoute la ligne à l'AnchorPane
-            pane.getChildren().add(line);
+             pane.getChildren().add(line);
         }
 
         deliveryInfoVBox.setVisible(true);
