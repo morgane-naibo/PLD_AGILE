@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - Morg_branch_2
+      - test_pr_morgane
       # Ceci permet de lancer des builds sur toutes les branches
   pull_request:
     branches:
