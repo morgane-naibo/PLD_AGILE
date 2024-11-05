@@ -10,11 +10,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Scale;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.Group;
+import javafx.scene.transform.Scale;
 import model.Intersection;
 import model.Livraison;
 import model.Plan;
@@ -53,20 +58,37 @@ public class Controller {
     private Label label;
 
     @FXML 
-    private Pane messagePane;
+    private Label messageLabel;
+
+    @FXML
+    private Pane mapPane;
+
+    @FXML
+    private Group zoomGroup;
 
     private View view;
+
+    private Scale scale = new Scale(1.0, 1.0, 0, 0); // Zoom initial à 1 (100%)
 
     // Constructeur
     public Controller() {
         this.view = new View();
     }
 
+    // Méthode d'initialisation appelée après le chargement du FXML
+    public void initialize() {
+        // Appliquer la transformation de zoom uniquement sur mapPane
+        if (mapPane != null) {
+            mapPane.getTransforms().add(scale);
+            mapPane.setOnScroll(event -> handleZoom(event.getDeltaY()));
+        }
+    }
+
     // Click sur le bouton "charger un (nouveau) plan"
     @FXML
     public void handleLoadPlan() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("C:\\Users\\PC\\source\\repos\\PLD-Agile\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
+        fileChooser.setInitialDirectory(new File("resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             loadPlan(file.getPath());
@@ -78,11 +100,10 @@ public class Controller {
         Plan plan = xmlPlan.parse(filePath);
         if (plan != null) {
             view.setPlan(plan);
-            view.displayPlan(pane, deliveryInfoVBox, label);
+            view.displayPlan(mapPane, deliveryInfoVBox, label); // Afficher le plan dans mapPane
             view.displayButtons(pane, deliveryInfoVBox, boutonPlus, chargerFichierButton, selectionnerPointButton, chargerNouveauPlan);
-            pane.getChildren().add(messagePane);
             boutonPlus.setVisible(true);
-            messagePane.setVisible(true);
+            messageLabel.setVisible(true);
         }
     }
 
@@ -94,12 +115,12 @@ public class Controller {
 
     @FXML
     public void handleSelectButton() {
-        view.toggleSelectionMode(messagePane, selectionnerPointButton, chargerFichierButton, chargerNouveauPlan, deliveryInfoVBox);
+        view.toggleSelectionMode(messageLabel, selectionnerPointButton, chargerFichierButton, chargerNouveauPlan, deliveryInfoVBox);
     }
 
     @FXML
     public void handleLineClick(MouseEvent event) {
-        view.handleLineClick(event, pane, deliveryInfoVBox, label);
+        view.handleLineClick(event, mapPane, deliveryInfoVBox, label);
     }
 
     @FXML
@@ -116,12 +137,30 @@ public class Controller {
         XMLDemande xmlDemande = new XMLDemande();
         Demande demande = xmlDemande.parse(filePath);
         if (demande != null) {
-            view.displayDemande(demande, pane, deliveryInfoVBox);
+            view.displayDemande(demande, mapPane, deliveryInfoVBox);
         }
     }
 
     public void handleLabelClick(Intersection inter) {
         view.handleLabelClick(inter, pane, deliveryInfoVBox);
+    }
+
+    private void handleZoom(double deltaY) {
+        double zoomFactor = 1.05;
+        double minZoom = 0.5;
+        double maxZoom = 3.0;
+    
+        if (deltaY > 0) { // Zoom avant
+            if (scale.getX() < maxZoom) {
+                scale.setX(scale.getX() * zoomFactor);
+                scale.setY(scale.getY() * zoomFactor);
+            }
+        } else { // Zoom arrière
+            if (scale.getX() > minZoom) {
+                scale.setX(scale.getX() / zoomFactor);
+                scale.setY(scale.getY() / zoomFactor);
+            }
+        }
     }
 
 }
