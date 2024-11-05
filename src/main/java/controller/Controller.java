@@ -126,7 +126,7 @@ public class Controller {
     @FXML
     public void handleFileButton() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("C:\\Users\\PC\\source\\repos\\PLD-Agile\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
+        fileChooser.setInitialDirectory(new File("\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             loadDemande(file.getPath());
