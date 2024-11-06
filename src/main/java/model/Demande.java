@@ -14,6 +14,7 @@ public class Demande {
     private Trajet tournee;
     private Plan plan;
     private int nbLivreurs;
+    private ArrayList<ArrayList<Integer>> listesIndex;
 
     //constructeur
     public Demande() {
@@ -23,6 +24,7 @@ public class Demande {
         this.tournee = new Trajet() ;
         this.nbLivreurs = 2;
         this.listeMatriceAdjacence = new ArrayList<>(this.nbLivreurs);
+        this.listesIndex = new ArrayList<>();
     }
 
     //getters
@@ -163,6 +165,34 @@ public class Demande {
         }
     }
 
+    public boolean verifierMatriceAdjacence(){
+        boolean impasse = false;
+        for (int i = 0; i<this.matriceAdjacence.size();i++){
+            int compteurDeNull = 0;
+            for (int j = 0; j<this.matriceAdjacence.size();j++){
+                if (this.matriceAdjacence.get(i).get(j) == null){
+                    compteurDeNull++;
+                }
+            }
+            if (compteurDeNull == this.matriceAdjacence.size()){
+                impasse = true;
+                break;
+            }
+
+            compteurDeNull=0;
+            for (int j = 0; j<this.matriceAdjacence.size();j++){
+                if (this.matriceAdjacence.get(j).get(i) == null){
+                    compteurDeNull++;
+                }
+            }
+            if (compteurDeNull == this.matriceAdjacence.size()){
+                impasse = true;
+                break;
+            }
+        }
+        return impasse;
+    }
+
     public void supprimerPointDeLivraison(PointDeLivraison pdl){
         int position=-1;
         for(int i=0; i<this.listePointDeLivraison.size();i++){
@@ -182,9 +212,9 @@ public class Demande {
     }
     public void creerClusters(){
         ArrayList<Etape> etapesVisitees = new ArrayList<>();
-        ArrayList<ArrayList<Integer>> listesIndex = new ArrayList<>();
+        
         for(int init = 0; init<this.listePointDeLivraison.size();init++){
-            listesIndex.add(new ArrayList<Integer>());
+            this.listesIndex.add(new ArrayList<Integer>());
             
         }
         Etape enCours = null;
@@ -214,42 +244,42 @@ public class Demande {
                 
                 // System.out.println(enCours.toString());
                 for (int l=0;l<this.listePointDeLivraison.size();l++){
-                    if (listesIndex.get(l).contains(indexDepart)){
+                    if (this.listesIndex.get(l).contains(indexDepart)){
                         boolean test= true;
                         for (int p = l+1 ; p<this.listePointDeLivraison.size();p++){
-                            if (listesIndex.get(p).contains(indexArrivee)){
+                            if (this.listesIndex.get(p).contains(indexArrivee)){
                                 
-                                listesIndex.get(l).addAll(listesIndex.get(p));
-                                listesIndex.get(p).removeAll(listesIndex.get(p));
+                                this.listesIndex.get(l).addAll(this.listesIndex.get(p));
+                                this.listesIndex.get(p).removeAll(this.listesIndex.get(p));
                                 test = false;
                                 break;
                             }
                         }
                         if (test){
-                            listesIndex.get(l).add(indexArrivee);
+                            this.listesIndex.get(l).add(indexArrivee);
                         }
                         break;
                     }
-                    else if (listesIndex.get(l).contains(indexArrivee)){
+                    else if (this.listesIndex.get(l).contains(indexArrivee)){
                         boolean test= true;
                         for (int p = l ; p<this.listePointDeLivraison.size();p++){
-                            if (listesIndex.get(p).contains(indexDepart)){
-                                listesIndex.get(l).addAll(listesIndex.get(p));
-                                listesIndex.get(p).clear();
+                            if (this.listesIndex.get(p).contains(indexDepart)){
+                                this.listesIndex.get(l).addAll(this.listesIndex.get(p));
+                                this.listesIndex.get(p).clear();
                                 test = false;
                                 
                                 break;
                             }
                         }
                         if (test){
-                            listesIndex.get(l).add(indexDepart);
+                            this.listesIndex.get(l).add(indexDepart);
                            
                         }
                         break;
                     }
-                    else if (listesIndex.get(l).isEmpty()){
-                        listesIndex.get(l).add(indexDepart);
-                        listesIndex.get(l).add(indexArrivee);
+                    else if (this.listesIndex.get(l).isEmpty()){
+                        this.listesIndex.get(l).add(indexDepart);
+                        this.listesIndex.get(l).add(indexArrivee);
                         
                         break;
                     }
@@ -265,21 +295,21 @@ public class Demande {
         //Cas ou il y a moins de points de livraison que de livreurs
         else{
             for (int loop = 0; loop < this.listePointDeLivraison.size();loop++){
-                listesIndex.get(loop).add(loop+1);
+                this.listesIndex.get(loop).add(loop+1);
             }
         }
 
-        creerMatricesParClusters(listesIndex);
+        creerMatricesParClusters();
         //System.out.println(matrixToString(this.listeMatriceAdjacence.get(0)));
     }
 
 
-    public void creerMatricesParClusters(ArrayList<ArrayList<Integer>> listesIndex) {
+    public void creerMatricesParClusters() {
         for (int i = 0; i < this.nbLivreurs; i++) {
             // Initialize the adjacency matrix for each "livreur" as a 2D List of Etape objects
             List<List<Etape>> matrice = new ArrayList<>();
     
-            int clusterSize = listesIndex.get(i).size() + 1;
+            int clusterSize = this.listesIndex.get(i).size() + 1;
     
             // Create rows for the matrix and initialize each element with null (Etape type)
             for (int j = 0; j < clusterSize; j++) {
@@ -291,16 +321,16 @@ public class Demande {
             // Initialize the first row and first column of the matrix
             for (int j = 1; j < clusterSize; j++) {
                 // Set the first row (0, j) from the original adjacency matrix
-                matrice.get(0).set(j, this.matriceAdjacence.get(0).get(listesIndex.get(i).get(j - 1)));
+                matrice.get(0).set(j, this.matriceAdjacence.get(0).get(this.listesIndex.get(i).get(j - 1)));
                 
                 // Set the first column (j, 0) from the original adjacency matrix
-                matrice.get(j).set(0, this.matriceAdjacence.get(listesIndex.get(i).get(j - 1)).get(0));
+                matrice.get(j).set(0, this.matriceAdjacence.get(this.listesIndex.get(i).get(j - 1)).get(0));
             }
     
             for (int j = 1; j < clusterSize; j++) {
                 
                 for (int k = 1; k < clusterSize; k++) {
-                    matrice.get(j).set(k, this.matriceAdjacence.get(listesIndex.get(i).get(j - 1)).get(listesIndex.get(i).get(k - 1)));
+                    matrice.get(j).set(k, this.matriceAdjacence.get(this.listesIndex.get(i).get(j - 1)).get(this.listesIndex.get(i).get(k - 1)));
                 }
             }
     
