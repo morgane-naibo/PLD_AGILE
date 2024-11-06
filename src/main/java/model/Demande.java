@@ -182,11 +182,8 @@ public class Demande {
     }
     public void creerClusters(){
         ArrayList<Etape> etapesVisitees = new ArrayList<>();
-        ArrayList<ArrayList<Intersection>> listesClusters = new ArrayList<>();
         ArrayList<ArrayList<Integer>> listesIndex = new ArrayList<>();
-        //ArrayList<Intersection>[] listesClusters = new ArrayList<Intersection>[this.listePointDeLivraison.size()]
         for(int init = 0; init<this.listePointDeLivraison.size();init++){
-            listesClusters.add(new ArrayList<Intersection>());
             listesIndex.add(new ArrayList<Integer>());
             
         }
@@ -195,8 +192,6 @@ public class Demande {
         if (this.nbLivreurs<this.listePointDeLivraison.size()){
             for (int i=0; i< this.listePointDeLivraison.size()-this.nbLivreurs;i++){
                 double distanceMin = Double.MAX_VALUE;
-                Intersection origine = null;
-                Intersection destination = null;
                 int indexDepart = -1;
                 int indexArrivee = -1;
                 //on commence à 1 car il y a l'entrepot
@@ -207,8 +202,6 @@ public class Demande {
                                 continue;
                             }
                             if (distanceMin>this.matriceAdjacence.get(k).get(j).getLongueur()){
-                                origine = this.matriceAdjacence.get(k).get(j).getDepart();
-                                destination = this.matriceAdjacence.get(k).get(j).getArrivee();
                                 distanceMin = this.matriceAdjacence.get(k).get(j).getLongueur();
                                 enCours = this.matriceAdjacence.get(k).get(j);
                                 opposee = this.matriceAdjacence.get(j).get(k);
@@ -218,15 +211,13 @@ public class Demande {
                         }
                     }
                 }
-                System.out.println("\r\n\r\n\r\n");
+                
                 // System.out.println(enCours.toString());
                 for (int l=0;l<this.listePointDeLivraison.size();l++){
-                    if (listesClusters.get(l).contains(origine)){
+                    if (listesIndex.get(l).contains(indexDepart)){
                         boolean test= true;
                         for (int p = l+1 ; p<this.listePointDeLivraison.size();p++){
-                            if (listesClusters.get(p).contains(destination)){
-                                listesClusters.get(l).addAll(listesClusters.get(p));
-                                listesClusters.get(p).removeAll(listesClusters.get(p));
+                            if (listesIndex.get(p).contains(indexArrivee)){
                                 
                                 listesIndex.get(l).addAll(listesIndex.get(p));
                                 listesIndex.get(p).removeAll(listesIndex.get(p));
@@ -235,17 +226,14 @@ public class Demande {
                             }
                         }
                         if (test){
-                            listesClusters.get(l).add(destination);
                             listesIndex.get(l).add(indexArrivee);
                         }
                         break;
                     }
-                    else if (listesClusters.get(l).contains(destination)){
+                    else if (listesIndex.get(l).contains(indexArrivee)){
                         boolean test= true;
                         for (int p = l ; p<this.listePointDeLivraison.size();p++){
-                            if (listesClusters.get(p).contains(origine)){
-                                listesClusters.get(l).addAll(listesClusters.get(p));
-                                listesClusters.get(p).clear();
+                            if (listesIndex.get(p).contains(indexDepart)){
                                 listesIndex.get(l).addAll(listesIndex.get(p));
                                 listesIndex.get(p).clear();
                                 test = false;
@@ -254,19 +242,12 @@ public class Demande {
                             }
                         }
                         if (test){
-                            listesClusters.get(l).add(origine);
                             listesIndex.get(l).add(indexDepart);
                            
                         }
                         break;
                     }
-                    else if (listesClusters.get(l).isEmpty()){
-                        System.out.println("iteration l="+l);
-                        System.out.println("origine "+origine);
-                        System.out.println("destination " +destination);
-                        System.out.println("");
-                        listesClusters.get(l).add(origine);
-                        listesClusters.get(l).add(destination);
+                    else if (listesIndex.get(l).isEmpty()){
                         listesIndex.get(l).add(indexDepart);
                         listesIndex.get(l).add(indexArrivee);
                         
@@ -284,14 +265,12 @@ public class Demande {
         //Cas ou il y a moins de points de livraison que de livreurs
         else{
             for (int loop = 0; loop < this.listePointDeLivraison.size();loop++){
-                listesClusters.get(loop).add(this.listePointDeLivraison.get(loop));
                 listesIndex.get(loop).add(loop+1);
             }
         }
 
-        //System.out.println(listesClusters.toString());
         creerMatricesParClusters(listesIndex);
-        System.out.println(matrixToString(this.listeMatriceAdjacence.get(0)));
+        //System.out.println(matrixToString(this.listeMatriceAdjacence.get(0)));
     }
 
 
