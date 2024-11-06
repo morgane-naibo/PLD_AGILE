@@ -18,6 +18,13 @@ public class Intersection {
         this.listeTroncons = new ArrayList<Troncon>();
     }
 
+    public Intersection(Intersection i) {
+        this.id = i.id;
+        this.latitude = i.latitude;
+        this.longitude = i.longitude;
+        this.listeTroncons = i.listeTroncons;
+    }
+
     public Intersection() {
     }
 
@@ -66,7 +73,8 @@ public class Intersection {
     //toString
     @Override
     public String toString() {
-        return "Intersection [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + "]" ;
+        //return "Intersection [id=" + id + ", latitude=" + latitude + ", longitude=" + longitude + "]" ;
+        return "id " + id;
     }
 
     //autres methodes

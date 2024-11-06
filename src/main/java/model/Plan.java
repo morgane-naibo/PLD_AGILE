@@ -115,11 +115,8 @@ public class Plan {
             //pour les successeurs de ce sommet, relâcher les arcs (troncons)
             for (Troncon iteratorTroncon : actuel.getListeTroncons()){
                 if (! sommetsNoirs.contains(iteratorTroncon.getDestination().getNumero())){
-                    
                     if (iteratorTroncon.getLongueur()+distance[actuel.getNumero()] < distance[iteratorTroncon.getDestination().getNumero()]){
                         distance[iteratorTroncon.getDestination().getNumero()]= iteratorTroncon.getLongueur()+distance[actuel.getNumero()];
-                        System.out.println(iteratorTroncon.getDestination().getNumero());
-                        System.out.println(iteratorTroncon.getDestination().toString());
                         predecesseurs[iteratorTroncon.getDestination().getNumero()] = iteratorTroncon;
                         if (! sommetsGris.contains(iteratorTroncon.getDestination().getNumero())){
                             sommetsGris.add(iteratorTroncon.getDestination().getNumero());
@@ -137,6 +134,7 @@ public class Plan {
         //remettre les troncons dans l'ordre et créer l'étape à retourner
         List<Troncon> troncons = new ArrayList<Troncon>();
         Troncon tronconActuel = predecesseurs[destination.getNumero()];
+        //System.out.println( predecesseurs[destination.getNumero()].toString());
         troncons.add(tronconActuel);
         while (predecesseurs[tronconActuel.getOrigine().getNumero()] != null){
             tronconActuel = predecesseurs[tronconActuel.getOrigine().getNumero()];
@@ -145,6 +143,7 @@ public class Plan {
         Collections.reverse(troncons);
         double longueur = distance[destination.getNumero()];
         Etape plusCourtChemin = new Etape(troncons,origine,destination, longueur);
+        //System.out.println(plusCourtChemin.toString());
         return plusCourtChemin;
     }
 

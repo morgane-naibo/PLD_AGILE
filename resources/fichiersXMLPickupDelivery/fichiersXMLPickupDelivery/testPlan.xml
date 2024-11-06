@@ -1,9 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <reseau>
     <!--A CHANGER-->
-    <noeud id="208769499" latitude="45.75406" longitude="4.857418"/>
-    <noeud id="55474978" latitude="45.750404" longitude="4.8744674"/>
-    <noeud id="208769457" latitude="45.6" longitude="4.857418"/>
-    <troncon destination="208769457" longueur="106.73056" nomRue="Rue Frédéric Passy" origine="208769499"/>
-    <troncon destination="55474978" longueur="79.801414" nomRue="Rue Édouard Aynard" origine="208769499"/>
+    <noeud id="1" latitude="45.75406" longitude="4.857418"/>
+    <noeud id="2" latitude="45.750404" longitude="4.8744674"/>
+    <noeud id="3" latitude="45.6" longitude="4.857418"/>
+    <noeud id="4" latitude="45.61" longitude="4.83"/>
+    <noeud id="5" latitude="45.62" longitude="4.84"/>
+    <noeud id="6" latitude="45.63" longitude="4.86"/>
+    <noeud id="7" latitude="45.63" longitude="4.86"/>
+    <noeud id="8" latitude="45.63" longitude="4.86"/>
+    <noeud id="9" latitude="45.63" longitude="4.86"/>
+    <troncon destination="2" longueur="10" nomRue="Rue A*" origine="1"/>
+    <troncon destination="3" longueur="10" nomRue="Rue B*" origine="1"/>
+    <troncon destination="4" longueur="10" nomRue="Rue C*" origine="1"/>
+    <troncon destination="5" longueur="10" nomRue="Rue D*" origine="1"/>
+    <troncon destination="6" longueur="10" nomRue="Rue E*" origine="1"/>
+    <troncon destination="7" longueur="10" nomRue="Rue F*" origine="1"/>
+    <troncon destination="8" longueur="10" nomRue="Rue G*" origine="1"/>
+    <troncon destination="9" longueur="10" nomRue="Rue H*" origine="1"/>
+    <troncon destination="1" longueur="10" nomRue="Rue A*" origine="2"/>
+    <troncon destination="1" longueur="10" nomRue="Rue B*" origine="3"/>
+    <troncon destination="1" longueur="10" nomRue="Rue C*" origine="4"/>
+    <troncon destination="1" longueur="10" nomRue="Rue D*" origine="5"/>
+    <troncon destination="1" longueur="10" nomRue="Rue E*" origine="6"/>
+    <troncon destination="1" longueur="10" nomRue="Rue F*" origine="7"/>
+    <troncon destination="1" longueur="10" nomRue="Rue G*" origine="8"/>
+    <troncon destination="1" longueur="10" nomRue="Rue H*" origine="9"/>
+    <troncon destination="2" longueur="3" nomRue="Rue I" origine="3"/>
+    <troncon destination="3" longueur="3" nomRue="Rue I" origine="2"/>
+    <troncon destination="4" longueur="8" nomRue="Rue J" origine="3"/>
+    <troncon destination="3" longueur="8" nomRue="Rue J" origine="4"/>
+    <troncon destination="4" longueur="4" nomRue="Rue K" origine="5"/>
+    <troncon destination="5" longueur="4" nomRue="Rue K" origine="4"/>
+    <troncon destination="5" longueur="12" nomRue="Rue L" origine="6"/>
+    <troncon destination="6" longueur="12" nomRue="Rue L" origine="5"/>
+    <troncon destination="7" longueur="1" nomRue="Rue M" origine="6"/>
+    <troncon destination="6" longueur="1" nomRue="Rue M" origine="7"/>
+    <troncon destination="7" longueur="5" nomRue="Rue N" origine="8"/>
+    <troncon destination="8" longueur="5" nomRue="Rue N" origine="7"/>
+    <troncon destination="9" longueur="2" nomRue="Rue O" origine="8"/>
+    <troncon destination="8" longueur="2" nomRue="Rue O" origine="9"/>
+    <troncon destination="2" longueur="7" nomRue="Rue P" origine="9"/>
+    <troncon destination="9" longueur="7" nomRue="Rue P" origine="2"/>
 </reseau>
