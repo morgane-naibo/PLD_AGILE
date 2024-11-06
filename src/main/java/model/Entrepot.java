@@ -28,7 +28,7 @@ public class Entrepot extends Intersection{
     //toString
     @Override
     public String toString() {
-        return "Entrepôt: " + super.toString();
+        return super.toString();
     }
 
     //autres methodes
