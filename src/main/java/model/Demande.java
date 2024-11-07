@@ -30,6 +30,10 @@ public class Demande {
         return this.entrepot;
     }
 
+    public int getNbLivreurs() {
+        return this.nbLivreurs;
+    }
+
     public List<PointDeLivraison> getListePointDeLivraison() {
         return this.listePointDeLivraison;
     }
@@ -53,6 +57,10 @@ public class Demande {
     //setters
     public void setEntrepot(Entrepot newEntrepot) {
         this.entrepot = newEntrepot;
+    }
+
+    public void setNbLivreurs(int newNbLivreurs) {
+        this.nbLivreurs = newNbLivreurs;
     }
 
     public void setListePointDeLivraison(List<PointDeLivraison> newListePointDeLivraison) {
