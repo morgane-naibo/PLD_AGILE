@@ -365,7 +365,7 @@ public class Demande {
             this.creerMatricesParClusters();
             for (int i = 0; i<nbLivreurs;i++){
                 Trajet trajet = new Trajet();
-                this.listeMatriceAdjacence
+                //this.listeMatriceAdjacence
             }
 
 

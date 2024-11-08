@@ -4,12 +4,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import java.io.File;
-
+import exceptions.XMLParsingException;
 
 public abstract class XMLReader {
 
     // Méthode commune pour charger un document XML
-    protected Document loadDocument(String filePath) {
+    protected Document loadDocument(String filePath) throws XMLParsingException {
         Document doc = null;
         try {
             File xmlFile = new File(filePath);
@@ -21,13 +21,12 @@ public abstract class XMLReader {
             doc.getDocumentElement().normalize();
 
         } catch (Exception e) {
-            System.out.println("Erreur lors du chargement du document XML : " + e.getMessage());
-            e.printStackTrace();
+            throw new XMLParsingException("Erreur lors du chargement du document XML : " + e.getMessage(), e);
         }
 
         return doc;
     }
 
     // Méthode abstraite que les classes dérivées doivent implémenter
-    public abstract <T> T parse(String filePath);
+    public abstract <T> T parse(String filePath) throws XMLParsingException;
 }

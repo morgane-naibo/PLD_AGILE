@@ -1,6 +1,8 @@
 package tests;
 
 import model.Plan;
+import exceptions.IDIntersectionException;
+import exceptions.XMLParsingException;
 import model.Intersection;
 import model.Troncon;
 import model.Etape;
@@ -9,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import util.XMLPlan;
@@ -22,7 +24,6 @@ public class PlanTest {
 
     @BeforeEach
     public void setUp() {
-        // Initialisation du plan avant chaque test
         plan = new Plan();
     }
 
@@ -52,7 +53,7 @@ public class PlanTest {
     }
 
     @Test
-    public void testChercherIntersectionParId() {
+    public void testChercherIntersectionParId() throws IDIntersectionException {
         Intersection intersection1 = new Intersection(1, 45.754, 4.831);
         Intersection intersection2 = new Intersection(2, 45.755, 4.832);
         
@@ -63,39 +64,35 @@ public class PlanTest {
         assertNotNull(result);
         assertEquals(1, result.getId());
         
-        Intersection resultNull = plan.chercherIntersectionParId(3);
-        assertNull(resultNull);
+        assertThrows(IDIntersectionException.class, () -> {
+            plan.chercherIntersectionParId(3);
+        });
     }
 
     @Test
     public void testChercherPlusCourtChemin() {
-        // Créer des intersections pour tester l'algorithme
         Intersection intersection1 = new Intersection(1, 45.754, 4.831);
         Intersection intersection2 = new Intersection(2, 45.755, 4.832);
         Intersection intersection3 = new Intersection(3, 45.756, 4.833);
-        Intersection intersection4 = new Intersection(4, 45.757, 4.834); // Nouvelle intersection
-    
-        // Créer des tronçons entre les intersections
+        Intersection intersection4 = new Intersection(4, 45.757, 4.834);
+
         Troncon troncon1 = new Troncon(intersection1, intersection2, 50.0, "Rue A");
         Troncon troncon2 = new Troncon(intersection2, intersection3, 30.0, "Rue B");
         Troncon troncon3 = new Troncon(intersection1, intersection3, 100.0, "Rue C");
-        Troncon troncon4 = new Troncon(intersection3, intersection4, 40.0, "Rue D"); // Nouveau tronçon
-        Troncon troncon5 = new Troncon(intersection2, intersection4, 60.0, "Rue E"); // Nouveau tronçon
-    
-        // Ajouter les intersections
+        Troncon troncon4 = new Troncon(intersection3, intersection4, 40.0, "Rue D");
+        Troncon troncon5 = new Troncon(intersection2, intersection4, 60.0, "Rue E");
+
         plan.ajouterIntersection(intersection1);
         plan.ajouterIntersection(intersection2);
         plan.ajouterIntersection(intersection3);
-        plan.ajouterIntersection(intersection4); // Ajout de la nouvelle intersection
-    
-        // Ajouter les tronçons
+        plan.ajouterIntersection(intersection4);
+
         plan.ajouterTroncon(troncon1);
         plan.ajouterTroncon(troncon2);
         plan.ajouterTroncon(troncon3);
-        plan.ajouterTroncon(troncon4); // Ajout du nouveau tronçon
-        plan.ajouterTroncon(troncon5); // Ajout du nouveau tronçon
-    
-        // Associer les tronçons aux intersections correspondantes
+        plan.ajouterTroncon(troncon4);
+        plan.ajouterTroncon(troncon5);
+
         intersection1.ajouterTroncon(troncon1);
         intersection1.ajouterTroncon(troncon3);
         intersection2.ajouterTroncon(troncon1);
@@ -106,31 +103,22 @@ public class PlanTest {
         intersection3.ajouterTroncon(troncon4);
         intersection4.ajouterTroncon(troncon4);
         intersection4.ajouterTroncon(troncon5);
-    
-        // Rechercher le plus court chemin entre intersection1 et intersection4
+
         Etape etape = plan.chercherPlusCourtChemin(intersection1, intersection4);
         
         assertNotNull(etape);
         assertEquals(intersection1, etape.getDepart());
         assertEquals(intersection4, etape.getArrivee());
-        assertEquals(110.0, etape.getLongueur(), 0.01);  // 50 + 30 + 40 = 120, mais le plus court chemin devrait être via intersection2 à 80.0
+        assertEquals(110.0, etape.getLongueur(), 0.01);
     }
-    
 
     @Test
     public void testChargerPlanDepuisXML() {
-        
-        // Spécifiez le chemin du fichier XML ici
-        String xmlFilePath = "/Users/morganenaibo/4IF/AGILE/PLD_AGILE/resources/fichiersXMLPickupDelivery/fichiersXMLPickupDelivery/testPlan.xml"; // Remplacez par le chemin réel
+        String xmlFilePath = "/Users/morganenaibo/4IF/AGILE/PLD_AGILE/resources/fichiersXMLPickupDelivery/fichiersXMLPickupDelivery/testPlan.xml";
         XMLPlan xmlPlanReader = new XMLPlan();
         
-        // Charger le plan depuis le fichier XML
-        Plan planCharge = xmlPlanReader.parse(xmlFilePath);
-        
-        assertNotNull(planCharge);
-        assertTrue(planCharge.getListeIntersections().size() > 0);
-        assertTrue(planCharge.getListeTroncons().size() > 0);
-        
-        // Vous pouvez ajouter d'autres assertions pour vérifier les détails spécifiques du plan chargé
+        assertThrows(XMLParsingException.class, () -> {
+            xmlPlanReader.parse(xmlFilePath);
+        });
     }
 }

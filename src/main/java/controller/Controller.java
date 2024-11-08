@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -23,9 +24,10 @@ import model.Troncon;
 import util.XMLDemande;
 import model.Demande;
 import model.Entrepot;
-import model.Livraison;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import exceptions.IDIntersectionException;
+import java.lang.Exception;
 
 public class Controller {
 
@@ -74,77 +76,75 @@ public class Controller {
 
     @FXML
     public void handleLoadPlan() {
-        // Ouverture d'un sélecteur de fichier
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("C:\\Users\\PC\\source\\repos\\PLD-Agile\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\mathi\\Documents\\INSA\\IF4\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
-            // Charge et parse le plan depuis le fichier sélectionné
             loadPlan(file.getPath());
         }
     }
 
     private void loadPlan(String filePath) {
-        XMLPlan xmlPlan = new XMLPlan();
-        plan = xmlPlan.parse(filePath);
-        if (plan != null) {
-            latMin = plan.trouverLatitudeMin();
-            latMax = plan.trouverLatitudeMax();
-            longMin = plan.trouverLongitudeMin();
-            longMax = plan.trouverLongitudeMax();
-            System.out.println("Plan chargé avec succès !");
-            displayPlan(plan);
+        try {
+            XMLPlan xmlPlan = new XMLPlan();
+            plan = xmlPlan.parse(filePath);
+            if (plan != null) {
+                latMin = plan.trouverLatitudeMin();
+                latMax = plan.trouverLatitudeMax();
+                longMin = plan.trouverLongitudeMin();
+                longMax = plan.trouverLongitudeMax();
+                System.out.println("Plan chargé avec succès !");
+                displayPlan(plan);
+            } else {
+                throw new FileNotFoundException("Plan non trouvé ou fichier invalide.");
+            }
+        } catch (Exception e) {
+            showErrorPopup("Erreur lors du chargement du plan", e.getMessage());
         }
     }
 
     private void displayPlan(Plan plan) {
-        entrepotExiste = false;
-        chargerPlan.setVisible(false);
+        try {
+            entrepotExiste = false;
+            chargerPlan.setVisible(false);
 
-        pane.getChildren().clear();
-        deliveryInfoVBox.getChildren().clear();
+            pane.getChildren().clear();
+            deliveryInfoVBox.getChildren().clear();
 
-        // Ajoute les tronçons au Pane
-        for (Troncon troncon : plan.getListeTroncons()) {
-            // Coordonnées de l'intersection d'origine
-            double startX = longitudeToX(troncon.getOrigine().getLongitude());
-            double startY = latitudeToY(troncon.getOrigine().getLatitude());
-    
-            // Coordonnées de l'intersection de destination
-            double endX = longitudeToX(troncon.getDestination().getLongitude());
-            double endY = latitudeToY(troncon.getDestination().getLatitude());
-    
-            // Crée une ligne pour représenter le tronçon
-            Line line = new Line(startX, startY, endX, endY);
-            line.setStrokeWidth(2); // Largeur de la ligne
-            line.setStroke(Color.GRAY); // Couleur grise pour les tronçons
+            for (Troncon troncon : plan.getListeTroncons()) {
+                double startX = longitudeToX(troncon.getOrigine().getLongitude());
+                double startY = latitudeToY(troncon.getOrigine().getLatitude());
+                double endX = longitudeToX(troncon.getDestination().getLongitude());
+                double endY = latitudeToY(troncon.getDestination().getLatitude());
 
-            line.setOnMouseClicked(event -> handleLineClick(event));
-    
-            // Ajoute la ligne à l'AnchorPane
-            pane.getChildren().add(line);
+                Line line = new Line(startX, startY, endX, endY);
+                line.setStrokeWidth(2);
+                line.setStroke(Color.GRAY);
+                line.setOnMouseClicked(event -> handleLineClick(event));
+
+                pane.getChildren().add(line);
+            }
+
+            deliveryInfoVBox.setVisible(true);
+            deliveryInfoVBox.getChildren().add(label);
+            pane.getChildren().add(boutonPlus);
+            boutonPlus.setVisible(true);
+            pane.getChildren().add(chargerFichierButton);
+            pane.getChildren().add(selectionnerPointButton);
+            pane.getChildren().add(chargerNouveauPlan);
+            pane.getChildren().add(deliveryInfoVBox);
+        } catch (Exception e) {
+            showErrorPopup("Erreur d'affichage du plan", e.getMessage());
         }
-
-        deliveryInfoVBox.setVisible(true);
-        deliveryInfoVBox.getChildren().add(label);
-        pane.getChildren().add(boutonPlus);
-        boutonPlus.setVisible(true);
-        pane.getChildren().add(chargerFichierButton);
-        pane.getChildren().add(selectionnerPointButton);
-        pane.getChildren().add(chargerNouveauPlan);
-        pane.getChildren().add(deliveryInfoVBox);
     }
-    
-    // Méthode pour convertir la longitude en position X dans le Pane
-    private double longitudeToX(double longitude) {
-        // Exemple de conversion de longitude en position X
-        return ((longitude - longMin) / (longMax - longMin)) * (paneWidth) ;    }
-    
-    // Méthode pour convertir la latitude en position Y dans le Pane
-    private double latitudeToY(double latitude) {
-        // Exemple de conversion de latitude en position Y
-        return ((latitude - (latMin)) / (latMax - latMin)) * (paneHeight);    }
 
+    private double longitudeToX(double longitude) {
+        return ((longitude - longMin) / (longMax - longMin)) * paneWidth;
+    }
+
+    private double latitudeToY(double latitude) {
+        return ((latitude - latMin) / (latMax - latMin)) * paneHeight;
+    }
 
     @FXML
     public void handleButtonClick() {
@@ -155,8 +155,7 @@ public class Controller {
             chargerNouveauPlan.setVisible(true);
             button_visible = true;
             selectionModeEnabled = false;
-        }
-        else {
+        } else {
             boutonPlus.setText("+");
             chargerFichierButton.setVisible(false);
             selectionnerPointButton.setVisible(false);
@@ -164,7 +163,6 @@ public class Controller {
             button_visible = false;
             selectionModeEnabled = false;
         }
-       
     }
 
     @FXML
@@ -179,7 +177,7 @@ public class Controller {
     @FXML
     public void handleFileButton() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("C:\\Users\\PC\\source\\repos\\PLD-Agile\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\mathi\\Documents\\INSA\\IF4\\PLD_AGILE\\resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             loadDemande(file.getPath());
@@ -187,128 +185,124 @@ public class Controller {
     }
 
     private void loadDemande(String filePath) {
-        XMLDemande xmlDemande = new XMLDemande();
-        demande = xmlDemande.parse(filePath);
-        if (demande != null) {
-            System.out.println("Demande chargée avec succès !");
-            displayDemande(demande);
+        try {
+            XMLDemande xmlDemande = new XMLDemande();
+            demande = xmlDemande.parse(filePath);
+            if (demande != null) {
+                System.out.println("Demande chargée avec succès !");
+                displayDemande(demande);
+            } else {
+                throw new FileNotFoundException("Demande non trouvée ou fichier invalide.");
+            }
+        } catch (Exception e) {
+            showErrorPopup("Erreur lors du chargement de la demande", e.getMessage());
         }
     }
 
-    private void displayDemande(Demande demande) {
-        if (entrepotExiste) {
-            pane.getChildren().remove(entrepotCircle);
-            deliveryInfoVBox.getChildren().remove(labelEntrepot);
-        }
+    private void displayDemande(Demande demande) throws IDIntersectionException {
+        try {
+            if (entrepotExiste) {
+                pane.getChildren().remove(entrepotCircle);
+                deliveryInfoVBox.getChildren().remove(labelEntrepot);
+            }
 
-        boutonPlus.setVisible(true);
-        chargerFichierButton.setVisible(true);
-        selectionnerPointButton.setVisible(true);
-        chargerNouveauPlan.setVisible(true);
-        deliveryInfoVBox.setVisible(true);
+            boutonPlus.setVisible(true);
+            chargerFichierButton.setVisible(true);
+            selectionnerPointButton.setVisible(true);
+            chargerNouveauPlan.setVisible(true);
+            deliveryInfoVBox.setVisible(true);
 
-        entrepotExiste = true;
+            entrepotExiste = true;
 
-        entrepot = demande.getEntrepot();
-        Intersection intersection = plan.chercherIntersectionParId(entrepot.getId());
-        double lat = latitudeToY(intersection.getLatitude());
-        double lon = longitudeToX(intersection.getLongitude());
+            entrepot = demande.getEntrepot();
+            Intersection intersection = plan.chercherIntersectionParId(entrepot.getId());
+            double lat = latitudeToY(intersection.getLatitude());
+            double lon = longitudeToX(intersection.getLongitude());
 
-        entrepotCircle = new Circle(lon, lat, 5, Color.BLUE);
-        pane.getChildren().add(entrepotCircle);
+            entrepotCircle = new Circle(lon, lat, 5, Color.BLUE);
+            pane.getChildren().add(entrepotCircle);
 
-        System.out.println("Entrepot Point: (" + lon + ", " + lat + ")");
+            System.out.println("Entrepot Point: (" + lon + ", " + lat + ")");
 
-        labelEntrepot = new Label("Entrepôt: (" + intersection.getLongitude() + ", " + intersection.getLatitude() + ")");
+            labelEntrepot = new Label("Entrepôt: (" + intersection.getLongitude() + ", " + intersection.getLatitude() + ")");
+            deliveryInfoVBox.getChildren().add(labelEntrepot);
 
-        deliveryInfoVBox.getChildren().add(labelEntrepot);
+            for (PointDeLivraison pdl : demande.getListePointDeLivraison()) {
+                Intersection inter = plan.chercherIntersectionParId(pdl.getId());
 
-        for (PointDeLivraison pdl : demande.getListePointDeLivraison()) {
-            // Coordonnées de l'intersection d'origine
-            Intersection inter = plan.chercherIntersectionParId(pdl.getId());
+                double startX = longitudeToX(inter.getLongitude());
+                double startY = latitudeToY(inter.getLatitude());
 
-            double startX = longitudeToX(inter.getLongitude());
-            double startY = latitudeToY(inter.getLatitude());
-    
-            // Crée une ligne pour représenter le tronçon
-            Circle newPdl= new Circle(startX, startY, 5, Color.RED);
+                Circle newPdl = new Circle(startX, startY, 5, Color.RED);
 
-            System.out.println("Point de Livraison: (" + startX + ", " + startY + ")");
+                System.out.println("Point de Livraison: (" + startX + ", " + startY + ")");
 
-            deliveryInfoVBox.getChildren().add(new Label("Point de Livraison: (" + inter.getLongitude() + ", " + inter.getLatitude() + ")"));
-            pane.getChildren().add(newPdl);
+                deliveryInfoVBox.getChildren().add(new Label("Point de Livraison: (" + inter.getLongitude() + ", " + inter.getLatitude() + ")"));
+                pane.getChildren().add(newPdl);
+            }
+        } catch (IDIntersectionException e) {
+            showErrorPopup("Erreur d'ID d'intersection", e.getMessage());
+        } catch (Exception e) {
+            showErrorPopup("Erreur lors de l'affichage de la demande", e.getMessage());
         }
     }
 
     @FXML
     public void handleLineClick(MouseEvent event) {
-        if (!selectionModeEnabled) {
-            return; // Ignore le clic si le mode de sélection n'est pas activé
-        }
-
-        double x=event.getX();
-        double y=event.getY();
-
-        double lat = yToLatitude(y);
-        double lon = xToLongitude(x);
-
-        Intersection intersection = plan.chercherIntersectionLaPlusProche(lat, lon);
-
-        if (!entrepotExiste) {
-            // Crée l'entrepôt
-            entrepot = new Entrepot(intersection.getId(), "8");
-    
-            // Marquer l'entrepôt comme défini
-            entrepotExiste = true;
-    
-            // Afficher l'entrepôt sur le plan
-            entrepotCircle = new Circle(longitudeToX(intersection.getLongitude()), latitudeToY(intersection.getLatitude()), 5, Color.BLUE);
-            pane.getChildren().add(entrepotCircle);
-    
-            // Ajouter des informations dans l'interface utilisateur
-            labelEntrepot = new Label("Entrepôt: (" + intersection.getLongitude() + ", " + intersection.getLatitude() + ")");
-            deliveryInfoVBox.getChildren().add(labelEntrepot);
-    
-            System.out.println("Entrepôt sélectionné à (" + intersection.getLongitude() + ", " + intersection.getLatitude() + ")");
-        } else {
-            Livraison livraison = new Livraison(0, intersection.getId(), 5.0, 5.0);
-            PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), livraison);
-            if (demande == null) {
-                demande = new Demande();
+        try {
+            if (!selectionModeEnabled) {
+                return;
             }
-            demande.ajouterPointDeLivraison(pdl);
-            deliveryInfoVBox.setVisible(true);
 
-            Intersection inter = plan.chercherIntersectionParId(pdl.getId());
+            double x = event.getX();
+            double y = event.getY();
 
-            double startX = longitudeToX(inter.getLongitude());
-            double startY = latitudeToY(inter.getLatitude());
-    
-            // Crée une ligne pour représenter le tronçon
-            Circle newPdl= new Circle(startX, startY, 5, Color.RED);
+            double lat = yToLatitude(y);
+            double lon = xToLongitude(x);
 
-            System.out.println("Point de Livraison: (" + startX + ", " + startY + ")");
+            Intersection intersection = plan.chercherIntersectionLaPlusProche(lat, lon);
+            if (intersection == null) {
+                throw new IDIntersectionException("Aucune intersection trouvée pour ces coordonnées.");
+            }
 
-            deliveryInfoVBox.getChildren().add(new Label("Point de Livraison: (" + inter.getLongitude() + ", " + inter.getLatitude() + ")"));
-            pane.getChildren().add(newPdl);
-        
+            if (!entrepotExiste) {
+                entrepot = new Entrepot(intersection.getId(), "8");
+                entrepotExiste = true;
+
+                entrepotCircle = new Circle(longitudeToX(intersection.getLongitude()), latitudeToY(intersection.getLatitude()), 5, Color.BLUE);
+                pane.getChildren().add(entrepotCircle);
+
+                labelEntrepot = new Label("Entrepôt: (" + intersection.getLongitude() + ", " + intersection.getLatitude() + ")");
+                deliveryInfoVBox.getChildren().add(labelEntrepot);
+            }
+        } catch (IDIntersectionException e) {
+            showErrorPopup("Erreur d'intersection", e.getMessage());
+        } catch (Exception e) {
+            showErrorPopup("Erreur inconnue", e.getMessage());
         }
     }
 
     private double yToLatitude(double y) {
-        return (y / paneHeight) * (latMax - latMin) + latMin;
+        return latMin + ((latMax - latMin) * (y / paneHeight));
     }
-
+    
     private double xToLongitude(double x) {
-        return (x / paneWidth) * (longMax - longMin) + longMin;
+        return longMin + ((longMax - longMin) * (x / paneWidth));
     }
-
+    
+    public void showErrorPopup(String title, String message) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
     public void showInfoPopup() {
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Information");
+        alert.setTitle("Mode Sélection");
         alert.setHeaderText(null);
-        alert.setContentText("Veuillez en premier lieu sélectionner l'entrepôt, puis les points de livraison.");
-        alert.showAndWait(); // Affiche la fenêtre et attend la fermeture
+        alert.setContentText("Mode de sélection activé, cliquez sur une ligne pour sélectionner un point.");
+        alert.showAndWait();
     }
 }

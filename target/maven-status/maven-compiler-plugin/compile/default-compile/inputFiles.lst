@@ -1,4 +1,8 @@
 /Users/morganenaibo/4IF/AGILE/PLD_AGILE/src/main/java/controller/Controller.java
+/Users/morganenaibo/4IF/AGILE/PLD_AGILE/src/main/java/exceptions/IDIntersectionException.java
+/Users/morganenaibo/4IF/AGILE/PLD_AGILE/src/main/java/exceptions/ImpasseErrorException.java
+/Users/morganenaibo/4IF/AGILE/PLD_AGILE/src/main/java/exceptions/LongueTourneeException.java
+/Users/morganenaibo/4IF/AGILE/PLD_AGILE/src/main/java/exceptions/XMLParsingException.java
 /Users/morganenaibo/4IF/AGILE/PLD_AGILE/src/main/java/model/Demande.java
 /Users/morganenaibo/4IF/AGILE/PLD_AGILE/src/main/java/model/Entrepot.java
 /Users/morganenaibo/4IF/AGILE/PLD_AGILE/src/main/java/model/Etape.java
