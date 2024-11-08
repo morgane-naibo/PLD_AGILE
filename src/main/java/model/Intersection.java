@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Intersection {
-    private double latitude;
-    private double longitude;
-    private long id;
-    private List<Troncon> listeTroncons;
+    protected double latitude;
+    protected double longitude;
+    protected long id;
+    protected List<Troncon> listeTroncons;
     protected int numero;
 
     // Constructeurs

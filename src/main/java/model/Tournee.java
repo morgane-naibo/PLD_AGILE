@@ -29,6 +29,9 @@ public class Tournee extends Trajet{
 
 
     //autres methodes
+    public int calculerDurerTournee(){
+        return 1;
+    }
 
 }
 
