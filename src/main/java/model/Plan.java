@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import exceptions.IDIntersectionException;
+
 public class Plan {
     private List<Intersection> listeIntersections;
     private List<Troncon> listeTroncons;
@@ -75,11 +77,16 @@ public class Plan {
         }
     }
 
-    public Intersection chercherIntersectionParId(long id){
+    public Intersection chercherIntersectionParId(long id) throws IDIntersectionException{
+        boolean existence=false;
         for(Intersection iteratorIntersection : this.listeIntersections){
             if (iteratorIntersection.getId() == id) {
+                existence=true;
                 return iteratorIntersection;
             }
+        }
+        if (!existence){
+            throw new IDIntersectionException("Cette intersection n'esxiste pas.");
         }
         return null;
     }
@@ -89,7 +96,7 @@ public class Plan {
         Intersection actuel = origine;
         double[] distance = new double[this.listeIntersections.size()];
         for (int i=0 ; i<this.listeIntersections.size(); i++){
-            distance[i] = 100000000;
+            distance[i] = Double.MAX_VALUE;
         }
         distance[origine.getNumero()] = 0;
         Troncon[] predecesseurs = new Troncon[this.listeIntersections.size()];
