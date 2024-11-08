@@ -37,6 +37,7 @@ import model.Demande;
 import model.Entrepot;
 import view.View;
 
+
 public class Controller {
 
     @FXML
@@ -75,8 +76,6 @@ public class Controller {
     @FXML
     private Pane mapPane;
 
-    @FXML
-    private Group mapGroup;
 
     private View view;
 
@@ -85,7 +84,6 @@ public class Controller {
     private Plan plan;
 
     private Scale scale = new Scale(1.0, 1.0, 0, 0); // Zoom initial à 1 (100%)
-
 
     // Variables pour le drag de la carte
     private double initialMouseX;
@@ -99,11 +97,14 @@ public class Controller {
     private static final double MAX_X = 550; // Remplacez par la limite maximale souhaitée pour X
     private static final double MAX_Y = 600; // Remplacez par la limite maximale souhaitée pour Y
 
+    private Etat etat;
+
     // Constructeur
     public Controller() {
         this.view = new View();
         this.demande = new Demande();
         this.plan = new Plan();
+        this.etat = new PlanNonCharge(this);
     }
 
     // Méthode d'initialisation appelée après le chargement du FXML
@@ -130,7 +131,85 @@ public class Controller {
         }
     }
     
+    public void setEtat(Etat etat) {
+        this.etat = etat;
+    }
 
+    public void setView(View view) {
+        this.view = view;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
+
+    public void setDemande(Demande demande) {
+        this.demande = demande;
+    }
+
+    public Plan getPlan() {
+        return this.plan;
+    }
+
+    public Demande getDemande() {
+        return this.demande;
+    }
+
+    public View getView() {
+        return this.view;
+    }
+
+    public Button getBoutonPlus() {
+        return boutonPlus;
+    }
+
+    public BorderPane getPane() {
+        return pane;
+    }
+
+    public AnchorPane getAnchorPane() {
+        return anchorPane;
+    }
+
+    public Button getChargerFichierButton() {
+        return chargerFichierButton;
+    }
+
+    public Button getSelectionnerPointButton() {
+        return selectionnerPointButton;
+    }
+
+    public Button getChargerPlan() {
+        return chargerPlan;
+    }
+
+    public VBox getDeliveryInfoVBox() {
+        return deliveryInfoVBox;
+    }
+
+    public Button getChargerNouveauPlan() {
+        return chargerNouveauPlan;
+    }
+
+    public Button getCalculerChemin() {
+        return calculerChemin;
+    }
+
+    public Label getLabel() {
+        return label;
+    }
+
+    public Label getMessageLabel() {
+        return messageLabel;
+    }
+
+    public Pane getMapPane() {
+        return mapPane;
+    }
+
+    public Etat getEtat() {
+        return etat;
+    }
 
 
 // Gestionnaire d'événements pour le clic de souris
@@ -192,23 +271,8 @@ private void handleMouseDragged(MouseEvent event) {
     // Click sur le bouton "charger un (nouveau) plan"
     @FXML
     public void handleLoadPlan() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
-        File file = fileChooser.showOpenDialog(null);
-        if (file != null) {
-            loadPlan(file.getPath());
-        }
-    }
-
-    private void loadPlan(String filePath) {
-        XMLPlan xmlPlan = new XMLPlan();
-        plan = xmlPlan.parse(filePath);
-        if (plan != null) {
-            view.setPlan(plan);
-            view.displayPlan(mapPane, deliveryInfoVBox, label, messageLabel); // Afficher le plan dans mapPane
-            view.displayButtons(pane, deliveryInfoVBox, boutonPlus, chargerFichierButton, selectionnerPointButton, chargerNouveauPlan);
-            boutonPlus.setVisible(true);
-        }
+        etat.handleLoadPlan();
+        System.out.println(etat);
     }
 
     @FXML
@@ -219,30 +283,25 @@ private void handleMouseDragged(MouseEvent event) {
 
     @FXML
     public void handleSelectButton() {
-        messageLabel.setVisible(true);
-        view.toggleSelectionMode(messageLabel, selectionnerPointButton, chargerFichierButton, chargerNouveauPlan, deliveryInfoVBox);
+        etat.handleSelectButton();
+        System.out.println(etat);
+
     }
 
     @FXML
     public void handleFileButton() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
-        File file = fileChooser.showOpenDialog(null);
-        if (file != null) {
-            loadDemande(file.getPath());
-        }
+        etat.handleFileButton();
+        System.out.println(etat);
+
+    }  
+
+    @FXML
+    public void calculerChemin() {
+        etat.calculerChemin();
+        System.out.println(etat);
+
     }
 
-    private void loadDemande(String filePath) {
-        XMLDemande xmlDemande = new XMLDemande();
-        Demande demandeFile = xmlDemande.parse(filePath);
-        if (demandeFile != null) {
-            view.demande.setPlan(plan);
-            this.demande.setPlan(plan);
-            view.displayDemande(demandeFile, mapPane, deliveryInfoVBox, messageLabel);
-        }
-        this.demande = view.demande;
-    }
 
     private void handleZoom(double deltaY) {
         double zoomFactor = 1.05;
@@ -298,17 +357,4 @@ private void handleMouseDragged(MouseEvent event) {
         }
     }
  
-    
-
-    @FXML
-    public void calculerChemin() {
-        demande.setPlan(plan);
-        demande.initialiserMatriceAdjacence();
-        demande.creerClusters();
-        RunTSP run = new RunTSP();
-        for (int i=0; i<demande.getNbLivreurs(); i++) {
-            Trajet trajet = run.calculerTSP(demande.getListeMatriceAdjacence().get(i));
-            view.calculerChemin(mapPane, deliveryInfoVBox, trajet);
-        }
-    }
 }

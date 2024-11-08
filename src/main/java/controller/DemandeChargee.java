@@ -5,19 +5,34 @@ import java.io.File;
 import javafx.stage.FileChooser;
 import model.Demande;
 import model.Plan;
+import model.Trajet;
+import tsp.RunTSP;
 import util.XMLDemande;
 import util.XMLPlan;
 
-public class PlanCharge extends Etat {
-    public PlanCharge(Controller controller) {
+public class DemandeChargee extends Etat {
+    public DemandeChargee(Controller controller) {
         super(controller);
+    }
+
+    @Override
+    public void calculerChemin() {
+        controller.getDemande().setPlan(controller.getPlan());
+        controller.getDemande().initialiserMatriceAdjacence();
+        controller.getDemande().creerClusters();
+        RunTSP run = new RunTSP();
+        for (int i=0; i<controller.getDemande().getNbLivreurs(); i++) {
+            Trajet trajet = run.calculerTSP(controller.getDemande().getListeMatriceAdjacence().get(i));
+            view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajet);
+        }
+        controller.setEtat(new TourneeAffichee(controller));
     }
 
     @Override
     public void handleSelectButton() {
         controller.getMessageLabel().setVisible(true);
-        controller.setEtat(new DemandeChargee(controller));
         controller.getView().toggleSelectionMode(controller.getMessageLabel(), controller.getSelectionnerPointButton(), controller.getChargerFichierButton(), controller.getChargerNouveauPlan(), controller.getDeliveryInfoVBox());
+        controller.setEtat(new DemandeChargee(controller));
     }
 
     @Override
