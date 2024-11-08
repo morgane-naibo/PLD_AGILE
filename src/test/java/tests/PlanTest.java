@@ -121,7 +121,7 @@ public class PlanTest {
     public void testChargerPlanDepuisXML() {
         
         // Spécifiez le chemin du fichier XML ici
-        String xmlFilePath = "/Users/morganenaibo/4IF/AGILE/PLD_AGILE/resources/fichiersXMLPickupDelivery/fichiersXMLPickupDelivery/grandPlan.xml"; // Remplacez par le chemin réel
+        String xmlFilePath = "/Users/morganenaibo/4IF/AGILE/PLD_AGILE/resources/fichiersXMLPickupDelivery/fichiersXMLPickupDelivery/testPlan.xml"; // Remplacez par le chemin réel
         XMLPlan xmlPlanReader = new XMLPlan();
         
         // Charger le plan depuis le fichier XML

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="tests.PlanTest" time="0.485" tests="5" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="tests.PlanTest" time="0.483" tests="5" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="GB"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire/surefirebooter-20241105095137832_3.jar /Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire 2024-11-05T09-51-37_789-jvmRun1 surefire-20241105095137832_1tmp surefire_0-20241105095137832_2tmp"/>
+    <property name="sun.java.command" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire/surefirebooter-20241105111649422_3.jar /Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire 2024-11-05T11-16-49_371-jvmRun1 surefire-20241105111649422_1tmp surefire_0-20241105111649422_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/test-classes:/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/classes:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-controls/23.0.1/javafx-controls-23.0.1.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-controls/23.0.1/javafx-controls-23.0.1-mac-aarch64.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-graphics/23.0.1/javafx-graphics-23.0.1.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-graphics/23.0.1/javafx-graphics-23.0.1-mac-aarch64.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-base/23.0.1/javafx-base-23.0.1.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-base/23.0.1/javafx-base-23.0.1-mac-aarch64.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-fxml/23.0.1/javafx-fxml-23.0.1.jar:/Users/morganenaibo/.m2/repository/org/openjfx/javafx-fxml/23.0.1/javafx-fxml-23.0.1-mac-aarch64.jar:/Users/morganenaibo/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/Users/morganenaibo/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/Users/morganenaibo/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/Users/morganenaibo/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/morganenaibo/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/Users/morganenaibo/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:"/>
@@ -29,7 +29,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire/surefirebooter-20241105095137832_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/morganenaibo/4IF/AGILE/PLD_AGILE/target/surefire/surefirebooter-20241105111649422_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="23"/>
@@ -60,8 +60,8 @@
   </properties>
   <testcase name="testAjouterTroncon" classname="tests.PlanTest" time="0.022"/>
   <testcase name="testAjouterIntersection" classname="tests.PlanTest" time="0.001"/>
-  <testcase name="testChercherIntersectionParId" classname="tests.PlanTest" time="0.001"/>
-  <testcase name="testChercherPlusCourtChemin" classname="tests.PlanTest" time="0.009">
+  <testcase name="testChercherIntersectionParId" classname="tests.PlanTest" time="0.0"/>
+  <testcase name="testChercherPlusCourtChemin" classname="tests.PlanTest" time="0.008">
     <system-out><![CDATA[1
 Intersection [id=2, latitude=45.755, longitude=4.832]
 2
@@ -72,7 +72,7 @@ Intersection [id=3, latitude=45.756, longitude=4.833]
 Intersection [id=4, latitude=45.757, longitude=4.834]
 ]]></system-out>
   </testcase>
-  <testcase name="testChargerPlanDepuisXML" classname="tests.PlanTest" time="0.439">
+  <testcase name="testChargerPlanDepuisXML" classname="tests.PlanTest" time="0.438">
     <system-out><![CDATA[Tronçon: 2684668925 -> 2509481775, Longueur: 97.249695m, Rue: Rue Château-Gaillard
 Tronçon: 2684668925 -> 190823183, Longueur: 62.401424m, Rue: Rue Château-Gaillard
 Tronçon: 2684668925 -> 190825078, Longueur: 77.52319m, Rue: Rue Château-Gaillard
