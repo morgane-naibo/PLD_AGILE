@@ -363,9 +363,16 @@ public class Demande {
             this.verifierMatriceAdjacence();
             this.creerClusters();
             this.creerMatricesParClusters();
+            RunTSP run = new RunTSP();
             for (int i = 0; i<nbLivreurs;i++){
                 Trajet trajet = new Trajet();
-                this.listeMatriceAdjacence
+                trajet = run.calculerTSP(this.listeMatriceAdjacence.get(i));
+                double duree = trajet.calculerDureeTrajet();
+                //on a juste à afficher le temps des tournées et à signaler qu'une tournée est hors-temps, 
+                //c'est à l'utilisateur de modifier manuellement les tournées
+                // while (duree>9*60){
+
+                // }
             }
 
 

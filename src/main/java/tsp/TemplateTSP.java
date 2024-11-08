@@ -3,6 +3,7 @@ package tsp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import tsp.BnBIntermediaire;
 
 public abstract class TemplateTSP implements TSP {
 	private Integer[] bestSol;
@@ -10,8 +11,23 @@ public abstract class TemplateTSP implements TSP {
 	private double bestSolCost;
 	private int timeLimit;
 	private long startTime;
+
 	
 	public void searchSolution(int timeLimit, Graph g){
+		if (timeLimit <= 0) return;
+		startTime = System.currentTimeMillis();	
+		this.timeLimit = timeLimit;
+		this.g = g;
+		bestSol = new Integer[g.getNbVertices()];
+		Collection<Integer> unvisited = new ArrayList<Integer>(g.getNbVertices()-1);
+		for (int i=1; i<g.getNbVertices(); i++) unvisited.add(i);
+		Collection<Integer> visited = new ArrayList<Integer>(g.getNbVertices());
+		visited.add(0); // The first visited vertex is 0
+		bestSolCost = Integer.MAX_VALUE;
+		branchAndBound(0, unvisited, visited, 0);
+	}
+
+	public void searchSolutionFromPrevious(int timeLimit, Graph g){
 		if (timeLimit <= 0) return;
 		startTime = System.currentTimeMillis();	
 		this.timeLimit = timeLimit;
@@ -62,9 +78,12 @@ public abstract class TemplateTSP implements TSP {
 	 * @param visited the sequence of vertices that have been already visited (including currentVertex)
 	 * @param currentCost the cost of the path corresponding to <code>visited</code>
 	 */	
-	private void branchAndBound(int currentVertex, Collection<Integer> unvisited, 
+	private BnBIntermediaire branchAndBound(int currentVertex, Collection<Integer> unvisited, 
 			Collection<Integer> visited, double currentCost){
-		if (System.currentTimeMillis() - startTime > timeLimit) return;
+		if (System.currentTimeMillis() - startTime > timeLimit) {
+			BnBIntermediaire bnbInter = new BnBIntermediaire(currentVertex, unvisited, visited, currentCost) ;
+			return bnbInter;
+		}
 	    if (unvisited.size() == 0){ 
 	    	if (g.isArc(currentVertex,0)){ 
 	    		if (currentCost+g.getCost(currentVertex,0) < bestSolCost){ 
@@ -84,6 +103,7 @@ public abstract class TemplateTSP implements TSP {
 	            unvisited.add(nextVertex);
 	        }	    
 	    }
+		return null;
 	}
 
 }
