@@ -42,6 +42,10 @@ public abstract class Etat {
         System.out.println("Action non disponible dans cet état.");
     }
 
+    public void selectionnerPoint() {
+        System.out.println("Action non disponible dans cet état.");
+    }
+
 
     // Autres méthodes spécifiques à ajouter selon les besoins
 }

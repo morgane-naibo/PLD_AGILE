@@ -15,13 +15,15 @@ public class PlanCharge extends Etat {
 
     @Override
     public void handleSelectButton() {
-        controller.getMessageLabel().setVisible(true);
         controller.setEtat(new DemandeChargee(controller));
         controller.getView().toggleSelectionMode(controller.getMessageLabel(), controller.getSelectionnerPointButton(), controller.getChargerFichierButton(), controller.getChargerNouveauPlan(), controller.getDeliveryInfoVBox());
+        controller.getMessageLabel().setVisible(true);
     }
+
 
     @Override
     public void handleFileButton() {
+        view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin());
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File("resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
@@ -40,10 +42,12 @@ public class PlanCharge extends Etat {
             view.displayDemande(demandeFile, controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getMessageLabel());
         }
         controller.setDemande(controller.getView().demande);
+        controller.getCalculerChemin().setVisible(true);
     }
 
     @Override
     public void handleLoadPlan() {
+        view.setDemande(null);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File("resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         fileChooser.setTitle("Ouvrir un plan");
@@ -63,9 +67,10 @@ public class PlanCharge extends Etat {
         Plan plan = xmlPlan.parse(filePath);
         if (plan != null) {
             view.setPlan(plan);
-            view.displayPlan(controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel(), controller.getMessageLabel()); // Afficher le plan dans mapPane
+            view.displayPlan(controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel(), controller.getMessageLabel(), controller.getCalculerChemin()); // Afficher le plan dans mapPane
             view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin());
             controller.getBoutonPlus().setVisible(true);
+            controller.getCalculerChemin().setVisible(false);
         }
     }
 

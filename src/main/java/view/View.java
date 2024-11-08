@@ -24,6 +24,8 @@ import model.Troncon;
 import model.Demande;
 import model.Entrepot;
 import model.Etape;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,14 +50,29 @@ public class View {
     private boolean selectionModeEnabled = false;
     private boolean entrepotExiste = false;
     private boolean popupOuverte = false;
+    private boolean tourneeCalculee = false;
 
     private Circle entrepotCircle;
     private Label labelEntrepot;
 
     public Demande demande;
 
+    private Tournee tournee;
+
     private Scale scale = new Scale(1.0, 1.0, 0, 0); // Zoom initial à 1 (100%)
 
+
+    public boolean isEntrepotExiste() {
+        return entrepotExiste;
+    }
+
+    public boolean isSelectionModeEnabled() {
+        return selectionModeEnabled;
+    }
+
+    public boolean isTourneeCalculee() {
+        return tourneeCalculee;
+    }
 
     public void fileChooser() {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -79,9 +96,11 @@ public class View {
         longMax = plan.trouverLongitudeMax();
     }
 
-    public void displayPlan(Pane pane, VBox deliveryInfoVBox, Label label, Label messageLabel) {
+    public void displayPlan(Pane pane, VBox deliveryInfoVBox, Label label, Label messageLabel, Button calculerChemin) {
         pane.getChildren().clear();
         deliveryInfoVBox.getChildren().clear();
+        tourneeCalculee = false;
+
 
         for (Troncon troncon : plan.getListeTroncons()) {
             double startX = longitudeToX(troncon.getOrigine().getLongitude());
@@ -92,7 +111,7 @@ public class View {
             Line line = new Line(startX, startY, endX, endY);
             line.setStrokeWidth(2);
             line.setStroke(Color.GRAY);
-            line.setOnMouseClicked(event -> handleLineClick(event, pane, deliveryInfoVBox, messageLabel));
+            line.setOnMouseClicked(event -> handleLineClick(event, pane, deliveryInfoVBox, messageLabel, calculerChemin));
             pane.getChildren().add(line);
         }
 
@@ -145,10 +164,15 @@ public class View {
     }
 
 
-    public void handleLineClick(MouseEvent event, Pane pane, VBox deliveryInfoVBox, Label label) {
+    public void handleLineClick(MouseEvent event, Pane pane, VBox deliveryInfoVBox, Label label, Button calculerChemin) {
         if (!selectionModeEnabled) {
             return;
         }
+
+        if (tourneeCalculee) {
+            calculerChemin.setVisible(false);
+        }
+        else calculerChemin.setVisible(true);
 
         label.setText(null);
         label.setText("Cliquer sur la carte pour sélectionner un nouveau point de livraison, ou sur un point existant pour le supprimer.");
@@ -206,6 +230,33 @@ public class View {
 
             pdLabel.setOnMouseClicked(event2 -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
        
+            if (tourneeCalculee) {
+                List<PointDeLivraison> pointsRestants = demande.getListePointDeLivraison();
+                List<Etape> nouvellesEtapes = new ArrayList<>();
+
+                // Définir l'intersection d'origine comme étant celle de l'entrepôt
+                Intersection origine = plan.chercherIntersectionParId(entrepot.getId());
+
+                // Pour chaque point restant, recalculer le chemin optimal depuis l'origine et mettre à jour l'origine à chaque itération
+                for (PointDeLivraison pdl2 : pointsRestants) {
+                    Intersection destination = plan.chercherIntersectionParId(pdl2.getId());
+                    if (destination != null) {
+                        Etape etape = plan.chercherPlusCourtChemin(origine, destination);
+                        nouvellesEtapes.add(etape);
+                        origine = destination; // Met à jour l'origine pour la prochaine étape
+                    }
+                }
+
+                // Si l'entrepôt existe, ajouter l'étape finale pour le retour à l'entrepôt
+                if (entrepotExiste) {
+                    Etape retourEntrepot = plan.chercherPlusCourtChemin(origine, plan.chercherIntersectionParId(entrepot.getId()));
+                    nouvellesEtapes.add(retourEntrepot);
+                }
+
+                // 3. Mettre à jour la tournée avec les nouvelles étapes et l'afficher
+                tournee.setListeEtapes(nouvellesEtapes);
+                afficherTourneeSurCarte(nouvellesEtapes, pane);
+            }
         }
 
         for (PointDeLivraison pdl : demande.getListePointDeLivraison()) {
@@ -358,10 +409,12 @@ public class View {
         this.demande.supprimerIntersection(inter);
 
         if (inter.getId() == entrepot.getId()) {
+            if (!tourneeCalculee) {
             entrepotExiste = false;
             entrepotCircle = null;
             deliveryInfoVBox.getChildren().remove(labelEntrepot);
             pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+            } 
         }
         else {
             // Supprime le point de livraison du plan
@@ -369,6 +422,34 @@ public class View {
 
             // Supprime le label du point de livraison
             deliveryInfoVBox.getChildren().remove(label);
+
+            if (tourneeCalculee) {
+                List<PointDeLivraison> pointsRestants = demande.getListePointDeLivraison();
+                List<Etape> nouvellesEtapes = new ArrayList<>();
+
+                // Définir l'intersection d'origine comme étant celle de l'entrepôt
+                Intersection origine = plan.chercherIntersectionParId(entrepot.getId());
+
+                // Pour chaque point restant, recalculer le chemin optimal depuis l'origine et mettre à jour l'origine à chaque itération
+                for (PointDeLivraison pdl : pointsRestants) {
+                    Intersection destination = plan.chercherIntersectionParId(pdl.getId());
+                    if (destination != null) {
+                        Etape etape = plan.chercherPlusCourtChemin(origine, destination);
+                        nouvellesEtapes.add(etape);
+                        origine = destination; // Met à jour l'origine pour la prochaine étape
+                    }
+                }
+
+                // Si l'entrepôt existe, ajouter l'étape finale pour le retour à l'entrepôt
+                if (entrepotExiste) {
+                    Etape retourEntrepot = plan.chercherPlusCourtChemin(origine, plan.chercherIntersectionParId(entrepot.getId()));
+                    nouvellesEtapes.add(retourEntrepot);
+                }
+
+                // 3. Mettre à jour la tournée avec les nouvelles étapes et l'afficher
+                tournee.setListeEtapes(nouvellesEtapes);
+                afficherTourneeSurCarte(nouvellesEtapes, pane);
+            }
         }
         
     }
@@ -389,9 +470,9 @@ public class View {
         return latMax - (y / paneHeight * (latMax - latMin));
     }
 
-   
-
     public void calculerChemin(Pane pane, VBox deliveryInfoVBox, Trajet trajet) {
+        tourneeCalculee = true;
+        this.tournee = new Tournee(trajet.getListeEtapes(), null);
         this.demande.setPlan(this.plan);
         this.demande.initialiserMatriceAdjacence();
         this.demande.creerClusters();
@@ -416,4 +497,28 @@ public class View {
         }
         
     }
+
+
+private void afficherTourneeSurCarte(List<Etape> etapes, Pane pane) {
+    // Supprime les anciens tracés de la tournée du plan
+    pane.getChildren().removeIf(node -> node instanceof Line && ((Line) node).getStroke() == Color.DODGERBLUE);
+
+    // Ajoute les nouvelles lignes de la tournée
+    for (Etape etape : etapes) {
+        for (Troncon troncon : etape.getListeTroncons()) {
+            double startX = longitudeToX(troncon.getOrigine().getLongitude());
+            double startY = latitudeToY(troncon.getOrigine().getLatitude());
+            double endX = longitudeToX(troncon.getDestination().getLongitude());
+            double endY = latitudeToY(troncon.getDestination().getLatitude());
+
+            Line line = new Line(startX, startY, endX, endY);
+            line.setStrokeWidth(5);
+            line.setStroke(Color.DODGERBLUE);
+            pane.getChildren().add(line);
+        }
+    }
+}
+
+
+
 }

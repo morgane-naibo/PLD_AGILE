@@ -17,22 +17,27 @@ public class DemandeChargee extends Etat {
 
     @Override
     public void calculerChemin() {
-        controller.getDemande().setPlan(controller.getPlan());
-        controller.getDemande().initialiserMatriceAdjacence();
-        controller.getDemande().creerClusters();
+        view.demande.setPlan(controller.getPlan());
+        view.demande.initialiserMatriceAdjacence();
+        view.demande.creerClusters();
         RunTSP run = new RunTSP();
-        for (int i=0; i<controller.getDemande().getNbLivreurs(); i++) {
-            Trajet trajet = run.calculerTSP(controller.getDemande().getListeMatriceAdjacence().get(i));
+        for (int i=0; i<view.demande.getNbLivreurs(); i++) {
+            Trajet trajet = run.calculerTSP(view.demande.getListeMatriceAdjacence().get(i));
             view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajet);
         }
         controller.setEtat(new TourneeAffichee(controller));
+        controller.getCalculerChemin().setVisible(false);
     }
 
     @Override
     public void handleSelectButton() {
         controller.getMessageLabel().setVisible(true);
         controller.getView().toggleSelectionMode(controller.getMessageLabel(), controller.getSelectionnerPointButton(), controller.getChargerFichierButton(), controller.getChargerNouveauPlan(), controller.getDeliveryInfoVBox());
-        controller.setEtat(new DemandeChargee(controller));
+        if (view.isTourneeCalculee()) {
+            controller.setEtat(new TourneeAffichee(controller));
+            controller.getCalculerChemin().setVisible(false);
+        }
+        else controller.setEtat(new DemandeChargee(controller));
     }
 
     @Override
@@ -59,6 +64,7 @@ public class DemandeChargee extends Etat {
 
     @Override
     public void handleLoadPlan() {
+        view.setDemande(null);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File("resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         fileChooser.setTitle("Ouvrir un plan");
@@ -78,9 +84,10 @@ public class DemandeChargee extends Etat {
         Plan plan = xmlPlan.parse(filePath);
         if (plan != null) {
             view.setPlan(plan);
-            view.displayPlan(controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel(), controller.getMessageLabel()); // Afficher le plan dans mapPane
+            view.displayPlan(controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel(), controller.getMessageLabel(), controller.getCalculerChemin()); // Afficher le plan dans mapPane
             view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin());
             controller.getBoutonPlus().setVisible(true);
+            controller.getCalculerChemin().setVisible(false);
         }
     }
 

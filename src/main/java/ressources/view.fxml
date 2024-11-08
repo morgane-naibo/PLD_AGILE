@@ -36,7 +36,7 @@
                     <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton" visible="false" layoutY="95"/>
                     <Button fx:id="selectionnerPointButton" text="Sélectionner un point sur la carte" styleClass="file-button" onAction="#handleSelectButton" visible="false" layoutY="135"/>
                     <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan" visible="false" layoutY="175"/>
-                    <Button fx:id="calculerChemin" text="Calculer un chemin" styleClass="file-button" onAction="#calculerChemin" visible="true" layoutY="500" layoutX="250"/>
+                    <Button fx:id="calculerChemin" text="Calculer un chemin" styleClass="file-button" onAction="#calculerChemin" visible="false" layoutY="500" layoutX="250"/>
                 </children>
             </Pane>
         </ScrollPane>
