@@ -3,6 +3,7 @@ package view;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.effect.Light.Point;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -24,7 +25,12 @@ import model.Demande;
 import model.Entrepot;
 import model.Etape;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import javafx.scene.layout.BorderPane;
+import model.Trajet;
+import model.Tournee;
 
 public class View {
 
@@ -36,7 +42,6 @@ public class View {
     private double longMax;
 
     private Plan plan;
-    private Demande demande;
     private Entrepot entrepot;
 
     private boolean button_visible = false;
@@ -46,6 +51,8 @@ public class View {
 
     private Circle entrepotCircle;
     private Label labelEntrepot;
+
+    public Demande demande;
 
     private Scale scale = new Scale(1.0, 1.0, 0, 0); // Zoom initial à 1 (100%)
 
@@ -58,15 +65,21 @@ public class View {
         alert.showAndWait();
     }
 
+    public void setDemande(Demande demande) {
+        this.demande = demande;
+    }
+
     public void setPlan(Plan plan) {
         this.plan = plan;
+        entrepotExiste = false;
+        demande = new Demande();
         latMin = plan.trouverLatitudeMin();
         latMax = plan.trouverLatitudeMax();
         longMin = plan.trouverLongitudeMin();
         longMax = plan.trouverLongitudeMax();
     }
 
-    public void displayPlan(Pane pane, VBox deliveryInfoVBox, Label label, Label message) {
+    public void displayPlan(Pane pane, VBox deliveryInfoVBox, Label label, Label messageLabel) {
         pane.getChildren().clear();
         deliveryInfoVBox.getChildren().clear();
 
@@ -79,7 +92,7 @@ public class View {
             Line line = new Line(startX, startY, endX, endY);
             line.setStrokeWidth(2);
             line.setStroke(Color.GRAY);
-            line.setOnMouseClicked(event -> handleLineClick(event, pane, deliveryInfoVBox, message));
+            line.setOnMouseClicked(event -> handleLineClick(event, pane, deliveryInfoVBox, messageLabel));
             pane.getChildren().add(line);
         }
 
@@ -122,8 +135,15 @@ public class View {
         chargerFichierButton.setVisible(false);
         selectionnerPointButton.setVisible(false);
         chargerNouveauPlan.setVisible(false);
-        label.setText("Veuillez selectionner en premier un entrepôt, puis les points de livraison.");
+        if (!selectionModeEnabled) {
+            label.setText("Cliquer sur un point existant pour le supprimer.");
+        } else if (entrepotExiste) {
+            label.setText("Veuillez selectionner les points de livraison.");
+        } else {
+            label.setText("Veuillez selectionner en premier un entrepôt, puis les points de livraison.");
+        }
     }
+
 
     public void handleLineClick(MouseEvent event, Pane pane, VBox deliveryInfoVBox, Label label) {
         if (!selectionModeEnabled) {
@@ -154,6 +174,8 @@ public class View {
                 labelEntrepot.setText(labelEntrepot.getText() + troncon.getNomRue() + ", ");
             }
 
+            this.demande.setEntrepot(entrepot);
+
             deliveryInfoVBox.getChildren().add(labelEntrepot);
 
             entrepotCircle.setOnMouseClicked(event2 -> handleCircleClick(intersection, pane, deliveryInfoVBox, labelEntrepot));
@@ -163,10 +185,8 @@ public class View {
         } else {
             Livraison livraison = new Livraison(0, intersection.getId(), 5.0, 5.0);
             PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), livraison);
-            if (demande == null) {
-                demande = new Demande();
-            }
-            demande.ajouterPointDeLivraison(pdl);
+
+            this.demande.ajouterPointDeLivraison(pdl);
             deliveryInfoVBox.setVisible(true);
 
             Intersection inter = plan.chercherIntersectionParId(pdl.getId());
@@ -185,10 +205,11 @@ public class View {
             pane.getChildren().add(newPdl);
 
             pdLabel.setOnMouseClicked(event2 -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
+       
         }
     }
 
-    public void displayDemande(Demande demande, Pane pane, VBox deliveryInfoVBox, Label label) {
+    public void displayDemande(Demande demandeFile, Pane pane, VBox deliveryInfoVBox, Label label) {
         if (entrepotExiste) {
             pane.getChildren().remove(entrepotCircle);
             deliveryInfoVBox.getChildren().remove(labelEntrepot);
@@ -197,10 +218,11 @@ public class View {
         label.setVisible(true);
         label.setText("Selectionnez un point de livraison pour le supprimer.");
 
-        button_visible = false;
         entrepotExiste = true;
 
-        entrepot = demande.getEntrepot();
+        entrepot = demandeFile.getEntrepot();
+        this.demande.setEntrepot(entrepot);
+        
         Intersection intersection = plan.chercherIntersectionParId(entrepot.getId());
         double lat = latitudeToY(intersection.getLatitude());
         double lon = longitudeToX(intersection.getLongitude());
@@ -219,25 +241,30 @@ public class View {
         deliveryInfoVBox.getChildren().add(labelEntrepot);
         labelEntrepot.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, labelEntrepot));
 
-        for (PointDeLivraison pdl : demande.getListePointDeLivraison()) {
-            Intersection inter = plan.chercherIntersectionParId(pdl.getId());
-            double startX = longitudeToX(inter.getLongitude());
-            double startY = latitudeToY(inter.getLatitude());
+        List<Long> existingPdlIds = this.demande.getListePointDeLivraison().stream().map(PointDeLivraison::getId).collect(Collectors.toList());
+        System.out.println("Existing PDLs: " + existingPdlIds);
 
-           
 
-            Label pdLabel = new Label("Point de Livraison:");
-            for (Troncon troncon : inter.getListeTroncons()) {
-                pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
+        for (PointDeLivraison pdl : demandeFile.getListePointDeLivraison()) {
+            if (!existingPdlIds.contains(pdl.getId())) {
+                Intersection inter = plan.chercherIntersectionParId(pdl.getId());
+                double startX = longitudeToX(inter.getLongitude());
+                double startY = latitudeToY(inter.getLatitude());           
+
+                Label pdLabel = new Label("Point de Livraison:");
+                for (Troncon troncon : inter.getListeTroncons()) {
+                    pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
+                }
+                deliveryInfoVBox.getChildren().add(pdLabel);
+
+                this.demande.ajouterPointDeLivraison(pdl);
+
+                pdLabel.setOnMouseClicked(event -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
+                Circle newPdl = new Circle(startX, startY, 5, Color.RED);
+                newPdl.setOnMouseClicked(event -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
+                pane.getChildren().add(newPdl);
             }
-            deliveryInfoVBox.getChildren().add(pdLabel);
-
-            pdLabel.setOnMouseClicked(event -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
-            Circle newPdl = new Circle(startX, startY, 5, Color.RED);
-            newPdl.setOnMouseClicked(event -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
-            pane.getChildren().add(newPdl);
         }
-
     }
 
 
@@ -287,7 +314,7 @@ public class View {
             newPdl.setRadius(5);
             pane.getChildren().add(newPdl);
             newPdl.setOnMouseClicked(event -> handleCircleClick(inter, pane, deliveryInfoVBox, pdlLabel));
-            pdlLabel.setStyle("-fx-background-color: white;");
+            pdlLabel.setStyle("-fx-background-color: #f5f5f5;");
             popupOuverte = false;
         });
 
@@ -356,10 +383,29 @@ public class View {
 
    
 
-    public void calculerChemin(Pane pane, VBox deliveryInfoVBox, Label label) {
-        // Calculer le chemin
-        Etape etape = new Etape(plan.getListeTroncons(), entrepot, entrepot);
-        System.out.println("Chemin calculé: " + etape.getLongueur());
+    public void calculerChemin(Pane pane, VBox deliveryInfoVBox, Trajet trajet) {
+        this.demande.setPlan(this.plan);
+        this.demande.initialiserMatriceAdjacence();
+        this.demande.creerClusters();
+
+        for (PointDeLivraison pdl : this.demande.getListePointDeLivraison()) {
+            System.out.println("PDL: " + pdl.getId());
+        }
+
+        // Afficher le chemin
+        for (Etape etape : trajet.getListeEtapes()) {
+            for (Troncon troncon : etape.getListeTroncons()) {
+                double startX = longitudeToX(troncon.getOrigine().getLongitude());
+                double startY = latitudeToY(troncon.getOrigine().getLatitude());
+                double endX = longitudeToX(troncon.getDestination().getLongitude());
+                double endY = latitudeToY(troncon.getDestination().getLatitude());
+
+                Line line = new Line(startX, startY, endX, endY);
+                line.setStrokeWidth(5);
+                line.setStroke(Color.DODGERBLUE);
+                pane.getChildren().add(line);
+            }
+        }
         
     }
 }

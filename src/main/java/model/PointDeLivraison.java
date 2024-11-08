@@ -25,7 +25,8 @@ public class PointDeLivraison extends Intersection{
     //toString
     @Override
     public String toString() {
-        return "Point de Livraison: " + super.toString() + ", Livraison: " + livraison;
+        //return "Point de Livraison: " + super.toString() + ", Livraison: " + livraison;
+        return super.toString();
     }
 
     //autres methodes

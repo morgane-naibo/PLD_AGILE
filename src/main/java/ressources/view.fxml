@@ -21,21 +21,23 @@
     <top>
         <Label fx:id="messageLabel" visible="false" text="" prefHeight="50" styleClass="message-label"/>    
         <!--<Button fx:id="calculerChemin" text="calculer un chemin" onAction="#calculerChemin" prefHeight="50" />-->
+        <Button fx:id="calculerChemin" text="Calculer un chemin" styleClass="file-button" onAction="#calculerChemin" visible="true"/>
     </top>
 
     <!-- Plan au centre -->
     <center>
-       <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true">
+       <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
             <Pane fx:id="mapPane" prefWidth="500" prefHeight="500" styleClass="map-pane"> <!-- Nouveau Pane pour le plan -->
                 <!-- Ajouter ici les éléments du plan -->
                 <children>
-                    <StackPane prefHeight="450" prefWidth="700">
+                    <StackPane prefHeight="450" prefWidth="800">
                         <Button fx:id="chargerPlan" text="Charger un plan" styleClass="plan-button" onAction="#handleLoadPlan" />
                     </StackPane>
                     <Button fx:id="boutonPlus" text="+" styleClass="plus-button" onAction="#handleButtonClick" visible="false" layoutY="55" />
                     <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton" visible="false" layoutY="95"/>
                     <Button fx:id="selectionnerPointButton" text="Sélectionner un point sur la carte" styleClass="file-button" onAction="#handleSelectButton" visible="false" layoutY="135"/>
                     <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan" visible="false" layoutY="175"/>
+                    
                 </children>
             </Pane>
         </ScrollPane>

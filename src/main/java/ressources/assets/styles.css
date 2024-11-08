@@ -42,3 +42,9 @@
 .message-label{
     -fx-font-size: 16px; /* Font size */
 }
+
+
+.scroll-pane {
+    -fx-background-color: #f5f5f5; /* Background color */
+    -fx-border-color: #f5f5f5; /* Border color */
+}
