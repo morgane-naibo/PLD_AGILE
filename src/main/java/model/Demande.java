@@ -201,23 +201,37 @@ public class Demande {
         return impasse;
     }
 
-    public void supprimerPointDeLivraison(PointDeLivraison pdl){
-        int position=-1;
-        for(int i=0; i<this.listePointDeLivraison.size();i++){
-            if (listePointDeLivraison.get(i)==pdl) {
-                position = i;
-            }
-        }
+    public void supprimerIntersection(Intersection intersection) {
+        int position = -1;
 
-        if (position!=-1){
-            for(int i=0; i<this.listePointDeLivraison.size(); i++){
-                this.matriceAdjacence.get(i).remove(position);
+        // Check if the intersection is the entrepot
+        if (this.entrepot.getId() == intersection.getId()) {
+            this.entrepot = null;
+            // Remove the first row and column in the adjacency matrix
+            for (int i = 0; i < this.matriceAdjacence.size(); i++) {
+                this.matriceAdjacence.get(i).remove(0);
             }
-    
-            this.matriceAdjacence.remove(position);
-            this.listePointDeLivraison.remove(position);
+            this.matriceAdjacence.remove(0);
+        } else {
+            // Check if the intersection is a point de livraison
+            for (int i = 0; i < this.listePointDeLivraison.size(); i++) {
+                if (this.listePointDeLivraison.get(i).getId() == intersection.getId()) {
+                    position = i;
+                    break;
+                }
+            }
+
+            if (position != -1) {
+                for (int i = 0; i < this.matriceAdjacence.size(); i++) {
+                    this.matriceAdjacence.get(i).remove(position + 1);
+                }
+                this.matriceAdjacence.remove(position + 1);
+                this.listePointDeLivraison.remove(position);
+            }
         }
     }
+
+    
     public void creerClusters(){
         ArrayList<Etape> etapesVisitees = new ArrayList<>();
         

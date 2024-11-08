@@ -207,6 +207,10 @@ public class View {
             pdLabel.setOnMouseClicked(event2 -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
        
         }
+
+        for (PointDeLivraison pdl : demande.getListePointDeLivraison()) {
+            System.out.println("PDL: " + pdl.getId());
+        }
     }
 
     public void displayDemande(Demande demandeFile, Pane pane, VBox deliveryInfoVBox, Label label) {
@@ -264,6 +268,10 @@ public class View {
                 newPdl.setOnMouseClicked(event -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
                 pane.getChildren().add(newPdl);
             }
+        }
+
+        for (PointDeLivraison pdl : demande.getListePointDeLivraison()) {
+            System.out.println("PDL: " + pdl.getId());
         }
     }
 
@@ -347,7 +355,7 @@ public class View {
 
     public void supprimerPointDeLivraison(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label) {
         // Supprime le point de livraison de la demande
-        //demande.supprimerPointDeLivraison(inter.getId());
+        this.demande.supprimerIntersection(inter);
 
         if (inter.getId() == entrepot.getId()) {
             entrepotExiste = false;
