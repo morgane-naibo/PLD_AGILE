@@ -133,7 +133,11 @@ public class Plan {
 
         //remettre les troncons dans l'ordre et créer l'étape à retourner
         List<Troncon> troncons = new ArrayList<Troncon>();
+        if (predecesseurs[destination.getNumero()] == null){
+            return null;
+        }
         Troncon tronconActuel = predecesseurs[destination.getNumero()];
+        
         //System.out.println( predecesseurs[destination.getNumero()].toString());
         troncons.add(tronconActuel);
         while (predecesseurs[tronconActuel.getOrigine().getNumero()] != null){

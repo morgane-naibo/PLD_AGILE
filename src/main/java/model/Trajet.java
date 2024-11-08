@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Trajet {
-    private List<Etape> listeEtapes;
+    protected List<Etape> listeEtapes;
    
     //constructeur
     public Trajet(List<Etape> listeEtapes) {

@@ -19,7 +19,6 @@ public class Main {
         demande = demandeReader.parse(mapPathDemande);
         demande.setPlan(plan);
         // System.out.println(demande);
-
         demande.initialiserMatriceAdjacence();
         //System.out.println(demande.getMatriceAdjacence());
         // System.out.println(demande.getListePointDeLivraison());
@@ -34,7 +33,7 @@ public class Main {
         demande.creerClusters();
 
         RunTSP run = new RunTSP();
-        run.calculerTSP(demande.getListeMatriceAdjacence().get(0));
+        run.calculerTSP(demande.getListeMatriceAdjacence().get(1));
         
     }
 
