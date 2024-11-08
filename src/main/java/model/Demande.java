@@ -206,7 +206,7 @@ public class Demande {
 
         // Check if the intersection is the entrepot
         if (this.entrepot.getId() == intersection.getId()) {
-            this.entrepot = null;
+            this.entrepot = new Entrepot();
             // Remove the first row and column in the adjacency matrix
             for (int i = 0; i < this.matriceAdjacence.size(); i++) {
                 this.matriceAdjacence.get(i).remove(0);
@@ -222,11 +222,8 @@ public class Demande {
             }
 
             if (position != -1) {
-                for (int i = 0; i < this.matriceAdjacence.size(); i++) {
-                    this.matriceAdjacence.get(i).remove(position + 1);
-                }
-                this.matriceAdjacence.remove(position + 1);
                 this.listePointDeLivraison.remove(position);
+                this.initialiserMatriceAdjacence();
             }
         }
     }
