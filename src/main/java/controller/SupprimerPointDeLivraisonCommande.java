@@ -18,18 +18,21 @@ public class SupprimerPointDeLivraisonCommande extends Commande {
     private final View view;
     private final Pane pane;
     private final VBox deliveryInfoVBox;
+    private Stack<Intersection> intersectionsSupprimees = new Stack<>();
+    private Stack<Label> labelsSupprimes = new Stack<>();
 
 
     public SupprimerPointDeLivraisonCommande(View view, Pane pane, VBox deliveryInfoVBox) {
         this.view = view;
         this.pane = pane;
         this.deliveryInfoVBox = deliveryInfoVBox;
-
     }
 
     public void redoCommande(Intersection intersection, Label label) {
 
         // Supprimer le point de livraison via View
+        intersectionsSupprimees.push(intersection);
+        labelsSupprimes.push(label);
         view.supprimerPointDeLivraison(intersection, pane, deliveryInfoVBox, label);
     }
 

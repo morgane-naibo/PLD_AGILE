@@ -1,5 +1,8 @@
 package controller;
 
+import javafx.scene.control.Label;
+import model.Intersection;
+
 public abstract class Commande {
     
     // Méthodes génériques, présentes dans tous les états mais surchargées selon le contexte.
@@ -7,7 +10,7 @@ public abstract class Commande {
         // Par défaut : aucune action
     }
 
-    public void redoCommande() {
+    public void redoCommande(Intersection intersection, Label label) {
         // Par défaut : aucune action
     }
 }

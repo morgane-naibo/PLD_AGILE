@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import javafx.scene.layout.BorderPane;
 import model.Trajet;
 import model.Tournee;
+import controller.*;
 
 public class View {
 
@@ -66,6 +67,13 @@ public class View {
 
     private Stack<Label> labelsSupprimes = new Stack<>();
 
+    private Stack<Intersection> intersectionsAjoutees = new Stack<>();
+
+    private Stack<Label> labelsAjoutes = new Stack<>();
+
+    private Controller controller;
+
+    private Stack<Commande> commandes = new Stack<>();
 
     public boolean isEntrepotExiste() {
         return entrepotExiste;
@@ -103,6 +111,21 @@ public class View {
         return this.labelsSupprimes;
     }
 
+    public Stack<Intersection> getIntersectionsAjoutees() {
+        return this.intersectionsAjoutees;
+    }
+
+    public Stack<Label> getLabelsAjoutes() {
+        return this.labelsAjoutes;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public Stack<Commande> getCommandes() {
+        return this.commandes;
+    }
 
     public void fileChooser() {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -117,6 +140,10 @@ public class View {
     }
 
     public void setPlan(Plan plan) {
+        intersectionsAjoutees.clear();
+        labelsAjoutes.clear();
+        intersectionsSupprimees.clear();
+        labelsSupprimes.clear();
         this.plan = plan;
         entrepotExiste = false;
         demande = new Demande();
@@ -261,6 +288,11 @@ public class View {
             pdLabel.setOnMouseClicked(event2 -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
        
             if (tourneeCalculee) {
+                intersectionsAjoutees.push(inter);
+                System.out.println(intersectionsAjoutees);
+                labelsAjoutes.push(pdLabel);
+                AjouterPointDeLivraisonCommande ajouterPointDeLivraisonCommande = new AjouterPointDeLivraisonCommande(this, pane, deliveryInfoVBox);
+                commandes.push(ajouterPointDeLivraisonCommande);
                 reafficherTournee(pane, deliveryInfoVBox);
             }
         }
@@ -412,6 +444,8 @@ public class View {
 
         intersectionsSupprimees.push(inter);
         labelsSupprimes.push(label);
+        SupprimerPointDeLivraisonCommande supprimerPointDeLivraisonCommande = new SupprimerPointDeLivraisonCommande(this, pane, deliveryInfoVBox);
+        commandes.push(supprimerPointDeLivraisonCommande);
 
         if (inter.getId() == entrepot.getId()) {
             if (!tourneeCalculee) {

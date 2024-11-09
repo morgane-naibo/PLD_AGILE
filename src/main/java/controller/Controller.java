@@ -3,6 +3,7 @@ package controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -39,6 +40,7 @@ import model.Demande;
 import model.Entrepot;
 import model.Etape;
 import view.View;
+
 
 
 public class Controller {
@@ -106,11 +108,15 @@ public class Controller {
     private static final double MAX_X = 550; // Remplacez par la limite maximale souhaitée pour X
     private static final double MAX_Y = 600; // Remplacez par la limite maximale souhaitée pour Y
 
+    private Stack<Commande> commandes = new Stack<>();
+    private Commande derniereCommande;
+
     private Etat etat;
 
     // Constructeur
     public Controller() {
         this.view = new View();
+        view.setController(this);
         this.demande = new Demande();
         this.plan = new Plan();
         this.etat = new PlanNonCharge(this);
@@ -228,6 +234,18 @@ public class Controller {
         return redoButton;
     }
 
+    public Stack<Commande> getCommandes() {
+        return commandes;
+    }
+
+    public void setCommandes(Stack<Commande> commandes) {
+        this.commandes = commandes;
+    }
+
+    public Commande getDerniereCommande() {
+        return derniereCommande;
+    }
+
 
 // Gestionnaire d'événements pour le clic de souris
 private void handleMousePressed(MouseEvent event) {
@@ -321,16 +339,32 @@ private void handleMouseDragged(MouseEvent event) {
 
     @FXML
     public void undo() {
-        Commande commande = new SupprimerPointDeLivraisonCommande(view, mapPane, deliveryInfoVBox);
-        commande.undoCommande();
-        System.out.println(etat);
+        Commande derniereCommande = view.getCommandes().peek(); // Obtenez la dernière commande
 
+        if (derniereCommande != null) {
+            derniereCommande.undoCommande(); // Annulez la commande
+
+            // Retirez la commande annulée de la pile
+            view.getCommandes().pop();
+
+            // Mettez à jour la dernière commande, si la pile n'est pas vide
+            /*if (!view.getCommandes().isEmpty()) {
+                view.setDerniereCommande(view.getCommandes().peek());
+            } else {
+                view.setDerniereCommande(null); // Pas de commande restante
+            }*/
+            for (Commande commandes : view.getCommandes()) {
+                System.out.println(commandes);
+            }
+            System.out.println("Commande annulée : " + derniereCommande);
+            System.out.println("État après annulation : " + etat);
+        } else {
+            System.out.println("Aucune commande à annuler.");
+        }
     }
 
     @FXML
     public void redo() {
-        Commande commande = new SupprimerPointDeLivraisonCommande(view, mapPane, deliveryInfoVBox);
-        commande.redoCommande();
         System.out.println(etat);
     }
 
