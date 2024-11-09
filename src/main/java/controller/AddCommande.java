@@ -2,7 +2,7 @@ package controller;
 
 public class AddCommande extends Commande {
     @Override
-    public void doCommande() {
+    public void redoCommande() {
         System.out.println("Entrée dans l'état d'accueil.");
     }
 

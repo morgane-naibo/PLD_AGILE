@@ -28,6 +28,7 @@ import model.Etape;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import javafx.scene.layout.BorderPane;
@@ -61,6 +62,10 @@ public class View {
 
     private Scale scale = new Scale(1.0, 1.0, 0, 0); // Zoom initial à 1 (100%)
 
+    private Stack<Intersection> intersectionsSupprimees = new Stack<>();
+
+    private Stack<Label> labelsSupprimes = new Stack<>();
+
 
     public boolean isEntrepotExiste() {
         return entrepotExiste;
@@ -73,6 +78,31 @@ public class View {
     public boolean isTourneeCalculee() {
         return tourneeCalculee;
     }
+
+    public void setTourneeCalculee(boolean tourneeCalculee) {
+        this.tourneeCalculee = tourneeCalculee;
+    }
+
+    public Tournee getTournee() {
+        return tournee;
+    }
+
+    public void setTournee(Tournee tournee) {
+        this.tournee = tournee;
+    }
+
+    public Entrepot getEntrepot() {
+        return entrepot;
+    }
+
+    public Stack<Intersection> getIntersectionsSupprimees() {
+        return this.intersectionsSupprimees;
+    }
+
+    public Stack<Label> getLabelsSupprimes() {
+        return this.labelsSupprimes;
+    }
+
 
     public void fileChooser() {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -231,36 +261,8 @@ public class View {
             pdLabel.setOnMouseClicked(event2 -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
        
             if (tourneeCalculee) {
-                List<PointDeLivraison> pointsRestants = demande.getListePointDeLivraison();
-                List<Etape> nouvellesEtapes = new ArrayList<>();
-
-                // Définir l'intersection d'origine comme étant celle de l'entrepôt
-                Intersection origine = plan.chercherIntersectionParId(entrepot.getId());
-
-                // Pour chaque point restant, recalculer le chemin optimal depuis l'origine et mettre à jour l'origine à chaque itération
-                for (PointDeLivraison pdl2 : pointsRestants) {
-                    Intersection destination = plan.chercherIntersectionParId(pdl2.getId());
-                    if (destination != null) {
-                        Etape etape = plan.chercherPlusCourtChemin(origine, destination);
-                        nouvellesEtapes.add(etape);
-                        origine = destination; // Met à jour l'origine pour la prochaine étape
-                    }
-                }
-
-                // Si l'entrepôt existe, ajouter l'étape finale pour le retour à l'entrepôt
-                if (entrepotExiste) {
-                    Etape retourEntrepot = plan.chercherPlusCourtChemin(origine, plan.chercherIntersectionParId(entrepot.getId()));
-                    nouvellesEtapes.add(retourEntrepot);
-                }
-
-                // 3. Mettre à jour la tournée avec les nouvelles étapes et l'afficher
-                tournee.setListeEtapes(nouvellesEtapes);
-                afficherTourneeSurCarte(nouvellesEtapes, pane);
+                reafficherTournee(pane, deliveryInfoVBox);
             }
-        }
-
-        for (PointDeLivraison pdl : demande.getListePointDeLivraison()) {
-            System.out.println("PDL: " + pdl.getId());
         }
     }
 
@@ -408,6 +410,9 @@ public class View {
         // Supprime le point de livraison de la demande
         this.demande.supprimerIntersection(inter);
 
+        intersectionsSupprimees.push(inter);
+        labelsSupprimes.push(label);
+
         if (inter.getId() == entrepot.getId()) {
             if (!tourneeCalculee) {
             entrepotExiste = false;
@@ -454,6 +459,55 @@ public class View {
         
     }
 
+    public void reafficherPointDeLivraison(Intersection intersection, Pane pane, VBox deliveryInfoVBox, Label label) {
+        // Recréer le cercle représentant le point de livraison
+        double x = longitudeToX(intersection.getLongitude());
+        double y = latitudeToY(intersection.getLatitude());
+        Circle circle = new Circle(x, y, 5, Color.RED);
+        pane.getChildren().add(circle);
+
+        // Réajouter le label au VBox
+        label.setStyle("-fx-background-color: #f5f5f5;");
+        deliveryInfoVBox.getChildren().add(label);
+
+        PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), new Livraison(0, intersection.getId(), 5.0, 5.0));
+        this.demande.ajouterPointDeLivraison(pdl);
+
+        // Réassocier le clic sur le cercle à la suppression du point de livraison  
+        circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
+        
+        reafficherTournee(pane, deliveryInfoVBox);
+    }
+
+    public void reafficherTournee(Pane pane, VBox deliveryInfoVBox) {
+        List<PointDeLivraison> pointsRestants = demande.getListePointDeLivraison();
+                List<Etape> nouvellesEtapes = new ArrayList<>();
+
+                // Définir l'intersection d'origine comme étant celle de l'entrepôt
+                Intersection origine = plan.chercherIntersectionParId(entrepot.getId());
+
+                // Pour chaque point restant, recalculer le chemin optimal depuis l'origine et mettre à jour l'origine à chaque itération
+                for (PointDeLivraison pdl2 : pointsRestants) {
+                    Intersection destination = plan.chercherIntersectionParId(pdl2.getId());
+                    if (destination != null) {
+                        Etape etape = plan.chercherPlusCourtChemin(origine, destination);
+                        nouvellesEtapes.add(etape);
+                        origine = destination; // Met à jour l'origine pour la prochaine étape
+                    }
+                }
+
+                // Si l'entrepôt existe, ajouter l'étape finale pour le retour à l'entrepôt
+                if (entrepotExiste) {
+                    Etape retourEntrepot = plan.chercherPlusCourtChemin(origine, plan.chercherIntersectionParId(entrepot.getId()));
+                    nouvellesEtapes.add(retourEntrepot);
+                }
+
+                // 3. Mettre à jour la tournée avec les nouvelles étapes et l'afficher
+                tournee.setListeEtapes(nouvellesEtapes);
+                afficherTourneeSurCarte(nouvellesEtapes, pane);
+            }
+        
+
     private double latitudeToY(double latitude) {
         return paneHeight * (latMax - latitude) / (latMax - latMin);
     }
@@ -499,7 +553,7 @@ public class View {
     }
 
 
-private void afficherTourneeSurCarte(List<Etape> etapes, Pane pane) {
+public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane) {
     // Supprime les anciens tracés de la tournée du plan
     pane.getChildren().removeIf(node -> node instanceof Line && ((Line) node).getStroke() == Color.DODGERBLUE);
 

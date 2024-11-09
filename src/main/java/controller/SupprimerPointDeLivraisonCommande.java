@@ -2,33 +2,45 @@ package controller;
 
 import model.Intersection;
 import model.PointDeLivraison;
+import model.Tournee;
 
 import java.util.Stack;
 
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import view.View;
+
+import java.util.List;
+
 public class SupprimerPointDeLivraisonCommande extends Commande {
 
-    private Intersection intersection;
-    private controller.Controller controller;
-    private Stack pile;
+    private final View view;
+    private final Pane pane;
+    private final VBox deliveryInfoVBox;
 
-    public SupprimerPointDeLivraisonCommande(Intersection intersection, controller.Controller controller, Stack pile) {
-        this.intersection = intersection;
-        this.controller = controller;
-        this.pile = pile;
+
+    public SupprimerPointDeLivraisonCommande(View view, Pane pane, VBox deliveryInfoVBox) {
+        this.view = view;
+        this.pane = pane;
+        this.deliveryInfoVBox = deliveryInfoVBox;
+
     }
 
-    @Override
-    public void doCommande() {
-        // Effectuer la suppression du point de livraison
-        controller.getView().supprimerPointDeLivraison(intersection, controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel());
-        System.out.println("Point de livraison supprimé.");
-        pile.push(this);
+    public void redoCommande(Intersection intersection, Label label) {
+
+        // Supprimer le point de livraison via View
+        view.supprimerPointDeLivraison(intersection, pane, deliveryInfoVBox, label);
     }
 
-    @Override
     public void undoCommande() {
-        System.out.println("Action A exécutée dans l'état d'accueil.");
-    }
+        if (!view.getIntersectionsSupprimees().isEmpty() && !view.getLabelsSupprimes().isEmpty()) {
+            // Retirer le dernier point de livraison supprimé des piles pour le réafficher
+            Intersection intersectionARestaurer = view.getIntersectionsSupprimees().pop();
+            Label labelARestaurer = view.getLabelsSupprimes().pop();
 
+            view.reafficherPointDeLivraison(intersectionARestaurer, pane, deliveryInfoVBox, labelARestaurer);
+        }
+    }
     // Pas de surcharge de handleActionB ou handleActionC car elles ne sont pas disponibles dans cet état
 }

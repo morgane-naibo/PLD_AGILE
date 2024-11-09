@@ -1,6 +1,8 @@
 package controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -35,6 +37,7 @@ import util.XMLPlan;
 import util.XMLDemande;
 import model.Demande;
 import model.Entrepot;
+import model.Etape;
 import view.View;
 
 
@@ -75,6 +78,12 @@ public class Controller {
 
     @FXML
     private Pane mapPane;
+
+    @FXML
+    private Button undoButton;
+
+    @FXML
+    private Button redoButton;
 
 
     private View view;
@@ -211,6 +220,14 @@ public class Controller {
         return etat;
     }
 
+    public Button getUndoButton() {
+        return undoButton;
+    }
+
+    public Button getRedoButton() {
+        return redoButton;
+    }
+
 
 // Gestionnaire d'événements pour le clic de souris
 private void handleMousePressed(MouseEvent event) {
@@ -302,6 +319,21 @@ private void handleMouseDragged(MouseEvent event) {
 
     }
 
+    @FXML
+    public void undo() {
+        Commande commande = new SupprimerPointDeLivraisonCommande(view, mapPane, deliveryInfoVBox);
+        commande.undoCommande();
+        System.out.println(etat);
+
+    }
+
+    @FXML
+    public void redo() {
+        Commande commande = new SupprimerPointDeLivraisonCommande(view, mapPane, deliveryInfoVBox);
+        commande.redoCommande();
+        System.out.println(etat);
+    }
+
 
     private void handleZoom(double deltaY) {
         double zoomFactor = 1.05;
@@ -354,6 +386,39 @@ private void handleMouseDragged(MouseEvent event) {
             mapPane.setTranslateY(0);
         } else if (mapPane.getTranslateY() < containerHeight - mapHeight) {
             mapPane.setTranslateY(containerHeight - mapHeight);
+        }
+    }
+
+
+    public void recalculerTournee() {
+        if (view.isTourneeCalculee()) {
+            List<PointDeLivraison> pointsRestants = this.getDemande().getListePointDeLivraison();
+            List<Etape> nouvellesEtapes = new ArrayList<>();
+
+            // Définir l'intersection d'origine comme étant celle de l'entrepôt
+            Intersection origine = plan.chercherIntersectionParId(view.getEntrepot().getId());
+
+            // Recalculer chaque étape de la tournée
+            for (PointDeLivraison pdl : pointsRestants) {
+                Intersection destination = plan.chercherIntersectionParId(pdl.getId());
+                if (destination != null) {
+                    Etape etape = plan.chercherPlusCourtChemin(origine, destination);
+                    nouvellesEtapes.add(etape);
+                    origine = destination; // Met à jour l'origine pour la prochaine étape
+                }
+            }
+
+            // Si l'entrepôt existe, ajouter l'étape finale pour le retour à l'entrepôt
+            if (view.isEntrepotExiste()) {
+                Etape retourEntrepot = plan.chercherPlusCourtChemin(origine, plan.chercherIntersectionParId(view.getEntrepot().getId()));
+                nouvellesEtapes.add(retourEntrepot);
+            }
+
+            // Mettre à jour la tournée avec les nouvelles étapes
+            view.getTournee().setListeEtapes(nouvellesEtapes);
+            
+            // Afficher la tournée mise à jour sur la carte
+            view.afficherTourneeSurCarte(nouvellesEtapes, mapPane);
         }
     }
  
