@@ -348,6 +348,8 @@ private void handleMouseDragged(MouseEvent event) {
             if (derniereCommande != null) {
                 System.out.println("Commande annulée : " + derniereCommande);  // Afficher la commande annulée
     
+                System.out.println("Intersection : " + derniereCommande.getIntersection());
+
                 // Annuler la commande
                 derniereCommande.undoCommande(); 
     

@@ -457,12 +457,12 @@ public class View {
     public void supprimerPointDeLivraison(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label, boolean addCommand) {
         // Remove the delivery point from the request
         this.demande.supprimerIntersection(inter);
-    
-        intersectionsSupprimees.push(inter);
-        labelsSupprimes.push(label);
+
     
         // Only add the command to the stack if the addCommand flag is true
         if (addCommand) {
+            intersectionsSupprimees.push(inter);
+            labelsSupprimes.push(label);
             SupprimerPointDeLivraisonCommande supprimerPointDeLivraisonCommande = new SupprimerPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, label);
             commandes.push(supprimerPointDeLivraisonCommande);
             derniereCommande = supprimerPointDeLivraisonCommande;

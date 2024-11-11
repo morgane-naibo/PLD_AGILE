@@ -35,8 +35,10 @@ public class SupprimerPointDeLivraisonCommande extends Commande {
     public void undoCommande() {
         if (!view.getIntersectionsSupprimees().isEmpty() && !view.getLabelsSupprimes().isEmpty()) {
             // Retirer le dernier point de livraison supprimé des piles pour le réafficher
-            Intersection intersectionARestaurer = view.getIntersectionsSupprimees().pop();
-            Label labelARestaurer = view.getLabelsSupprimes().pop();
+            Intersection intersectionARestaurer = view.getIntersectionsSupprimees().peek();
+            view.getIntersectionsSupprimees().remove(intersectionARestaurer);
+            Label labelARestaurer = view.getLabelsSupprimes().peek();
+            view.getLabelsSupprimes().remove(labelARestaurer);
 
             view.reafficherPointDeLivraison(intersectionARestaurer, pane, deliveryInfoVBox, labelARestaurer);
         }
