@@ -327,47 +327,85 @@ private void handleMouseDragged(MouseEvent event) {
     public void handleFileButton() {
         etat.handleFileButton();
         System.out.println(etat);
-
     }  
 
     @FXML
     public void calculerChemin() {
         etat.calculerChemin();
         System.out.println(etat);
-
     }
 
     @FXML
     public void undo() {
-        Commande derniereCommande = view.getCommandes().peek(); // Obtenez la dernière commande
-
-        if (derniereCommande != null) {
-            derniereCommande.undoCommande(); // Annulez la commande
-
-            // Retirez la commande annulée de la pile
-            view.getCommandes().pop();
-
-            // Mettez à jour la dernière commande, si la pile n'est pas vide
-            /*if (!view.getCommandes().isEmpty()) {
-                view.setDerniereCommande(view.getCommandes().peek());
+        // Vérifiez si la pile des commandes n'est pas vide
+        if (!view.commandes.isEmpty()) {
+            Commande derniereCommande = view.commandes.peek(); // Obtenez la dernière commande
+    
+            // Afficher l'état de la pile pour le débogage
+            System.out.println("Commandes avant undo : " + view.commandes);
+    
+            // Vérifiez que la commande est bien présente dans la pile
+            if (derniereCommande != null) {
+                System.out.println("Commande annulée : " + derniereCommande);  // Afficher la commande annulée
+    
+                // Annuler la commande
+                derniereCommande.undoCommande(); 
+    
+                // Retirer la commande annulée de la pile
+                view.commandes.remove(derniereCommande); 
+    
+                // Ajouter la commande annulée dans la pile des commandes annulées pour un éventuel redo
+                // Vérifiez que la commande n'est pas déjà dans la pile des commandes annulées pour éviter les doublons
+                if (!view.getCommandesAnnulees().contains(derniereCommande)) {
+                    view.getCommandesAnnulees().push(derniereCommande);
+                }
+    
+                // Mettre à jour la dernière commande si la pile de commandes n'est pas vide
+                if (!view.commandes.isEmpty()) {
+                    view.setDerniereCommande(view.commandes.peek());
+                } else {
+                    view.setDerniereCommande(null); // Pas de commande restante
+                }
+    
+                // Afficher l'état des piles après l'annulation
+                System.out.println("Commandes après undo : " + view.commandes);
+                System.out.println("Commandes annulées après undo : " + view.getCommandesAnnulees());
             } else {
-                view.setDerniereCommande(null); // Pas de commande restante
-            }*/
-            for (Commande commandes : view.getCommandes()) {
-                System.out.println(commandes);
+                System.out.println("Aucune commande à annuler.");
             }
-            System.out.println("Commande annulée : " + derniereCommande);
-            System.out.println("État après annulation : " + etat);
         } else {
             System.out.println("Aucune commande à annuler.");
         }
     }
 
-    @FXML
-    public void redo() {
-        System.out.println(etat);
-    }
 
+    @FXML
+public void redo() {
+    // Vérifiez s'il y a des commandes annulées pouvant être rejouées
+    if (!view.getCommandesAnnulees().isEmpty()) {
+        // Récupérez la dernière commande annulée
+        Commande derniereCommandeAnnulee = view.getCommandesAnnulees().pop();
+
+        System.out.println("Dernière commande annulée : " + derniereCommandeAnnulee);
+
+        // Utilisez les attributs Intersection et Label de la commande
+        Intersection intersection = derniereCommandeAnnulee.getIntersection(); // méthode à ajouter dans Commande
+        Label label = derniereCommandeAnnulee.getLabel(); // méthode à ajouter dans Commande
+
+        // Rejouez la commande avec les arguments requis
+        derniereCommandeAnnulee.redoCommande(intersection, label);
+
+        // Remettez la commande dans la pile des commandes effectuées
+        view.getCommandes().push(derniereCommandeAnnulee);
+
+        // Mettez à jour la dernière commande
+        view.setDerniereCommande(derniereCommandeAnnulee);
+
+        System.out.println("Commande rejouée : " + derniereCommandeAnnulee);
+    } else {
+        System.out.println("Aucune commande à rejouer.");
+    }
+}
 
     private void handleZoom(double deltaY) {
         double zoomFactor = 1.05;
@@ -420,39 +458,6 @@ private void handleMouseDragged(MouseEvent event) {
             mapPane.setTranslateY(0);
         } else if (mapPane.getTranslateY() < containerHeight - mapHeight) {
             mapPane.setTranslateY(containerHeight - mapHeight);
-        }
-    }
-
-
-    public void recalculerTournee() {
-        if (view.isTourneeCalculee()) {
-            List<PointDeLivraison> pointsRestants = this.getDemande().getListePointDeLivraison();
-            List<Etape> nouvellesEtapes = new ArrayList<>();
-
-            // Définir l'intersection d'origine comme étant celle de l'entrepôt
-            Intersection origine = plan.chercherIntersectionParId(view.getEntrepot().getId());
-
-            // Recalculer chaque étape de la tournée
-            for (PointDeLivraison pdl : pointsRestants) {
-                Intersection destination = plan.chercherIntersectionParId(pdl.getId());
-                if (destination != null) {
-                    Etape etape = plan.chercherPlusCourtChemin(origine, destination);
-                    nouvellesEtapes.add(etape);
-                    origine = destination; // Met à jour l'origine pour la prochaine étape
-                }
-            }
-
-            // Si l'entrepôt existe, ajouter l'étape finale pour le retour à l'entrepôt
-            if (view.isEntrepotExiste()) {
-                Etape retourEntrepot = plan.chercherPlusCourtChemin(origine, plan.chercherIntersectionParId(view.getEntrepot().getId()));
-                nouvellesEtapes.add(retourEntrepot);
-            }
-
-            // Mettre à jour la tournée avec les nouvelles étapes
-            view.getTournee().setListeEtapes(nouvellesEtapes);
-            
-            // Afficher la tournée mise à jour sur la carte
-            view.afficherTourneeSurCarte(nouvellesEtapes, mapPane);
         }
     }
  

@@ -12,11 +12,9 @@ public class AjouterPointDeLivraisonCommande extends Commande {
     private final View view;
     private final Pane pane;
     private final VBox deliveryInfoVBox;
-    private Stack<Intersection> intersectionsAjoutees = new Stack<>();
-    private Stack<Label> labelsAjoutes = new Stack<>();
 
-
-    public AjouterPointDeLivraisonCommande(View view, Pane pane, VBox deliveryInfoVBox) {
+    public AjouterPointDeLivraisonCommande(View view, Pane pane, VBox deliveryInfoVBox, Intersection intersection, Label label) {
+        super(intersection, label);
         this.view = view;
         this.pane = pane;
         this.deliveryInfoVBox = deliveryInfoVBox;
@@ -24,8 +22,8 @@ public class AjouterPointDeLivraisonCommande extends Commande {
 
     @Override
     public void redoCommande(Intersection intersection, Label label) {
-        intersectionsAjoutees.push(intersection);
-        labelsAjoutes.push(label);
+        view.getIntersectionsAjoutees().push(this.getIntersection());
+        view.getLabelsAjoutes().push(this.getLabel());
         view.reafficherPointDeLivraison(intersection, pane, deliveryInfoVBox, label);
     }
 
@@ -34,7 +32,7 @@ public class AjouterPointDeLivraisonCommande extends Commande {
         if (!view.getIntersectionsAjoutees().isEmpty() && !view.getLabelsAjoutes().isEmpty()) {
             Intersection intersectionASupprimer = view.getIntersectionsAjoutees().pop();
             Label labelARestaurer = view.getLabelsAjoutes().pop();
-            view.supprimerPointDeLivraison(intersectionASupprimer, pane, deliveryInfoVBox, labelARestaurer);
+            view.supprimerPointDeLivraison(intersectionASupprimer, pane, deliveryInfoVBox, labelARestaurer, false);
         }
     }
 
