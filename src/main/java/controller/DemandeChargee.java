@@ -9,6 +9,7 @@ import model.Trajet;
 import tsp.RunTSP;
 import util.XMLDemande;
 import util.XMLPlan;
+import javafx.scene.control.Label;
 
 public class DemandeChargee extends Etat {
     public DemandeChargee(Controller controller) {
@@ -22,8 +23,9 @@ public class DemandeChargee extends Etat {
         view.demande.creerClusters();
         RunTSP run = new RunTSP();
         for (int i=0; i<view.demande.getNbLivreurs(); i++) {
+            //controller.getDeliveryInfoVBox().getChildren().add(new Label("Livreur " + (i+1) + ":"));
             Trajet trajet = run.calculerTSP(view.demande.getListeMatriceAdjacence().get(i));
-            view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajet);
+            view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajet, i);
         }
         controller.setEtat(new TourneeAffichee(controller));
         controller.getCalculerChemin().setVisible(false);

@@ -26,7 +26,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.Group;
 import javafx.scene.layout.BorderPane;
-
+import javafx.scene.layout.HBox;
 import model.Intersection;
 import model.Livraison;
 import model.Plan;
@@ -87,6 +87,8 @@ public class Controller {
     @FXML
     private Button redoButton;
 
+    @FXML
+    private HBox hboxUndoRedo;
 
     private View view;
 
@@ -108,8 +110,6 @@ public class Controller {
     private static final double MAX_X = 550; // Remplacez par la limite maximale souhaitée pour X
     private static final double MAX_Y = 600; // Remplacez par la limite maximale souhaitée pour Y
 
-    private Stack<Commande> commandes = new Stack<>();
-    private Commande derniereCommande;
 
     private Etat etat;
 
@@ -234,16 +234,8 @@ public class Controller {
         return redoButton;
     }
 
-    public Stack<Commande> getCommandes() {
-        return commandes;
-    }
-
-    public void setCommandes(Stack<Commande> commandes) {
-        this.commandes = commandes;
-    }
-
-    public Commande getDerniereCommande() {
-        return derniereCommande;
+    public HBox getHboxUndoRedo() {
+        return hboxUndoRedo;
     }
 
 
@@ -332,6 +324,8 @@ private void handleMouseDragged(MouseEvent event) {
     @FXML
     public void calculerChemin() {
         etat.calculerChemin();
+        undoButton.setVisible(true);
+        redoButton.setVisible(true);
         System.out.println(etat);
     }
 

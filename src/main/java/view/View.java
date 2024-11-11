@@ -25,8 +25,13 @@ import model.Demande;
 import model.Entrepot;
 import model.Etape;
 
+import javafx.scene.paint.Color;
+import java.util.Random;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -75,9 +80,13 @@ public class View {
 
     public Commande derniereCommande;
 
+    private Map<Integer, Color> livreurCouleurs = new HashMap<>();
+
     public Stack<Commande> commandes = new Stack<>();
 
     Stack<Commande> commandesAnnulees = new Stack<>(); 
+
+    private int livreur = 0;
 
     public boolean isEntrepotExiste() {
         return entrepotExiste;
@@ -145,6 +154,10 @@ public class View {
 
     public void setDerniereCommande(Commande derniereCommande) {
         this.derniereCommande = derniereCommande;
+    }
+
+    public int getLivreur() {
+        return livreur;
     }
 
     public void fileChooser() {
@@ -507,7 +520,7 @@ public class View {
     
                 // Update the tour with the new steps and display it
                 tournee.setListeEtapes(nouvellesEtapes);
-                afficherTourneeSurCarte(nouvellesEtapes, pane);
+                afficherTourneeSurCarte(nouvellesEtapes, pane, livreur);
             }
         }
     }
@@ -557,7 +570,7 @@ public class View {
 
                 // 3. Mettre à jour la tournée avec les nouvelles étapes et l'afficher
                 tournee.setListeEtapes(nouvellesEtapes);
-                afficherTourneeSurCarte(nouvellesEtapes, pane);
+                afficherTourneeSurCarte(nouvellesEtapes, pane, livreur);
             }
         
 
@@ -577,13 +590,29 @@ public class View {
         return latMax - (y / paneHeight * (latMax - latMin));
     }
 
-    public void calculerChemin(Pane pane, VBox deliveryInfoVBox, Trajet trajet) {
+    public void calculerChemin(Pane pane, VBox deliveryInfoVBox, Trajet trajet, int livreur) {
+        System.out.println("Calculer chemin");
         tourneeCalculee = true;
         this.tournee = new Tournee(trajet.getListeEtapes(), null);
         this.demande.setPlan(this.plan);
         this.demande.initialiserMatriceAdjacence();
         this.demande.creerClusters();
+        this.livreur = livreur;
 
+        Color color;
+        if (!livreurCouleurs.containsKey(livreur)) {
+            double hue = (livreur * 60) % 360; // Espacement de 60 degrés entre chaque couleur
+            color = Color.hsb(hue, 0.7, 0.8);
+            livreurCouleurs.put(livreur, color);
+        } else {
+            color = livreurCouleurs.get(livreur);
+        }
+
+        Label livreurLabel = new Label("Livreur " + (livreur + 1) + ":");
+        livreurLabel.setOnMouseClicked(event -> {
+            afficherTourneeSurCarte(trajet.getListeEtapes(), pane, livreur);
+        });
+        deliveryInfoVBox.getChildren().add(livreurLabel);
 
         // Afficher le chemin
         for (Etape etape : trajet.getListeEtapes()) {
@@ -595,17 +624,27 @@ public class View {
 
                 Line line = new Line(startX, startY, endX, endY);
                 line.setStrokeWidth(5);
-                line.setStroke(Color.DODGERBLUE);
+                line.setStroke(color);
                 pane.getChildren().add(line);
+
+                Label label = new Label("Troncon: " + troncon.getNomRue());
+                boolean labelExists = deliveryInfoVBox.getChildren().stream()
+                    .filter(node -> node instanceof Label)
+                    .map(node -> (Label) node)
+                    .anyMatch(existingLabel -> existingLabel.getText().equals(label.getText()));
+                if (!labelExists) {
+                    deliveryInfoVBox.getChildren().add(label);
+                }
+
             }
         }
         
     }
 
 
-public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane) {
+public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, int livreur) {
     // Supprime les anciens tracés de la tournée du plan
-    pane.getChildren().removeIf(node -> node instanceof Line && ((Line) node).getStroke() == Color.DODGERBLUE);
+    pane.getChildren().removeIf(node -> node instanceof Line && ((Line) node).getStroke() != livreurCouleurs.get(livreur) && ((Line) node).getStroke() != Color.GRAY);
 
     // Ajoute les nouvelles lignes de la tournée
     for (Etape etape : etapes) {
@@ -617,7 +656,7 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane) {
 
             Line line = new Line(startX, startY, endX, endY);
             line.setStrokeWidth(5);
-            line.setStroke(Color.DODGERBLUE);
+            line.setStroke(livreurCouleurs.get(livreur));
             pane.getChildren().add(line);
         }
     }

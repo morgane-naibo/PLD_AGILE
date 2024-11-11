@@ -21,7 +21,6 @@
     <top>
         <Label fx:id="messageLabel" visible="false" text="" prefHeight="50" styleClass="message-label"/>    
         <!--<Button fx:id="calculerChemin" text="calculer un chemin" onAction="#calculerChemin" prefHeight="50" />-->
-        <Button fx:id="undoButton" text="Annuler" styleClass="file-button" onAction="#undo" visible="true" layoutX="0"/>
     </top>
 
     <!-- Plan au centre -->
@@ -38,6 +37,8 @@
                     <Button fx:id="selectionnerPointButton" text="Sélectionner un point sur la carte" styleClass="file-button" onAction="#handleSelectButton" visible="false" layoutY="135"/>
                     <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan" visible="false" layoutY="175"/>
                     <Button fx:id="calculerChemin" text="Calculer un chemin" styleClass="file-button" onAction="#calculerChemin" visible="false" layoutY="500" layoutX="250"/>
+                    <Button fx:id="undoButton" text="Annuler" styleClass="file-button" onAction="#undo" visible="false" layoutY="550"  layoutX="0"/>
+                    <Button fx:id="redoButton" text="Refaire" styleClass="file-button" onAction="#redo" visible="false" layoutY="550" layoutX="100"/>
                 </children>
             </Pane>
         </ScrollPane>
@@ -52,7 +53,6 @@
    </right>
     
     <bottom>
-            <Button fx:id="redoButton" text="Refaire" styleClass="file-button" onAction="#redo" visible="true" layoutX="60"/>
     </bottom>
 
 

@@ -22,7 +22,7 @@ public class Demande {
         this.listePointDeLivraison = new ArrayList<PointDeLivraison>();
         this.matriceAdjacence = new ArrayList<List<Etape>>();
         this.tournee = new Trajet() ;
-        this.nbLivreurs = 2;
+        this.nbLivreurs = 3;
         this.listeMatriceAdjacence = new ArrayList<>(this.nbLivreurs);
         this.listesIndex = new ArrayList<>();
     }
