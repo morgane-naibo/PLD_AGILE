@@ -59,6 +59,10 @@ public class Demande {
         return this.plan;
     }
 
+    public ArrayList<ArrayList<Integer>> getListesIndex() {
+        return this.listesIndex;
+    }
+
     //setters
     public void setEntrepot(Entrepot newEntrepot) {
         this.entrepot = newEntrepot;
@@ -229,6 +233,10 @@ public class Demande {
 
     
     public void creerClusters(){
+        ArrayList<Integer> indexAAjouter = new ArrayList();
+        for (int i=1;i<this.matriceAdjacence.size();i++){
+            indexAAjouter.add(i);
+        }
         ArrayList<Etape> etapesVisitees = new ArrayList<>();
         
         for(int init = 0; init<this.listePointDeLivraison.size();init++){
@@ -261,7 +269,6 @@ public class Demande {
                     }
                 }
                 
-                // System.out.println(enCours.toString());
                 for (int l=0;l<this.listePointDeLivraison.size();l++){
                     if (this.listesIndex.get(l).contains(indexDepart)){
                         boolean test= true;
@@ -276,6 +283,7 @@ public class Demande {
                         }
                         if (test){
                             this.listesIndex.get(l).add(indexArrivee);
+                            indexAAjouter.remove(Integer.valueOf(indexArrivee));
                         }
                         break;
                     }
@@ -292,13 +300,15 @@ public class Demande {
                         }
                         if (test){
                             this.listesIndex.get(l).add(indexDepart);
-                           
+                            indexAAjouter.remove(Integer.valueOf(indexDepart));
                         }
                         break;
                     }
                     else if (this.listesIndex.get(l).isEmpty()){
                         this.listesIndex.get(l).add(indexDepart);
                         this.listesIndex.get(l).add(indexArrivee);
+                        indexAAjouter.remove(Integer.valueOf(indexArrivee));
+                        indexAAjouter.remove(Integer.valueOf(indexDepart));
                         
                         break;
                     }
@@ -310,6 +320,11 @@ public class Demande {
 
 
             }
+            for (int k =0; k<indexAAjouter.size();k++){
+                ArrayList<Integer> cluster = new ArrayList<>();
+                cluster.add(indexAAjouter.get(k));
+                this.listesIndex.set(this.nbLivreurs-k-1,cluster);
+            }
         }
         //Cas ou il y a moins de points de livraison que de livreurs
         else{
@@ -318,8 +333,6 @@ public class Demande {
             }
         }
 
-        
-        //System.out.println(matrixToString(this.listeMatriceAdjacence.get(0)));
     }
 
 
@@ -359,6 +372,7 @@ public class Demande {
     
     }
 
+
     public List<Trajet> calculerTSP(){
         List<Trajet> livraisons = new ArrayList<>(); 
         try {
@@ -378,13 +392,62 @@ public class Demande {
                 // }
             }
 
-
         } catch(Exception e){
             System.out.println("Erreur : "+ e.getMessage());
             e.printStackTrace();
         }
 
         return livraisons;
+    }
+
+    public void creerMatricesPourCluster(int nbLivreur) {
+        int clusterSize = this.listesIndex.get(nbLivreur).size() + 1;
+    
+        // Create rows for the matrix and initialize each element with null (Etape type)
+        List<List<Etape>> matrice = new ArrayList<>(clusterSize);
+        for (int j = 0; j < clusterSize; j++) {
+            matrice.add(new ArrayList<>(Collections.nCopies(clusterSize, null)));
+        }
+
+        // Populate the matrix with values from the original adjacency matrix
+        matrice.get(0).set(0, this.matriceAdjacence.get(0).get(0));
+        // Initialize the first row and first column of the matrix
+        for (int j = 1; j < clusterSize; j++) {
+            // Set the first row (0, j) from the original adjacency matrix
+            matrice.get(0).set(j, this.matriceAdjacence.get(0).get(this.listesIndex.get(nbLivreur).get(j - 1)));
+            
+            // Set the first column (j, 0) from the original adjacency matrix
+            matrice.get(j).set(0, this.matriceAdjacence.get(this.listesIndex.get(nbLivreur).get(j - 1)).get(0));
+        }
+
+        for (int j = 1; j < clusterSize; j++) {
+            
+            for (int k = 1; k < clusterSize; k++) {
+                matrice.get(j).set(k, this.matriceAdjacence.get(this.listesIndex.get(nbLivreur).get(j - 1)).get(this.listesIndex.get(nbLivreur).get(k - 1)));
+            }
+        }
+
+        this.listeMatriceAdjacence.set(nbLivreur, matrice);
+    
+    }
+
+    public void ajouterPDLaMatrice(int nbLivreur){
+        //avant d'appeler cette méthode il faut appeler la méthode ajouterPointDeLivraison pour que newPDL soit déjà pris en compte
+        PointDeLivraison newPDL = this.listePointDeLivraison.get(this.listePointDeLivraison.size() - 1);
+        this.matriceAdjacence.add(new ArrayList<>(Collections.nCopies(this.matriceAdjacence.size()+1, null)));
+        this.matriceAdjacence.get(this.matriceAdjacence.size()-1).set(0,this.plan.chercherPlusCourtChemin(newPDL, this.entrepot));
+        this.matriceAdjacence.get(0).add(null);
+        this.matriceAdjacence.get(0).set(this.matriceAdjacence.size()-1,this.plan.chercherPlusCourtChemin(this.entrepot, newPDL));
+        this.matriceAdjacence.get(this.matriceAdjacence.size()-1).set(this.matriceAdjacence.size()-1, null);
+
+        for(int i=1 ; i<this.matriceAdjacence.size()-1 ; i++){
+                this.matriceAdjacence.get(i).add(null);
+                this.matriceAdjacence.get(i).set(this.listePointDeLivraison.size(), (this.plan.chercherPlusCourtChemin(this.listePointDeLivraison.get(i), newPDL)));
+                this.matriceAdjacence.get(this.listePointDeLivraison.size()).set(i, this.plan.chercherPlusCourtChemin(newPDL, this.listePointDeLivraison.get(i)));
+        }
+
+        this.listesIndex.get(nbLivreur).add(this.listePointDeLivraison.size());
+        creerMatricesPourCluster(nbLivreur);
     }
 
     

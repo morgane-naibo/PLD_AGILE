@@ -7,7 +7,7 @@ public class PointDeLivraison extends Intersection{
     // Constructeur
     // Constructeur
     public PointDeLivraison(Long id, Livraison livraison) {
-        this.setId(id);;
+        this.setId(id);
         this.livraison=livraison;
         
     }
