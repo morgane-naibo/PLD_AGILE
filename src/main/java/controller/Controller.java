@@ -219,21 +219,6 @@ private void handleMousePressed(MouseEvent event) {
     initialMouseY = event.getSceneY();
     initialTranslateX = mapPane.getTranslateX();
     initialTranslateY = mapPane.getTranslateY();
-
-    // Ajustement initial pour rester dans les limites
-    if (initialTranslateX < MIN_X) {
-        mapPane.setTranslateX(MIN_X);
-    } 
-    else if (initialTranslateX > MAX_X) {
-        mapPane.setTranslateX(MAX_X);
-    }
-
-    if (initialTranslateY < MIN_Y) {
-        mapPane.setTranslateY(MIN_Y);
-    } 
-    else if (initialTranslateY > MAX_Y) {
-        mapPane.setTranslateY(MAX_Y);
-    }
 }
 
 private void handleMouseDragged(MouseEvent event) {
