@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import util.XMLDemande;
 import util.XMLPlan;
 import tsp.RunTSP;
+import java.lang.Exception;
+import exceptions.*;
 
 public class Main {
 
@@ -19,7 +21,10 @@ public class Main {
         demande = demandeReader.parse(mapPathDemande);
         demande.setPlan(plan);
         // System.out.println(demande);
+        demande.initialiserListePointdeLivraisons();
         demande.initialiserMatriceAdjacence();
+        System.out.println("AAAAAAAAAAAAAAAAAA\r\n");
+        System.out.println(demande.matrixToString(demande.getMatriceAdjacence()));
         //System.out.println(demande.getMatriceAdjacence());
         // System.out.println(demande.getListePointDeLivraison());
         // System.out.println("AHHHHHHHH");
@@ -31,9 +36,11 @@ public class Main {
         //System.out.print(plan);
         //System.out.print(demande);
         demande.creerClusters();
+        demande.creerMatricesParClusters();
+        //demande.calculerTSP();
 
         RunTSP run = new RunTSP();
-        run.calculerTSP(demande.getListeMatriceAdjacence().get(1));
+        run.calculerTSP(demande.getListeMatriceAdjacence().get(0));
         
     }
 

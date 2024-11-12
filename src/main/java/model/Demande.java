@@ -180,32 +180,15 @@ public class Demande {
     }
 
     public void verifierMatriceAdjacence() throws ImpasseErrorException {
-        boolean impasse = false;
         for (int i = 0; i<this.matriceAdjacence.size();i++){
-            int compteurDeNull = 0;
-            for (int j = 0; j<this.matriceAdjacence.size();j++){
+            for (int j = i+1; j<this.matriceAdjacence.size();j++){
                 if (this.matriceAdjacence.get(i).get(j) == null){
-                    compteurDeNull++;
+                    throw new ImpasseErrorException("Il y a une impasse à sens unique. On ne peut pas calculer d'itinéraire.");
                 }
-            }
-            if (compteurDeNull == this.matriceAdjacence.size()){
-                impasse = true;
-                break;
-            }
-
-            compteurDeNull=0;
-            for (int j = 0; j<this.matriceAdjacence.size();j++){
-                if (this.matriceAdjacence.get(j).get(i) == null){
-                    compteurDeNull++;
+                else if (this.matriceAdjacence.get(j).get(i) == null){
+                    throw new ImpasseErrorException("Il y a une impasse à sens unique. On ne peut pas calculer d'itinéraire.");
                 }
-            }
-            if (compteurDeNull == this.matriceAdjacence.size()){
-                impasse = true;
-                break;
-            }
-        }
-        if (impasse){
-            throw new ImpasseErrorException("Il y a une impasse à sens unique. On ne peut pas calculer d'itinéraire.");
+            }     
         }
     }
 
@@ -255,6 +238,7 @@ public class Demande {
                                 indexArrivee = j;
                             }
                         }
+                        //prendre les distances nulles comme distances max (comment ajouter à enCours??)
                     }
                 }
                 
@@ -356,8 +340,8 @@ public class Demande {
     
     }
 
-    public List<Tournee> calculerTSP(){
-        List<Tournee> livraisons = new ArrayList<>(); 
+    public List<Trajet> calculerTSP(){
+        List<Trajet> livraisons = new ArrayList<>(); 
         try {
             this.initialiserMatriceAdjacence();
             this.verifierMatriceAdjacence();
@@ -367,7 +351,7 @@ public class Demande {
             for (int i = 0; i<nbLivreurs;i++){
                 Trajet trajet = new Trajet();
                 trajet = run.calculerTSP(this.listeMatriceAdjacence.get(i));
-                double duree = trajet.calculerDureeTrajet();
+                livraisons.add(trajet);
                 //on a juste à afficher le temps des tournées et à signaler qu'une tournée est hors-temps, 
                 //c'est à l'utilisateur de modifier manuellement les tournées
                 // while (duree>9*60){
