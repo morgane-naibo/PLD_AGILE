@@ -8,7 +8,17 @@ public interface TSP {
 	 * @param limitTime
 	 * @param g
 	 */
-	public void searchSolution(int timeLimit, Graph g);
+	public BnBIntermediaire searchSolution(int timeLimit, Graph g);
+
+	/**
+	 * Search for a shortest cost hamiltonian circuit in <code>g</code> within <code>timeLimit</code> milliseconds starting the branch and bound from <code>BnBIntermediaire</code>
+	 * (returns the best found tour whenever the time limit is reached)
+	 * Warning: The computed tour always start from vertex 0
+	 * @param limitTime
+	 * @param g
+	 * @param intermediaire
+	 */
+	public BnBIntermediaire searchSolutionFromPrevious(int timeLimit, Graph g, BnBIntermediaire intermediaire);
 	
 	/**
 	 * @param i
