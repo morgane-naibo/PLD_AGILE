@@ -250,6 +250,7 @@ public class Demande {
                         //prendre les distances nulles comme distances max (comment ajouter à enCours??)
                     }
                 }
+                //System.out.println("distance entre"+indexDepart+ "et " + indexArrivee + "distance : "+ distanceMin);
                 
                 for (int l=0;l<this.listePointDeLivraison.size();l++){
                     if (this.listesIndex.get(l).contains(indexDepart)){
@@ -258,9 +259,7 @@ public class Demande {
                             if (this.listesIndex.get(p).contains(indexArrivee)){
                                 
                                 this.listesIndex.get(l).addAll(this.listesIndex.get(p));
-                                System.out.println("taille de L avant clear"+this.listesIndex.get(l).size());
                                 this.listesIndex.get(p).removeAll(this.listesIndex.get(p));
-                                System.out.println("taille de L apres clear"+this.listesIndex.get(l).size());
                                 test = false;
                                 break;
                             }
@@ -298,9 +297,27 @@ public class Demande {
                     }
                     
                 }
-                //On rajoute l'etape à la liste des visitées pour ne pas la prendre en compte plus tard
+                //On rajoute l'etape à la liste des visitées pour ne pas la prendre en compte plus tard, et toutes les etapes entre des points qui existent deja dans les clusters
                 etapesVisitees.add(enCours);
                 etapesVisitees.add(opposee);
+                for (int l=0;l<this.listesIndex.size();l++){
+                    //System.out.println(this.listesIndex.size());
+                    if (!listesIndex.get(l).isEmpty()){
+                        for (int k= 0; k<this.listesIndex.get(l).size();k++){
+                            for (int t= 0; t<this.listesIndex.get(l).size();t++){
+                                Etape test = this.matriceAdjacence.get(this.listesIndex.get(l).get(k)).get(this.listesIndex.get(l).get(t));
+                                Etape test2 = this.matriceAdjacence.get(this.listesIndex.get(l).get(t)).get(this.listesIndex.get(l).get(k));
+                                if (!(etapesVisitees.contains(test))){
+                                    etapesVisitees.add(test);
+                                }
+                                if (!(etapesVisitees.contains(test2))){
+                                    etapesVisitees.add(test2);
+                                }
+                            }
+                        }
+                    }
+                    
+                }
 
 
             }
