@@ -11,7 +11,7 @@ import exceptions.*;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IDIntersectionException{
         String mapPathPlan = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
         String mapPathDemande = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testDemande.xml";
         XMLPlan planReader = new XMLPlan();
@@ -41,6 +41,29 @@ public class Main {
 
         RunTSP run = new RunTSP();
         run.calculerTSP(demande.getListeMatriceAdjacence().get(0));
+        try{
+            Intersection inter = plan.chercherIntersectionParId(7);
+            PointDeLivraison newPDL = new PointDeLivraison(inter.getId(), null);
+            newPDL.setLatitude(inter.getLatitude());
+            newPDL.setLongitude(inter.getLongitude());
+            newPDL.setNumero(inter.getNumero());
+            demande.ajouterPointDeLivraison(newPDL);
+            demande.ajouterPDLaMatrice(0);
+            System.out.println(demande.matrixToString(demande.getMatriceAdjacence()));
+            System.out.println("AAAAAHHHHHHHHHHHHH");
+            System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(0)));
+            System.out.println("IIIIIIIIIIHHHHHHHHHHHHH");
+            System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(1)));
+        } catch (IDIntersectionException e){
+            e.printStackTrace();
+        }
+        
+
+        // if (run.getTimeLimit()==1){
+        //     System.out.println("Time Limit atteint");
+        //     run.calculerTSPApresTimeLimit(demande.getListeMatriceAdjacence().get(0))
+        // }
+
         
     }
 
