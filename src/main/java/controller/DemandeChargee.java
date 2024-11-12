@@ -26,7 +26,6 @@ public class DemandeChargee extends Etat {
         // view.demande.creerClusters();
         // RunTSP run = new RunTSP();
         for (int i = 0; i < trajets.size(); i++) {
-            //controller.getDeliveryInfoVBox().getChildren().add(new Label("Livreur " + (i+1) + ":"));
             view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajets.get(i), i, controller.getMessageLabel());
         }
         controller.setEtat(new TourneeAffichee(controller));

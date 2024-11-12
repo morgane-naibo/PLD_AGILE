@@ -11,6 +11,10 @@ public class Tournee extends Trajet{
         this.livreur = livreur;
     }
 
+    public void setListeEtapes(List<Etape> newListeEtapes) {
+        this.listeEtapes = newListeEtapes;
+    }
+
     //getters
     public Livreur getLivreur() {
         return this.livreur;

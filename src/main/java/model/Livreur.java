@@ -1,20 +1,20 @@
 package model;
 
 public class Livreur {
-    private Long id;
+    private int id;
 
     // Constructeur
-    public Livreur(Long id) {
+    public Livreur(int id) {
         this.id=id;
     }
 
     //getter
-    public long getId() {
+    public int getId() {
         return this.id;
     }
 
     //setter
-    public void setId(long newId) {
+    public void setId(int newId) {
         this.id = newId;
     }
 

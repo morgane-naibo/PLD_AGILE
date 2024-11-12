@@ -31,6 +31,7 @@ import java.util.Random;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +42,7 @@ import javafx.scene.layout.BorderPane;
 import model.Trajet;
 import model.Tournee;
 import controller.*;
+import model.Livreur;
 
 import exceptions.IDIntersectionException;
 
@@ -67,8 +69,6 @@ public class View {
 
     public Demande demande;
 
-    private Tournee tournee;
-
     private Scale scale = new Scale(1.0, 1.0, 0, 0); // Zoom initial à 1 (100%)
 
     private Stack<Intersection> intersectionsSupprimees = new Stack<>();
@@ -85,13 +85,15 @@ public class View {
 
     private Map<Integer, Color> livreurCouleurs = new HashMap<>();
 
-    private Map<Integer, Trajet> trajets = new HashMap<>();
-
     public Stack<Commande> commandes = new Stack<>();
 
     Stack<Commande> commandesAnnulees = new Stack<>(); 
 
-    private int livreur = 0;
+    private List<Livreur> livreurs = new ArrayList<>();
+
+    private Livreur livreurSelectionne;
+
+    private List<Tournee> tournees = new ArrayList<>();
 
     public boolean isEntrepotExiste() {
         return entrepotExiste;
@@ -107,14 +109,6 @@ public class View {
 
     public void setTourneeCalculee(boolean tourneeCalculee) {
         this.tourneeCalculee = tourneeCalculee;
-    }
-
-    public Tournee getTournee() {
-        return tournee;
-    }
-
-    public void setTournee(Tournee tournee) {
-        this.tournee = tournee;
     }
 
     public Entrepot getEntrepot() {
@@ -161,13 +155,14 @@ public class View {
         this.derniereCommande = derniereCommande;
     }
 
-    public int getLivreur() {
-        return livreur;
+    public List<Livreur> getLivreurs() {
+        return livreurs;
     }
 
-    public HashMap<Integer, Trajet> getTrajets() {
-        return (HashMap<Integer, Trajet>) trajets;
+    public Livreur getLivreurSelectionne() {
+        return livreurSelectionne;
     }
+
 
     public void fileChooser() {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -335,9 +330,11 @@ public class View {
                 AjouterPointDeLivraisonCommande ajouterPointDeLivraisonCommande = new AjouterPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, pdLabel);
                 commandes.push(ajouterPointDeLivraisonCommande);
                 derniereCommande = ajouterPointDeLivraisonCommande;
+                //this.demande.ajouterPointDeLivraison(pdl);
+                this.demande.ajouterPDLaMatrice(livreurSelectionne.getId());
                 //System.out.println(commandes);
                 //System.out.println(ajouterPointDeLivraisonCommande.getIntersection());
-                reafficherTournee(pane, deliveryInfoVBox, livreur);
+                reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
             }
         } catch (IDIntersectionException e) {
             e.printStackTrace();
@@ -443,7 +440,7 @@ public class View {
 
         // Bouton pour fermer la pop-up
         Button deleteButton = new Button("Supprimer");
-        deleteButton.setOnAction (e ->  { supprimerPointDeLivraison(inter, pane, deliveryInfoVBox, pdlLabel, true, -1);
+        deleteButton.setOnAction (e ->  { supprimerPointDeLivraison(inter, pane, deliveryInfoVBox, pdlLabel, true, null);
             popup.hide();
             popupOuverte = false;
         });
@@ -487,7 +484,7 @@ public class View {
         popup.show(pane.getScene().getWindow());
     }
 
-    public void supprimerPointDeLivraison(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label, boolean addCommand, int livreur) {
+    public void supprimerPointDeLivraison(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label, boolean addCommand, Livreur livreur) {
         // Remove the delivery point from the request
         this.demande.supprimerIntersection(inter);
 
@@ -516,13 +513,11 @@ public class View {
             deliveryInfoVBox.getChildren().remove(label);
     
             if (tourneeCalculee) {
-                List<Etape> etapes = this.trajets.get(livreur).getListeEtapes();
-                System.out.println("etapes : "  + etapes);
+                List<Etape> etapes = this.tournees.stream().filter(t -> t.getLivreur().getId() == livreur.getId()).findFirst().get().getListeEtapes();
                 List<PointDeLivraison> pointsRestants = demande.getListePointDeLivraison();
 
                 for (int i = 0; i < etapes.size(); i++) {
                     Etape etape = etapes.get(i);
-                    System.out.println("etape : " + etape);
                     Intersection intersection = etape.getArrivee();
                     PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), new Livraison(0, intersection.getId(), 5.0, 5.0));
                     //pointsRestants.add(pdl);
@@ -565,13 +560,13 @@ public class View {
                 }
     
                 // Update the tour with the new steps and display it
-                tournee.setListeEtapes(nouvellesEtapes);
+                tournees.get((int)livreurSelectionne.getId()).setListeEtapes(nouvellesEtapes);
                 afficherTourneeSurCarte(nouvellesEtapes, pane, livreur);
             }
         }
     }
 
-    public void reafficherPointDeLivraison(Intersection intersection, Pane pane, VBox deliveryInfoVBox, Label label, int livreur) {
+    public void reafficherPointDeLivraison(Intersection intersection, Pane pane, VBox deliveryInfoVBox, Label label, Livreur livreur) {
         // Recréer le cercle représentant le point de livraison
         double x = longitudeToX(intersection.getLongitude());
         double y = latitudeToY(intersection.getLatitude());
@@ -584,6 +579,7 @@ public class View {
 
         PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), new Livraison(0, intersection.getId(), 5.0, 5.0));
         this.demande.ajouterPointDeLivraison(pdl);
+        this.demande.ajouterPDLaMatrice(livreur.getId());
 
         // Réassocier le clic sur le cercle à la suppression du point de livraison  
         circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
@@ -591,50 +587,69 @@ public class View {
         reafficherTournee(pane, deliveryInfoVBox, livreur);
     }
 
-    public void reafficherTournee(Pane pane, VBox deliveryInfoVBox, int livreur) {
-        List<PointDeLivraison> pointsRestants = demande.getListePointDeLivraison();
-        List<Etape> nouvellesEtapes = new ArrayList<>();
+    public void reafficherTournee(Pane pane, VBox deliveryInfoVBox, Livreur livreur) {
+        // Récupérer la tournée associée au livreur sélectionné
+        Tournee tournee = tournees.get((int) livreur.getId());
+    
+        // Obtenir la liste des points de livraison à partir des étapes de la tournée
+        List<PointDeLivraison> pointsRestants = tournee.getListeEtapes().stream()
+            .map(etape -> new PointDeLivraison(etape.getArrivee().getId(), new Livraison(0, etape.getArrivee().getId(), 5.0, 5.0)))
+            .collect(Collectors.toList());
 
+        System.out.println("pointsRestants : " + pointsRestants);
+        
+        List<Etape> nouvellesEtapes = new ArrayList<>();
+        
         // Définir l'intersection d'origine comme étant celle de l'entrepôt
         Intersection origine;
         try {
-             origine = plan.chercherIntersectionParId(entrepot.getId());
+            origine = plan.chercherIntersectionParId(entrepot.getId());
         } catch (IDIntersectionException e) {
-             e.printStackTrace();
-             return;
+            e.printStackTrace();
+            return;
         }
-
+    
         // Pour chaque point restant, recalculer le chemin optimal depuis l'origine et mettre à jour l'origine à chaque itération
-        for (PointDeLivraison pdl2 : pointsRestants) {
+        for (PointDeLivraison pdl : pointsRestants) {
             try {
-                Intersection destination = plan.chercherIntersectionParId(pdl2.getId());
+                Intersection destination = plan.chercherIntersectionParId(pdl.getId());
                 if (destination != null) {
                     Etape etape = plan.chercherPlusCourtChemin(origine, destination);
-                    nouvellesEtapes.add(etape);
-                    origine = destination; // Met à jour l'origine pour la prochaine étape
+                    if (etape != null) {
+                        nouvellesEtapes.add(etape);
+                        origine = destination; // Mise à jour de l'origine pour la prochaine étape
+                    }
                 }
             } catch (IDIntersectionException e) {
                 e.printStackTrace();
             }
         }
-
-        // Si l'entrepôt existe, ajouter l'étape finale pour le retour à l'entrepôt
+    
+        // Ajouter l'étape finale pour le retour à l'entrepôt
         if (entrepotExiste) {
             try {
-                Intersection destination = plan.chercherIntersectionParId(entrepot.getId());
-                if (destination != null) {
-                    Etape retourEntrepot = plan.chercherPlusCourtChemin(origine, destination);
+                Etape retourEntrepot = plan.chercherPlusCourtChemin(origine, plan.chercherIntersectionParId(entrepot.getId()));
+                if (retourEntrepot != null) {
                     nouvellesEtapes.add(retourEntrepot);
                 }
             } catch (IDIntersectionException e) {
                 e.printStackTrace();
             }
         }
+    
+        // Filtrer les étapes non nulles
+        nouvellesEtapes = nouvellesEtapes.stream()
+            .filter(etape -> etape != null)
+            .collect(Collectors.toList());
+    
+        // Mettre à jour la tournée avec les nouvelles étapes
+        tournee.setListeEtapes(nouvellesEtapes);
 
-                // 3. Mettre à jour la tournée avec les nouvelles étapes et l'afficher
-                tournee.setListeEtapes(nouvellesEtapes);
-                afficherTourneeSurCarte(nouvellesEtapes, pane, livreur);
-            }
+        System.out.println("nouvellesEtapes : " + nouvellesEtapes);
+    
+        // Afficher la tournée mise à jour
+        afficherTourneeSurCarte(nouvellesEtapes, pane, livreur);
+    }
         
 
     private double latitudeToY(double latitude) {
@@ -653,37 +668,33 @@ public class View {
         return latMax - (y / paneHeight * (latMax - latMin));
     }
 
-    public void calculerChemin(Pane pane, VBox deliveryInfoVBox, Trajet trajet, int livreur, Label messageLabel) {
+    public void calculerChemin(Pane pane, VBox deliveryInfoVBox, Trajet trajet, int livreurId, Label messageLabel) {
         messageLabel.setText("Selectionnez une tournée pour la modifier.");
         
-        System.out.println("Calculer chemin");
+        Set<String> tronconsAffiches = new HashSet<>();
+
+        Livreur livreur = new Livreur(livreurId);
+        livreurs.add(livreur);
+
         tourneeCalculee = true;
-        this.tournee = new Tournee(trajet.getListeEtapes(), null);
+        Tournee tournee = new Tournee(trajet.getListeEtapes(), livreur);
+        tournees.add(tournee);
         this.demande.setPlan(this.plan);
-        this.livreur = livreur;
 
         Color color;
-        if (!livreurCouleurs.containsKey(livreur)) {
-            double hue = (livreur * 60) % 360; // Espacement de 60 degrés entre chaque couleur
+        if (!livreurCouleurs.containsKey(livreur.getId())) {
+            double hue = (livreur.getId() * 60) % 360; // Espacement de 60 degrés entre chaque couleur
             color = Color.hsb(hue, 0.7, 0.8);
-            livreurCouleurs.put(livreur, color);
+            livreurCouleurs.put(livreur.getId(), color);
         } else {
-            color = livreurCouleurs.get(livreur);
+            color = livreurCouleurs.get(livreur.getId());
         }
-
-        if(!trajets.containsKey(livreur)) {
-            trajets.put(livreur, trajet);
-        }
-        else {
-            trajets.replace(livreur, trajet);
-        }
-
-        System.out.println("Trajets: " + trajets);
 
         Label vide = new Label(" ");
         deliveryInfoVBox.getChildren().add(vide);
-        Label livreurLabel = new Label("Livreur " + (livreur + 1) + ": " + trajet.calculerDureeTrajet() + " minutes");
-        livreurLabel.setStyle("-fx-background-color: " + toHexString(color) + ";");
+        Label livreurLabel = new Label("Livreur " + (livreur.getId() + 1) + ": " + String.format("%.2f", trajet.calculerDureeTrajet()) + " minutes");
+        Color lightColor = color.deriveColor(0, 1, 1.3, 0.5); // Increase brightness by 30% and set opacity to 50%
+        livreurLabel.setStyle("-fx-background-color: " + toHexString(lightColor) + ";");
         livreurLabel.setOnMouseClicked(event -> {
             afficherTourneeSurCarte(trajet.getListeEtapes(), pane, livreur);
         });
@@ -692,7 +703,8 @@ public class View {
         // Afficher le chemin
         for (Etape etape : trajet.getListeEtapes()) {
             double temps = etape.getLongueur()*60/15000;
-            Label labelEtape = new Label("Etape : " + temps + " minutes");
+            double heure = 8 + temps/60;
+            Label labelEtape = new Label("Etape : " + heure);
             deliveryInfoVBox.getChildren().add(labelEtape);
             for (Troncon troncon : etape.getListeTroncons()) {
                 double startX = longitudeToX(troncon.getOrigine().getLongitude());
@@ -726,20 +738,17 @@ public class View {
 
                 pane.getChildren().add(arrowHead);
 
-                Label label = new Label("Troncon: " + troncon.getNomRue());
-                boolean labelExists = deliveryInfoVBox.getChildren().stream()
-                    .filter(node -> node instanceof Label)
-                    .map(node -> (Label) node)
-                    .anyMatch(existingLabel -> existingLabel.getText().equals(label.getText()));
-                if (!labelExists) {
+                Label label = new Label("    Troncon: " + troncon.getNomRue());
+                if (!tronconsAffiches.contains(troncon.getNomRue())) {
                     deliveryInfoVBox.getChildren().add(label);
+                    tronconsAffiches.add(troncon.getNomRue());
                 }
             }
-
+            tronconsAffiches.clear();
 
             try {
                 Intersection pdl = plan.chercherIntersectionParId(etape.getArrivee().getId());
-                Label pdLabel = new Label("Point de Livraison:");
+                Label pdLabel = new Label("    Point de Livraison:");
                 for (Troncon troncon : pdl.getListeTroncons()) {
                     pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
                 }
@@ -752,56 +761,52 @@ public class View {
     }
 
 
-public void afficherTourneeLivreur(List<Etape> etapes, Pane pane, int livreur) {
+
+public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livreur) {
+
     // Supprime les anciens tracés de la tournée du plan
-    this.livreur = livreur;
+    this.livreurSelectionne = livreur;
 
-    pane.getChildren().removeIf(node -> node instanceof Line && ((Line) node).getStroke() != livreurCouleurs.get(livreur) && ((Line) node).getStroke() != Color.GRAY);
-
-    afficherTourneeSurCarte(etapes, pane, livreur);
-}
-
-
-public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, int livreur) {
-    // Supprime les anciens tracés de la tournée du plan
-    this.livreur = livreur;
+    System.out.println("Livreur selectionne: " + livreurSelectionne);
 
     pane.getChildren().removeIf(node -> node instanceof Line && ((Line) node).getStroke() == livreurCouleurs.get(livreur));
     pane.getChildren().removeIf(node -> node instanceof Polygon && ((Polygon) node).getFill() == Color.GRAY);
 
     // Ajoute les nouvelles lignes de la tournée
     for (Etape etape : etapes) {
-        for (Troncon troncon : etape.getListeTroncons()) {
-            double startX = longitudeToX(troncon.getOrigine().getLongitude());
-            double startY = latitudeToY(troncon.getOrigine().getLatitude());
-            double endX = longitudeToX(troncon.getDestination().getLongitude());
-            double endY = latitudeToY(troncon.getDestination().getLatitude());
+        if (etape!=null) {
+            for (Troncon troncon : etape.getListeTroncons()) {
+                double startX = longitudeToX(troncon.getOrigine().getLongitude());
+                double startY = latitudeToY(troncon.getOrigine().getLatitude());
+                double endX = longitudeToX(troncon.getDestination().getLongitude());
+                double endY = latitudeToY(troncon.getDestination().getLatitude());
 
-            Line line = new Line(startX, startY, endX, endY);
-            line.setOnMouseClicked(event -> afficherTourneeSurCarte(etapes, pane, livreur));
-            line.setStrokeWidth(5);
-            line.setStroke(livreurCouleurs.get(livreur));
-            pane.getChildren().add(line);
+                Line line = new Line(startX, startY, endX, endY);
+                line.setOnMouseClicked(event -> afficherTourneeSurCarte(etapes, pane, livreur));
+                line.setStrokeWidth(5);
+                line.setStroke(livreurCouleurs.get(livreur.getId()));
+                pane.getChildren().add(line);
 
-            // Calcul de l'angle de rotation
-            double angle = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
+                // Calcul de l'angle de rotation
+                double angle = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
 
-            // Création de la flèche
-            Polygon arrowHead = new Polygon(0, 0, -8, 3, -8, -3); // Forme triangulaire
-            arrowHead.setFill(Color.GRAY);
+                // Création de la flèche
+                Polygon arrowHead = new Polygon(0, 0, -8, 3, -8, -3); // Forme triangulaire
+                arrowHead.setFill(Color.GRAY);
 
-            // Positionnement de la flèche au milieu du segment
-            double arrowX = (startX + endX) / 2;
-            double arrowY = (startY + endY) / 2;
+                // Positionnement de la flèche au milieu du segment
+                double arrowX = (startX + endX) / 2;
+                double arrowY = (startY + endY) / 2;
 
 
-            arrowHead.setLayoutX(arrowX+5);
-            arrowHead.setLayoutY(arrowY );
+                arrowHead.setLayoutX(arrowX+5);
+                arrowHead.setLayoutY(arrowY );
 
-            // Rotation de la flèche pour qu'elle pointe dans la direction du tronçon
-            arrowHead.setRotate(angle);
+                // Rotation de la flèche pour qu'elle pointe dans la direction du tronçon
+                arrowHead.setRotate(angle);
 
-            pane.getChildren().add(arrowHead);
+                pane.getChildren().add(arrowHead);
+            }
         }
     }
 }

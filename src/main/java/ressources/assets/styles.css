@@ -47,4 +47,6 @@
 .scroll-pane {
     -fx-background-color: #f5f5f5; /* Background color */
     -fx-border-color: #f5f5f5; /* Border color */
+    -fx-position: absolute; /* Absolute positioning */
+    -fx-right: 0; /* Positioned to the right */
 }

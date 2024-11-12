@@ -1,47 +1,21 @@
 package controller;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.Group;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import model.Intersection;
-import model.Livraison;
 import model.Plan;
-import model.PointDeLivraison;
-import model.Trajet;
-import model.Troncon;
-import tsp.RunTSP;
-import util.XMLPlan;
-import util.XMLDemande;
 import model.Demande;
-import model.Entrepot;
-import model.Etape;
 import view.View;
-
-
 
 public class Controller {
 
