@@ -12,8 +12,8 @@ import exceptions.*;
 public class Main {
 
     public static void main(String[] args) throws IDIntersectionException{
-        String mapPathPlan = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testPlan.xml";
-        String mapPathDemande = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\testDemande.xml";
+        String mapPathPlan = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\moyenPlan.xml";
+        String mapPathDemande = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\demandeMoyen5.xml";
         XMLPlan planReader = new XMLPlan();
         Plan plan = planReader.parse(mapPathPlan);
         XMLDemande demandeReader = new XMLDemande();
@@ -22,6 +22,7 @@ public class Main {
         demande.setPlan(plan);
         // System.out.println(demande);
         demande.initialiserListePointdeLivraisons();
+        System.out.println(demande.getListePointDeLivraison().toString());
         demande.initialiserMatriceAdjacence();
         System.out.println("AAAAAAAAAAAAAAAAAA\r\n");
         System.out.println(demande.matrixToString(demande.getMatriceAdjacence()));
@@ -37,26 +38,38 @@ public class Main {
         //System.out.print(demande);
         demande.creerClusters();
         demande.creerMatricesParClusters();
+
+        System.out.println(demande.getListesIndex().get(0).toString());
+        System.out.println("Les listes index");
+        System.out.println(demande.getListesIndex().get(1).toString());
         //demande.calculerTSP();
 
         RunTSP run = new RunTSP();
         run.calculerTSP(demande.getListeMatriceAdjacence().get(0));
-        try{
-            Intersection inter = plan.chercherIntersectionParId(7);
-            PointDeLivraison newPDL = new PointDeLivraison(inter.getId(), null);
-            newPDL.setLatitude(inter.getLatitude());
-            newPDL.setLongitude(inter.getLongitude());
-            newPDL.setNumero(inter.getNumero());
-            demande.ajouterPointDeLivraison(newPDL);
-            demande.ajouterPDLaMatrice(0);
-            System.out.println(demande.matrixToString(demande.getMatriceAdjacence()));
-            System.out.println("AAAAAHHHHHHHHHHHHH");
-            System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(0)));
-            System.out.println("IIIIIIIIIIHHHHHHHHHHHHH");
-            System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(1)));
-        } catch (IDIntersectionException e){
-            e.printStackTrace();
-        }
+        
+        System.out.println("BBBBBBBBBBBBBBBB\r\n");
+        System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(0)));
+
+        //run.calculerTSP(demande.getListeMatriceAdjacence().get(1));
+
+        System.out.println("CCCCCCCCCCCCCCCC\r\n");
+        System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(1)));
+        // try{
+        //     Intersection inter = plan.chercherIntersectionParId(7);
+        //     PointDeLivraison newPDL = new PointDeLivraison(inter.getId(), null);
+        //     newPDL.setLatitude(inter.getLatitude());
+        //     newPDL.setLongitude(inter.getLongitude());
+        //     newPDL.setNumero(inter.getNumero());
+        //     demande.ajouterPointDeLivraison(newPDL);
+        //     demande.ajouterPDLaMatrice(0);
+        //     System.out.println(demande.matrixToString(demande.getMatriceAdjacence()));
+        //     System.out.println("AAAAAHHHHHHHHHHHHH");
+        //     System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(0)));
+        //     System.out.println("IIIIIIIIIIHHHHHHHHHHHHH");
+        //     System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(1)));
+        // } catch (IDIntersectionException e){
+        //     e.printStackTrace();
+        // }
         
 
         // if (run.getTimeLimit()==1){

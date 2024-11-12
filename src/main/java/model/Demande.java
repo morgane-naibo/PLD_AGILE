@@ -55,6 +55,10 @@ public class Demande {
         return this.plan;
     }
 
+    public ArrayList<ArrayList<Integer>> getListesIndex() {
+        return this.listesIndex;
+    }
+
     //setters
     public void setEntrepot(Entrepot newEntrepot) {
         this.entrepot = newEntrepot;
@@ -210,6 +214,10 @@ public class Demande {
         }
     }
     public void creerClusters(){
+        ArrayList<Integer> indexAAjouter = new ArrayList();
+        for (int i=1;i<this.matriceAdjacence.size();i++){
+            indexAAjouter.add(i);
+        }
         ArrayList<Etape> etapesVisitees = new ArrayList<>();
         
         for(int init = 0; init<this.listePointDeLivraison.size();init++){
@@ -242,7 +250,6 @@ public class Demande {
                     }
                 }
                 
-                // System.out.println(enCours.toString());
                 for (int l=0;l<this.listePointDeLivraison.size();l++){
                     if (this.listesIndex.get(l).contains(indexDepart)){
                         boolean test= true;
@@ -257,6 +264,7 @@ public class Demande {
                         }
                         if (test){
                             this.listesIndex.get(l).add(indexArrivee);
+                            indexAAjouter.remove(Integer.valueOf(indexArrivee));
                         }
                         break;
                     }
@@ -273,13 +281,15 @@ public class Demande {
                         }
                         if (test){
                             this.listesIndex.get(l).add(indexDepart);
-                           
+                            indexAAjouter.remove(Integer.valueOf(indexDepart));
                         }
                         break;
                     }
                     else if (this.listesIndex.get(l).isEmpty()){
                         this.listesIndex.get(l).add(indexDepart);
                         this.listesIndex.get(l).add(indexArrivee);
+                        indexAAjouter.remove(Integer.valueOf(indexArrivee));
+                        indexAAjouter.remove(Integer.valueOf(indexDepart));
                         
                         break;
                     }
@@ -291,6 +301,11 @@ public class Demande {
 
 
             }
+            for (int k =0; k<indexAAjouter.size();k++){
+                ArrayList<Integer> cluster = new ArrayList<>();
+                cluster.add(indexAAjouter.get(k));
+                this.listesIndex.set(this.nbLivreurs-k-1,cluster);
+            }
         }
         //Cas ou il y a moins de points de livraison que de livreurs
         else{
@@ -299,8 +314,6 @@ public class Demande {
             }
         }
 
-        
-        //System.out.println(matrixToString(this.listeMatriceAdjacence.get(0)));
     }
 
 
@@ -336,7 +349,6 @@ public class Demande {
     
             // Add this cluster's matrix to the main list
             this.listeMatriceAdjacence.add(matrice);
-            //System.out.println("creerMatricesParClusters : "+ matrixToString(matrice));
         }
     
     }
