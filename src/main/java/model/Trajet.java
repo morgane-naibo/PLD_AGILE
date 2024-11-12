@@ -32,4 +32,12 @@ public class Trajet {
         this.listeEtapes.add(etape);
     }
 
+    public double calculerDureeTrajet(){
+        double duree =0.0;
+        for (Etape i : this.listeEtapes){
+            duree+=i.getLongueur()*60/15000 + 5.0;
+        }
+        return duree;
+    }
+
 }

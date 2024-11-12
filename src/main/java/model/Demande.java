@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.*; 
 import java.util.stream.Collectors;
+import java.lang.Exception;
+import exceptions.*;
+import tsp.RunTSP;
 
 public class Demande {
     private Entrepot entrepot;
@@ -134,19 +137,30 @@ public class Demande {
     }
 
     //autres methodes
-    public void initialiserMatriceAdjacence() {
+    public void initialiserListePointdeLivraisons(){
         int n = listePointDeLivraison.size();
         //ajouter lat, long, num aux points de livraison 
-        for (int i=0;i<n;i++){
-            Intersection inter = plan.chercherIntersectionParId(listePointDeLivraison.get(i).getId());
-            listePointDeLivraison.get(i).setLatitude(inter.getLatitude());
-            listePointDeLivraison.get(i).setLongitude(inter.getLongitude());
-            listePointDeLivraison.get(i).setNumero(inter.getNumero());
+        try{
+            //ajouter lat, long, num aux points de livraison 
+            for (int i=0;i<n;i++){
+                Intersection inter = plan.chercherIntersectionParId(listePointDeLivraison.get(i).getId());
+                listePointDeLivraison.get(i).setLatitude(inter.getLatitude());
+                listePointDeLivraison.get(i).setLongitude(inter.getLongitude());
+                listePointDeLivraison.get(i).setNumero(inter.getNumero());
+            }
+            Intersection inter = plan.chercherIntersectionParId(this.entrepot.getId());
+            this.entrepot.setLatitude(inter.getLatitude());
+            this.entrepot.setLongitude(inter.getLongitude());
+            this.entrepot.setNumero(inter.getNumero());
+        } catch (Exception e){
+            System.out.println("Erreur : "+ e.getMessage());
+            e.printStackTrace();
         }
-        Intersection inter = plan.chercherIntersectionParId(this.entrepot.getId());
-        this.entrepot.setLatitude(inter.getLatitude());
-        this.entrepot.setLongitude(inter.getLongitude());
-        this.entrepot.setNumero(inter.getNumero());
+    }
+
+    public void initialiserMatriceAdjacence() {
+        int n = listePointDeLivraison.size();
+        
         // Initialiser la matrice carrée de taille (n + 1) x (n + 1)
         matriceAdjacence = new ArrayList<>(n + 1);
         for (int i = 0; i <= n; i++) {
@@ -173,32 +187,17 @@ public class Demande {
         }
     }
 
-    public boolean verifierMatriceAdjacence(){
-        boolean impasse = false;
+    public void verifierMatriceAdjacence() throws ImpasseErrorException {
         for (int i = 0; i<this.matriceAdjacence.size();i++){
-            int compteurDeNull = 0;
-            for (int j = 0; j<this.matriceAdjacence.size();j++){
+            for (int j = i+1; j<this.matriceAdjacence.size();j++){
                 if (this.matriceAdjacence.get(i).get(j) == null){
-                    compteurDeNull++;
+                    throw new ImpasseErrorException("Il y a une impasse à sens unique. On ne peut pas calculer d'itinéraire.");
                 }
-            }
-            if (compteurDeNull == this.matriceAdjacence.size()){
-                impasse = true;
-                break;
-            }
-
-            compteurDeNull=0;
-            for (int j = 0; j<this.matriceAdjacence.size();j++){
-                if (this.matriceAdjacence.get(j).get(i) == null){
-                    compteurDeNull++;
+                else if (this.matriceAdjacence.get(j).get(i) == null){
+                    throw new ImpasseErrorException("Il y a une impasse à sens unique. On ne peut pas calculer d'itinéraire.");
                 }
-            }
-            if (compteurDeNull == this.matriceAdjacence.size()){
-                impasse = true;
-                break;
-            }
+            }     
         }
-        return impasse;
     }
 
     public void supprimerIntersection(Intersection intersection) {
@@ -258,6 +257,7 @@ public class Demande {
                                 indexArrivee = j;
                             }
                         }
+                        //prendre les distances nulles comme distances max (comment ajouter à enCours??)
                     }
                 }
                 
@@ -318,7 +318,7 @@ public class Demande {
             }
         }
 
-        creerMatricesParClusters();
+        
         //System.out.println(matrixToString(this.listeMatriceAdjacence.get(0)));
     }
 
@@ -357,6 +357,34 @@ public class Demande {
             this.listeMatriceAdjacence.add(matrice);
         }
     
+    }
+
+    public List<Trajet> calculerTSP(){
+        List<Trajet> livraisons = new ArrayList<>(); 
+        try {
+            this.initialiserMatriceAdjacence();
+            this.verifierMatriceAdjacence();
+            this.creerClusters();
+            this.creerMatricesParClusters();
+            RunTSP run = new RunTSP();
+            for (int i = 0; i<nbLivreurs;i++){
+                Trajet trajet = new Trajet();
+                trajet = run.calculerTSP(this.listeMatriceAdjacence.get(i));
+                livraisons.add(trajet);
+                //on a juste à afficher le temps des tournées et à signaler qu'une tournée est hors-temps, 
+                //c'est à l'utilisateur de modifier manuellement les tournées
+                // while (duree>9*60){
+
+                // }
+            }
+
+
+        } catch(Exception e){
+            System.out.println("Erreur : "+ e.getMessage());
+            e.printStackTrace();
+        }
+
+        return livraisons;
     }
 
     
