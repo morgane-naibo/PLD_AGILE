@@ -26,12 +26,14 @@ public class SupprimerPointDeLivraisonCommande extends Commande {
         this.deliveryInfoVBox = deliveryInfoVBox;
     }
 
+    @Override
     public void redoCommande(Intersection intersection, Label label) {
         view.getIntersectionsSupprimees().push(this.getIntersection());
         view.getLabelsSupprimes().push(this.getLabel());
-        view.supprimerPointDeLivraison(intersection, pane, deliveryInfoVBox, label, false);
+        view.supprimerPointDeLivraison(intersection, pane, deliveryInfoVBox, label, false, view.getLivreur());
     }
 
+    @Override
     public void undoCommande() {
         if (!view.getIntersectionsSupprimees().isEmpty() && !view.getLabelsSupprimes().isEmpty()) {
             // Retirer le dernier point de livraison supprimé des piles pour le réafficher
@@ -40,7 +42,7 @@ public class SupprimerPointDeLivraisonCommande extends Commande {
             Label labelARestaurer = view.getLabelsSupprimes().peek();
             view.getLabelsSupprimes().remove(labelARestaurer);
 
-            view.reafficherPointDeLivraison(intersectionARestaurer, pane, deliveryInfoVBox, labelARestaurer);
+            view.reafficherPointDeLivraison(intersectionARestaurer, pane, deliveryInfoVBox, labelARestaurer, view.getLivreur());
         }
     }
     // Pas de surcharge de handleActionB ou handleActionC car elles ne sont pas disponibles dans cet état

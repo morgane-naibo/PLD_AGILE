@@ -24,7 +24,7 @@ public class TourneeAffichee extends Etat {
         RunTSP run = new RunTSP();
         for (int i=0; i<controller.getDemande().getNbLivreurs(); i++) {
             Trajet trajet = run.calculerTSP(controller.getDemande().getListeMatriceAdjacence().get(i));
-            view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajet, i);
+            view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajet, i, controller.getMessageLabel());
         }
         controller.setEtat(new TourneeAffichee(controller));
         controller.getCalculerChemin().setVisible(false);

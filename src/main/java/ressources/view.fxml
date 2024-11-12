@@ -20,7 +20,7 @@
     <!-- Message en haut -->
     <top>
         <Label fx:id="messageLabel" visible="false" text="" prefHeight="50" styleClass="message-label"/>    
-        <!--<Button fx:id="calculerChemin" text="calculer un chemin" onAction="#calculerChemin" prefHeight="50" />-->
+        <!--<Button fx:id="calculerChemin" text="calculer un chemin" onAction="#calculerChemin" prefHeight="50" />-->   
     </top>
 
     <!-- Plan au centre -->

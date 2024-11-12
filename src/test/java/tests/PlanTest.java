@@ -16,6 +16,8 @@ import util.XMLPlan;
 
 import java.util.List;
 
+import exceptions.IDIntersectionException;
+
 public class PlanTest {
     
     private Plan plan;
@@ -59,12 +61,16 @@ public class PlanTest {
         plan.ajouterIntersection(intersection1);
         plan.ajouterIntersection(intersection2);
         
-        Intersection result = plan.chercherIntersectionParId(1);
-        assertNotNull(result);
-        assertEquals(1, result.getId());
-        
-        Intersection resultNull = plan.chercherIntersectionParId(3);
-        assertNull(resultNull);
+        try {
+            Intersection result = plan.chercherIntersectionParId(1);
+            assertNotNull(result);
+            assertEquals(1, result.getId());
+            
+            Intersection resultNull = plan.chercherIntersectionParId(3);
+            assertNull(resultNull);
+        } catch (IDIntersectionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

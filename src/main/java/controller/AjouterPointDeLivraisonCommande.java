@@ -24,7 +24,7 @@ public class AjouterPointDeLivraisonCommande extends Commande {
     public void redoCommande(Intersection intersection, Label label) {
         view.getIntersectionsAjoutees().push(this.getIntersection());
         view.getLabelsAjoutes().push(this.getLabel());
-        view.reafficherPointDeLivraison(intersection, pane, deliveryInfoVBox, label);
+        view.reafficherPointDeLivraison(intersection, pane, deliveryInfoVBox, label, view.getLivreur());
     }
 
     @Override
@@ -32,7 +32,7 @@ public class AjouterPointDeLivraisonCommande extends Commande {
         if (!view.getIntersectionsAjoutees().isEmpty() && !view.getLabelsAjoutes().isEmpty()) {
             Intersection intersectionASupprimer = view.getIntersectionsAjoutees().pop();
             Label labelARestaurer = view.getLabelsAjoutes().pop();
-            view.supprimerPointDeLivraison(intersectionASupprimer, pane, deliveryInfoVBox, labelARestaurer, false);
+            view.supprimerPointDeLivraison(intersectionASupprimer, pane, deliveryInfoVBox, labelARestaurer, false, view.getLivreur());
         }
     }
 
