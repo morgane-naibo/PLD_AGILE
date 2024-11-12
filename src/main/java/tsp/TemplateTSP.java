@@ -13,8 +13,8 @@ public abstract class TemplateTSP implements TSP {
 	private long startTime;
 
 	
-	public void searchSolution(int timeLimit, Graph g){
-		if (timeLimit <= 0) return;
+	public BnBIntermediaire searchSolution(int timeLimit, Graph g){
+		if (timeLimit <= 0) return null;
 		startTime = System.currentTimeMillis();	
 		this.timeLimit = timeLimit;
 		this.g = g;
@@ -24,21 +24,23 @@ public abstract class TemplateTSP implements TSP {
 		Collection<Integer> visited = new ArrayList<Integer>(g.getNbVertices());
 		visited.add(0); // The first visited vertex is 0
 		bestSolCost = Integer.MAX_VALUE;
-		branchAndBound(0, unvisited, visited, 0);
+		BnBIntermediaire inter = branchAndBound(0, unvisited, visited, 0);
+		return inter;
 	}
 
-	public void searchSolutionFromPrevious(int timeLimit, Graph g){
-		if (timeLimit <= 0) return;
+	public BnBIntermediaire searchSolutionFromPrevious(int timeLimit, Graph g, BnBIntermediaire intermediaire){
+		if (timeLimit <= 0) return null;
 		startTime = System.currentTimeMillis();	
 		this.timeLimit = timeLimit;
 		this.g = g;
 		bestSol = new Integer[g.getNbVertices()];
-		Collection<Integer> unvisited = new ArrayList<Integer>(g.getNbVertices()-1);
-		for (int i=1; i<g.getNbVertices(); i++) unvisited.add(i);
-		Collection<Integer> visited = new ArrayList<Integer>(g.getNbVertices());
-		visited.add(0); // The first visited vertex is 0
+		Collection<Integer> unvisited = new ArrayList<Integer>(intermediaire.getUnvisited());
+		Collection<Integer> visited = new ArrayList<Integer>(intermediaire.getVisited());
 		bestSolCost = Integer.MAX_VALUE;
-		branchAndBound(0, unvisited, visited, 0);
+		int currentVertex = intermediaire.getCurrentVertex();
+		double currentCost = intermediaire.getCurrentCost();
+		BnBIntermediaire inter = branchAndBound(currentVertex, unvisited, visited, currentCost);
+		return inter;
 	}
 	
 	public Integer getSolution(int i){

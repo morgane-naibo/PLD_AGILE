@@ -213,8 +213,9 @@ public class Demande {
             this.listePointDeLivraison.remove(position);
         }
     }
+
     public void creerClusters(){
-        ArrayList<Integer> indexAAjouter = new ArrayList();
+        ArrayList<Integer> indexAAjouter = new ArrayList<Integer>();
         for (int i=1;i<this.matriceAdjacence.size();i++){
             indexAAjouter.add(i);
         }
@@ -257,7 +258,9 @@ public class Demande {
                             if (this.listesIndex.get(p).contains(indexArrivee)){
                                 
                                 this.listesIndex.get(l).addAll(this.listesIndex.get(p));
+                                System.out.println("taille de L avant clear"+this.listesIndex.get(l).size());
                                 this.listesIndex.get(p).removeAll(this.listesIndex.get(p));
+                                System.out.println("taille de L apres clear"+this.listesIndex.get(l).size());
                                 test = false;
                                 break;
                             }
@@ -316,6 +319,82 @@ public class Demande {
 
     }
 
+    // public void creerClusters() {
+    //     ArrayList<Integer> indexAAjouter = new ArrayList<>();
+    //     for (int i = 1; i < this.matriceAdjacence.size(); i++) {
+    //         indexAAjouter.add(i);
+    //     }
+    //     ArrayList<Etape> etapesVisitees = new ArrayList<>();
+        
+    //     for (int init = 0; init < this.listePointDeLivraison.size(); init++) {
+    //         this.listesIndex.add(new ArrayList<Integer>());
+    //     }
+    
+    //     Etape enCours = null;
+    //     Etape opposee = null;
+    
+    //     if (this.nbLivreurs < this.listePointDeLivraison.size()) {
+    //         for (int i = 0; i < this.listePointDeLivraison.size() - this.nbLivreurs; i++) {
+    //             double distanceMin = Double.MAX_VALUE;
+    //             int indexDepart = -1;
+    //             int indexArrivee = -1;
+    
+    //             // Chercher le plus proche non visité
+    //             for (int k = 1; k < this.listePointDeLivraison.size() + 1; k++) {
+    //                 for (int j = 1; j < this.listePointDeLivraison.size() + 1; j++) {
+    //                     Etape etapeCourante = this.matriceAdjacence.get(k).get(j);
+    //                     if (etapeCourante != null && !etapesVisitees.contains(etapeCourante)) {
+    //                         if (distanceMin > etapeCourante.getLongueur()) {
+    //                             distanceMin = etapeCourante.getLongueur();
+    //                             enCours = etapeCourante;
+    //                             opposee = this.matriceAdjacence.get(j).get(k);
+    //                             indexDepart = k;
+    //                             indexArrivee = j;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    
+    //             boolean clusterMisAJour = false;
+    //             for (int l = 0; l < this.listePointDeLivraison.size(); l++) {
+    //                 if (this.listesIndex.get(l).contains(indexDepart) || this.listesIndex.get(l).contains(indexArrivee)) {
+    //                     int autreIndex = this.listesIndex.get(l).contains(indexDepart) ? indexArrivee : indexDepart;
+    //                     if (!this.listesIndex.get(l).contains(autreIndex)) {
+    //                         this.listesIndex.get(l).add(autreIndex);
+    //                         indexAAjouter.remove(Integer.valueOf(autreIndex));
+    //                         clusterMisAJour = true;
+    //                     }
+    //                     break;
+    //                 } else if (this.listesIndex.get(l).isEmpty()) {
+    //                     this.listesIndex.get(l).add(indexDepart);
+    //                     this.listesIndex.get(l).add(indexArrivee);
+    //                     indexAAjouter.remove(Integer.valueOf(indexDepart));
+    //                     indexAAjouter.remove(Integer.valueOf(indexArrivee));
+    //                     clusterMisAJour = true;
+    //                     break;
+    //                 }
+    //             }
+    
+    //             if (clusterMisAJour) {
+    //                 etapesVisitees.add(enCours);
+    //                 etapesVisitees.add(opposee);
+    //             }
+    //         }
+    
+    //         // Ajouter les indices restants pour compléter les clusters
+    //         for (int k = 0; k < indexAAjouter.size(); k++) {
+    //             ArrayList<Integer> cluster = new ArrayList<>();
+    //             cluster.add(indexAAjouter.get(k));
+    //             this.listesIndex.set(this.nbLivreurs - k - 1, cluster);
+    //         }
+    //     } else {
+    //         for (int loop = 0; loop < this.listePointDeLivraison.size(); loop++) {
+    //             this.listesIndex.get(loop).add(loop + 1);
+    //         }
+    //     }
+    // }
+    
+
 
     public void creerMatricesParClusters() {
         for (int i = 0; i < this.nbLivreurs; i++) {
@@ -359,8 +438,11 @@ public class Demande {
         try {
             this.initialiserMatriceAdjacence();
             this.verifierMatriceAdjacence();
+            System.out.println(matrixToString(matriceAdjacence));
             this.creerClusters();
             this.creerMatricesParClusters();
+            System.out.println("cluster 0 :" + this.listesIndex.get(0).toString());
+            System.out.println("cluster 1 :" + this.listesIndex.get(1).toString());
             RunTSP run = new RunTSP();
             for (int i = 0; i<nbLivreurs;i++){
                 Trajet trajet = new Trajet();

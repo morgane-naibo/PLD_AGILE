@@ -11,9 +11,9 @@ import exceptions.*;
 
 public class Main {
 
-    public static void main(String[] args) throws IDIntersectionException{
-        String mapPathPlan = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\moyenPlan.xml";
-        String mapPathDemande = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\demandeMoyen5.xml";
+    public static void main(String[] args) throws Exception{
+        String mapPathPlan = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\grandPlan.xml";
+        String mapPathDemande = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\demandeGrand9.xml";
         XMLPlan planReader = new XMLPlan();
         Plan plan = planReader.parse(mapPathPlan);
         XMLDemande demandeReader = new XMLDemande();
@@ -22,10 +22,10 @@ public class Main {
         demande.setPlan(plan);
         // System.out.println(demande);
         demande.initialiserListePointdeLivraisons();
-        System.out.println(demande.getListePointDeLivraison().toString());
-        demande.initialiserMatriceAdjacence();
-        System.out.println("AAAAAAAAAAAAAAAAAA\r\n");
-        System.out.println(demande.matrixToString(demande.getMatriceAdjacence()));
+        System.out.println("Liste PDL : " + demande.getListePointDeLivraison().toString());
+        // demande.initialiserMatriceAdjacence();
+        // System.out.println("AAAAAAAAAAAAAAAAAA\r\n");
+        // System.out.println(demande.matrixToString(demande.getMatriceAdjacence()));
         //System.out.println(demande.getMatriceAdjacence());
         // System.out.println(demande.getListePointDeLivraison());
         // System.out.println("AHHHHHHHH");
@@ -36,24 +36,30 @@ public class Main {
 
         //System.out.print(plan);
         //System.out.print(demande);
-        demande.creerClusters();
-        demande.creerMatricesParClusters();
+        // demande.creerClusters();
+        // demande.creerMatricesParClusters();
 
-        System.out.println(demande.getListesIndex().get(0).toString());
-        System.out.println("Les listes index");
-        System.out.println(demande.getListesIndex().get(1).toString());
+        // System.out.println("\nLes listes index par cluster");
+        // System.out.println(demande.getListesIndex().get(0).toString());
+        // System.out.println(demande.getListesIndex().get(1).toString());
         //demande.calculerTSP();
 
         RunTSP run = new RunTSP();
-        run.calculerTSP(demande.getListeMatriceAdjacence().get(0));
+        try {
+            demande.calculerTSP();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        //run.calculerTSP(demande.getListeMatriceAdjacence().get(0));
         
-        System.out.println("BBBBBBBBBBBBBBBB\r\n");
-        System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(0)));
+        // System.out.println("BBBBBBBBBBBBBBBB\r\n");
+        // System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(0)));
 
         //run.calculerTSP(demande.getListeMatriceAdjacence().get(1));
 
-        System.out.println("CCCCCCCCCCCCCCCC\r\n");
-        System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(1)));
+        // System.out.println("CCCCCCCCCCCCCCCC\r\n");
+        // System.out.println(demande.matrixToString(demande.getListeMatriceAdjacence().get(1)));
         // try{
         //     Intersection inter = plan.chercherIntersectionParId(7);
         //     PointDeLivraison newPDL = new PointDeLivraison(inter.getId(), null);
@@ -72,10 +78,10 @@ public class Main {
         // }
         
 
-        // if (run.getTimeLimit()==1){
-        //     System.out.println("Time Limit atteint");
-        //     run.calculerTSPApresTimeLimit(demande.getListeMatriceAdjacence().get(0))
-        // }
+        if (run.getTimeLimit()==1){
+            System.out.println("Time Limit atteint");
+            run.calculerTSPApresTimeLimit(demande.getListeMatriceAdjacence().get(0));
+        }
 
         
     }
