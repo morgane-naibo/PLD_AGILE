@@ -37,6 +37,7 @@ public class Trajet {
         for (Etape i : this.listeEtapes){
             duree+=i.getLongueur()*60/15000 + 5.0;
         }
+        duree -=5.0;
         return duree;
     }
 
