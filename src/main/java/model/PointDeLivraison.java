@@ -12,6 +12,16 @@ public class PointDeLivraison extends Intersection{
         
     }
 
+    public PointDeLivraison(Intersection inter) {
+        this.id=inter.getId();
+        this.latitude=inter.getLatitude();
+        this.longitude=inter.getLongitude();
+        this.listeTroncons = inter.getListeTroncons();
+        this.numero = inter.getNumero();
+        this.livraison=null;
+        
+    }
+
     public PointDeLivraison(Long id) {
         this.setId(id);
         
