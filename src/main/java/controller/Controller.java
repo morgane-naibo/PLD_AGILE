@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.Stack;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,6 +20,7 @@ import model.Plan;
 import model.Demande;
 import view.View;
 import javafx.scene.control.ComboBox;
+import javafx.scene.layout.StackPane;
 
 public class Controller {
 
@@ -72,6 +75,9 @@ public class Controller {
     @FXML
     private ComboBox<Integer> nbLivreurs;
 
+    @FXML
+    private StackPane stackPane;
+
     private View view;
 
     private Demande demande;
@@ -85,6 +91,12 @@ public class Controller {
     private double initialMouseY;
     private double initialTranslateX;
     private double initialTranslateY;
+
+    // Variables pour le drag de `deliveryInfoVBox`
+    private double vboxInitialX;
+    private double vboxInitialY;
+    private double mouseInitialX;
+    private double mouseInitialY;
 
     // Variables pour définir les limites maximales de déplacement
     private static final double MIN_X = 0;
@@ -108,6 +120,7 @@ public class Controller {
     // Méthode d'initialisation appelée après le chargement du FXML
     
     public void initialize() {
+        deliveryInfoVBox.setLayoutY(50);
         nbLivreurs.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 System.out.println("Option sélectionnée : " + newValue);
@@ -121,17 +134,29 @@ public class Controller {
             stage.widthProperty().addListener((obs, oldVal, newVal) -> {
                 deliveryInfoVBox.setPrefWidth(newVal.doubleValue() * 0.4);
             });
-
+    
             stage.heightProperty().addListener((obs, oldVal, newVal) -> {
                 deliveryInfoVBox.setPrefHeight(newVal.doubleValue());
             });
         });
+        
+       // Rendre `deliveryInfoVBox` déplaçable uniquement verticalement
+        deliveryInfoVBox.setOnMousePressed(event -> {
+            mouseInitialY = event.getSceneY();
+        });
+
+        deliveryInfoVBox.setOnMouseDragged(event -> {
+            double offsetY = event.getSceneY() - mouseInitialY;
+            deliveryInfoVBox.setLayoutY(deliveryInfoVBox.getLayoutY() + offsetY);
+            mouseInitialY = event.getSceneY();
+        });
+        
         // Appliquer la transformation de zoom uniquement sur mapPane
         if (mapPane != null) {
             mapPane.getTransforms().add(scale);
             mapPane.setOnScroll(event -> handleZoom(event.getDeltaY()));
-            
-            // Ajout de la fonctionnalité de drag
+    
+            // Ajout de la fonctionnalité de drag sur mapPane
             mapPane.setOnMousePressed(this::handleMousePressed);
             mapPane.setOnMouseDragged(this::handleMouseDragged);
         }
@@ -231,6 +256,10 @@ public class Controller {
 
     public Label getTitle() {
         return title;
+    }
+
+    public StackPane getStackPane() {
+        return stackPane;
     }
 
 

@@ -112,10 +112,6 @@ public class View {
         return tourneeCalculee;
     }
 
-    public void setNbLivreurs(int nbLivreurs) {
-        this.demande.setNbLivreurs(nbLivreurs);
-    }
-
     public void setTourneeCalculee(boolean tourneeCalculee) {
         this.tourneeCalculee = tourneeCalculee;
     }
@@ -203,13 +199,13 @@ public class View {
         latMax = plan.trouverLatitudeMax();
         longMin = plan.trouverLongitudeMin();
         longMax = plan.trouverLongitudeMax();
-        livreurCouleurs.clear();
     }
 
     public void displayPlan(Pane pane, VBox deliveryInfoVBox, Label label, Label messageLabel, Button calculerChemin) {
         pane.getChildren().clear();
         deliveryInfoVBox.getChildren().clear();
         tourneeCalculee = false;
+        livreurCouleurs.clear();
 
 
         for (Troncon troncon : plan.getListeTroncons()) {
@@ -600,20 +596,22 @@ public class View {
         // Réajouter le label au VBox
         label.setStyle("-fx-background-color: #f5f5f5;");
         deliveryInfoVBox.getChildren().add(label);
+        circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
 
         PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), new Livraison(0, intersection.getId(), 5.0, 5.0));
         this.demande.ajouterPointDeLivraison(pdl);
 
         try {
-            this.demande.ajouterPDLaMatrice(livreur.getId(), pdl);
+            Trajet trajet = this.demande.ajouterPDLaMatrice(livreurSelectionne.getId(), pdl);
+            Tournee tournee = new Tournee(trajet.getListeEtapes(), livreurSelectionne);
+            tournees.set((int)livreurSelectionne.getId(), tournee);
+            reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Réassocier le clic sur le cercle à la suppression du point de livraison  
-        circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
-        
-        reafficherTournee(pane, deliveryInfoVBox, livreur);
+        // Réassocier le clic sur le cercle à la suppression du point de livraison          
+        //reafficherTournee(pane, deliveryInfoVBox, livreur);
     }
 
     public void reafficherTournee(Pane pane, VBox deliveryInfoVBox, Livreur livreur) {
@@ -699,6 +697,7 @@ public class View {
     }
 
     public void calculerChemin(Pane pane, VBox deliveryInfoVBox, Trajet trajet, int livreurId, Label messageLabel) {
+        
         messageLabel.setText("Selectionnez une tournée pour la modifier.");
         
         Set<String> tronconsAffiches = new HashSet<>();
@@ -716,6 +715,9 @@ public class View {
         Color color;
         if (!livreurCouleurs.containsKey(livreur.getId())) {
             double hue = (livreur.getId() * 60) % 360; // Espacement de 60 degrés entre chaque couleur
+            if (hue == 0) {
+            hue += 30; // Éviter le rouge pur
+            }
             color = Color.hsb(hue, 0.7, 0.8);
             livreurCouleurs.put(livreur.getId(), color);
         } else {
@@ -731,13 +733,20 @@ public class View {
             afficherTourneeSurCarte(trajet.getListeEtapes(), pane, livreur);
         });
         deliveryInfoVBox.getChildren().add(livreurLabel);
+        double heureDepartProchainTroncon = 8.0; // Heure de départ du premier tronçon
 
         // Afficher le chemin
         for (Etape etape : trajet.getListeEtapes()) {
-            double temps = etape.getLongueur()*60/15000;
-            double heure = 8 + temps/60;
-            Label labelEtape = new Label("Etape : " + heure);
+            double temps = etape.getLongueur() * 60 / 15000;
+            temps = Math.round(temps * 100.0) / 100.0;
+            double heureFin = heureDepartProchainTroncon + temps / 60;
+            int heures = (int) heureFin;
+            int minutes = (int) ((heureFin - heures) * 60);
+            Label labelEtape = new Label("Etape : " + String.format("%02d:%02d", heures, minutes));
             deliveryInfoVBox.getChildren().add(labelEtape);
+
+            // Utiliser l'heure de fin comme heure de départ pour le prochain tronçon
+            heureDepartProchainTroncon = heureFin;
             for (Troncon troncon : etape.getListeTroncons()) {
                 double startX = longitudeToX(troncon.getOrigine().getLongitude());
                 double startY = latitudeToY(troncon.getOrigine().getLatitude());

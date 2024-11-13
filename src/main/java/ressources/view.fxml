@@ -20,40 +20,44 @@
     
     <!-- Message en haut -->
     <top>
-        <Label fx:id="messageLabel" visible="false" text="" prefHeight="50" styleClass="message-label"/>    
-        <!--<Button fx:id="calculerChemin" text="calculer un chemin" onAction="#calculerChemin" prefHeight="50" />-->   
+        <HBox alignment="TOP_RIGHT">
+            <Label fx:id="messageLabel" visible="false" text="" prefHeight="50" styleClass="message-label"/>    
+        </HBox>
     </top>
 
+
     <!-- Plan au centre -->
-    <center>
+    <right>
        <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
-            <Pane fx:id="mapPane" prefWidth="500" prefHeight="500" styleClass="map-pane"> <!-- Nouveau Pane pour le plan -->
+            <Pane fx:id="mapPane" prefWidth="550" prefHeight="500" styleClass="map-pane"> <!-- Nouveau Pane pour le plan -->
                 <!-- Ajouter ici les éléments du plan -->
                 <children>
-                    <StackPane prefHeight="450" prefWidth="800">
+                    <StackPane fx:id="stackPane" prefHeight="450" maxWidth="Infinity" BorderPane.alignment="TOP_CENTER">
                         <Label fx:id="title" text="Deliver'IF" styleClass="title" visible="true" StackPane.alignment="TOP_CENTER" />
                         <Button fx:id="chargerPlan" text="Charger un plan" styleClass="plan-button" onAction="#handleLoadPlan" StackPane.alignment="CENTER" />
                         <ComboBox fx:id="nbLivreurs" prefWidth="250.0" promptText="Choisissez un nombre de livreurs" StackPane.alignment="BOTTOM_CENTER"/>
                     </StackPane>
-                    <Button fx:id="boutonPlus" text="+" styleClass="plus-button" onAction="#handleButtonClick" visible="false" layoutY="55" />
-                    <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton" visible="false" layoutY="95"/>
-                    <Button fx:id="selectionnerPointButton" text="Sélectionner un point sur la carte" styleClass="file-button" onAction="#handleSelectButton" visible="false" layoutY="135"/>
-                    <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan" visible="false" layoutY="175"/>
-                    <Button fx:id="calculerChemin" text="Calculer un chemin" styleClass="file-button" onAction="#calculerChemin" visible="false" layoutY="500" layoutX="250"/>
-                    <Button fx:id="undoButton" text="Annuler" styleClass="file-button" onAction="#undo" visible="false" layoutY="550"  layoutX="0"/>
-                    <Button fx:id="redoButton" text="Refaire" styleClass="file-button" onAction="#redo" visible="false" layoutY="550" layoutX="100"/>
+                    <Button fx:id="boutonPlus" text="+" styleClass="plus-button" onAction="#handleButtonClick" visible="false" layoutY="55" layoutX="250" />
+                    <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton" visible="false" layoutY="95" layoutX="250"/>
+                    <Button fx:id="selectionnerPointButton" text="Sélectionner un point sur la carte" styleClass="file-button" onAction="#handleSelectButton" visible="false" layoutY="135" layoutX="250"/>
+                    <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan" visible="false" layoutY="175" layoutX="250"/>
+                    <Button fx:id="calculerChemin" text="Calculer un chemin" styleClass="file-button" onAction="#calculerChemin" visible="false" layoutY="550" layoutX="450"/>
+                    <Button fx:id="undoButton" text="Annuler" styleClass="file-button" onAction="#undo" visible="false" layoutY="550"  layoutX="250"/>
+                    <Button fx:id="redoButton" text="Refaire" styleClass="file-button" onAction="#redo" visible="false" layoutY="550" layoutX="350"/>
                 </children>
             </Pane>
         </ScrollPane>
-    </center>
+    </right>
     
     <!-- VBox d'information à droite -->
-    <right>
-        <VBox fx:id="deliveryInfoVBox" visible="false" prefWidth="230.0" spacing="0" maxWidth="Infinity" styleClass="vbox">
-            <Label fx:id="label" text="Liste des Points de Livraison" />
-            <Label text="" />
-        </VBox>
-   </right>
+    <left>
+        <Pane fx:id="containerPane">
+                <VBox fx:id="deliveryInfoVBox" visible="false" prefWidth="230.0" spacing="0" maxWidth="Infinity" styleClass="vbox">
+                    <Label fx:id="label" text="Liste des Points de Livraison" />
+                    <Label text="" />
+                </VBox>
+        </Pane>
+   </left>
     
     <bottom>
     </bottom>
