@@ -96,7 +96,10 @@ public class View {
 
     private List<Tournee> tournees = new ArrayList<>();
 
-
+    public List<Tournee> getTournees(){
+        return tournees;
+    }
+    
     public Demande getDemande() {
         return demande;
     }

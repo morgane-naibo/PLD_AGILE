@@ -1,6 +1,9 @@
 package controller;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javafx.stage.FileChooser;
 import model.Demande;
@@ -8,6 +11,7 @@ import model.Plan;
 import model.Trajet;
 import tsp.RunTSP;
 import util.XMLDemande;
+import util.XMLExport;
 import util.XMLPlan;
 
 public class TourneeAffichee extends Etat {
@@ -58,6 +62,25 @@ public class TourneeAffichee extends Etat {
             loadPlan(file.getPath()); // Tentative de chargement du plan
         }
     }
+
+    @Override
+    public void handleExportXML(){
+        XMLExport export = new XMLExport();
+        export.exportDemande(controller.getDemande(), "docs\\export.xml");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("docs\\tournees.txt"))) {
+            System.out.println(view.getTournees());
+            for (Trajet trajet : view.getTournees()) {
+                System.out.println(trajet.toString());
+                System.out.println("ON TESTE");
+                writer.write(trajet.toString());
+                writer.write("\n"); // ajouter une nouvelle ligne entre chaque trajet pour la lisibilité
+            }
+            System.out.println("Exportation réussie vers le fichier : " + "docs\\tournees.txt");
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'exportation des trajets : " + e.getMessage());
+        }
+    }
     
     private void loadPlan(String filePath) {
         XMLPlan xmlPlan = new XMLPlan();
@@ -73,6 +96,7 @@ public class TourneeAffichee extends Etat {
             controller.getBoutonPlus().setVisible(true);
             controller.getCalculerChemin().setVisible(false);
             controller.setEtat(new PlanCharge(controller)); // Passer à l'état chargé
+            controller.getExport().setVisible(false);
         } else {
             // Si le plan est invalide, afficher un message et réinitialiser l'état
             controller.getMessageLabel().setText("Le plan n'a pas pu être chargé. Veuillez réessayer.");

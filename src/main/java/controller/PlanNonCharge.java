@@ -38,7 +38,7 @@ public class PlanNonCharge extends Etat {
             view.setPlan(plan);
             view.demande.setNbLivreur(controller.getNbLivreur());
             view.displayPlan(controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel(), controller.getMessageLabel(), controller.getCalculerChemin(), controller.getUndoButton(), controller.getRedoButton());
-            view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin(), controller.getUndoButton(), controller.getRedoButton());
+            view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin(), controller.getUndoButton(), controller.getRedoButton(), controller.getExport());
             controller.getBoutonPlus().setVisible(true);
             controller.getCalculerChemin().setVisible(false);
             controller.setEtat(new PlanCharge(controller)); // Passer à l'état chargé

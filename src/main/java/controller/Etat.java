@@ -30,6 +30,10 @@ public abstract class Etat {
         System.out.println("Action non disponible dans cet état.");
     }
 
+    public void handleExportXML() {
+        System.out.println("Action non disponible dans cet état.");
+    }
+
     public void handleMousePressed(MouseEvent event) {
         System.out.println("Action non disponible dans cet état.");
     }

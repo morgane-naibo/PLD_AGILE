@@ -52,6 +52,9 @@ public class Controller {
     private Button calculerChemin;
 
     @FXML
+    private Button exportXML;
+
+    @FXML
     private Label label;
 
     @FXML 
@@ -226,6 +229,10 @@ public class Controller {
         return calculerChemin;
     }
 
+    public Button getExport() {
+        return exportXML;
+    }
+
     public Label getLabel() {
         return label;
     }
@@ -337,6 +344,12 @@ private void handleMouseDragged(MouseEvent event) {
     @FXML
     public void calculerChemin() {
         etat.calculerChemin();
+        System.out.println(etat);
+    }
+
+    @FXML
+    public void handleExportXML() {
+        etat.handleExportXML();
         System.out.println(etat);
     }
 
