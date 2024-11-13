@@ -22,24 +22,34 @@ public class PlanNonCharge extends Etat {
         fileChooser.setTitle("Ouvrir un plan");
         File file = fileChooser.showOpenDialog(null);
         XMLPlan xmlPlan = new XMLPlan();
+    
         if (file != null) {
-            loadPlan(file.getPath());
-            Plan plan = xmlPlan.parse(file.getPath());
-            controller.setPlan(plan);
-            PlanCharge planCharge = new PlanCharge(controller);
-            controller.setEtat(planCharge);
+            loadPlan(file.getPath()); // Tentative de chargement du plan
         }
     }
-
+    
     private void loadPlan(String filePath) {
         XMLPlan xmlPlan = new XMLPlan();
         Plan plan = xmlPlan.parse(filePath);
-        if (plan != null) {
+    
+        // Vérifie si le plan est chargé et contient des intersections
+        if (plan != null && plan.getListeIntersections().size() > 0) {
+            controller.setPlan(plan);
             view.setPlan(plan);
-            view.displayPlan(controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel(), controller.getMessageLabel(), controller.getCalculerChemin()); // Afficher le plan dans mapPane
+            view.demande.setNbLivreur(controller.getNbLivreur());
+            view.displayPlan(controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel(), controller.getMessageLabel(), controller.getCalculerChemin(), controller.getUndoButton(), controller.getRedoButton());
             view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin(), controller.getUndoButton(), controller.getRedoButton());
             controller.getBoutonPlus().setVisible(true);
             controller.getCalculerChemin().setVisible(false);
+            controller.setEtat(new PlanCharge(controller)); // Passer à l'état chargé
+        } else {
+            // Si le plan est invalide, afficher un message et réinitialiser l'état
+            controller.getMessageLabel().setText("Le plan n'a pas pu être chargé. Veuillez réessayer.");
+            controller.getMessageLabel().setVisible(true);
+    
+            // Réinitialiser l'interface et revenir à l'état initial
+            controller.setPlan(null);
+            controller.setEtat(new PlanNonCharge(controller)); // Revenir à l'état initial
         }
     }
 

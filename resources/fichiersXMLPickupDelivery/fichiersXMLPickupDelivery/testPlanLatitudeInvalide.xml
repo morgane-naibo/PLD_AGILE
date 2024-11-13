@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<reseau>
+    <!-- Test pour la latitude incorrecte -->
+    <noeud id="1" latitude="91.0" longitude="4.857418"/>
+    <noeud id="2" latitude="45.750404" longitude="4.8744674"/>
+    <noeud id="3" latitude="45.6" longitude="4.857418"/>
+    <noeud id="4" latitude="45.61" longitude="4.83"/>
+    <troncon destination="2" longueur="10" nomRue="Rue A*" origine="1"/>
+    <troncon destination="3" longueur="10" nomRue="Rue B*" origine="1"/>
+</reseau>

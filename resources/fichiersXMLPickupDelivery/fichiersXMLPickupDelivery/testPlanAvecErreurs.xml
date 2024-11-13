@@ -1,6 +1,15 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <reseau>
     <noeud id="1" latitude="45.75406"/> <!-- Manque l'attribut longitude -->
     <noeud latitude="45.750404" longitude="4.8744674"/> <!-- Manque l'attribut id -->
     <troncon destination="2" longueur="10" nomRue="Rue A*"/> <!-- Manque l'attribut origine -->
 </reseau>
+=======
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<reseau>
+    <noeud id="1" latitude="45.75406"/> <!-- Manque l'attribut longitude -->
+    <noeud latitude="45.750404" longitude="4.8744674"/> <!-- Manque l'attribut id -->
+    <troncon destination="2" longueur="10" nomRue="Rue A*"/> <!-- Manque l'attribut origine -->
+</reseau>
+>>>>>>> d7387dc1fbe5770b849e97d26f7ebc861badf1bb

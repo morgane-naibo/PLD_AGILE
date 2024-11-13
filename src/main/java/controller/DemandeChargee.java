@@ -31,6 +31,8 @@ public class DemandeChargee extends Etat {
             }
             controller.setEtat(new TourneeAffichee(controller));
             controller.getCalculerChemin().setVisible(false);
+            controller.getUndoButton().setVisible(true);
+            controller.getRedoButton().setVisible(true);
         }
         else {
             controller.getMessageLabel().setText("Veuillez sélectionner un entrepôt");
@@ -51,24 +53,44 @@ public class DemandeChargee extends Etat {
 
     @Override
     public void handleFileButton() {
+        view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin());
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File("resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery"));
         File file = fileChooser.showOpenDialog(null);
+        
         if (file != null) {
             loadDemande(file.getPath());
-            controller.setEtat(new DemandeChargee(controller));
         }
     }
-
+    
     private void loadDemande(String filePath) {
         XMLDemande xmlDemande = new XMLDemande();
         Demande demandeFile = xmlDemande.parse(filePath);
-        if (demandeFile != null) {
-            controller.getView().demande.setPlan(controller.getPlan());
+    
+        // Vérifiez si la demande est valide et contient des points de livraison
+        if (demandeFile != null && demandeFile.getListePointDeLivraison() != null && !demandeFile.getListePointDeLivraison().isEmpty()) {
+            
+            // Initialiser la demande dans le contrôleur si elle est null
+            if (controller.getDemande() == null) {
+                controller.setDemande(new Demande());
+            }
+    
+            // Configurer la demande avec le plan et afficher
             controller.getDemande().setPlan(controller.getPlan());
             view.displayDemande(demandeFile, controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getMessageLabel());
+            
+            controller.setDemande(demandeFile); // Mettre à jour la demande dans le contrôleur
+            controller.getCalculerChemin().setVisible(true);
+            controller.setEtat(new DemandeChargee(controller)); // Passer à l'état "DemandeChargee"
+        } else {
+            // Si la demande est invalide, afficher un message et réinitialiser l'état
+            controller.getMessageLabel().setText("Le fichier de demande n'a pas pu être chargé. Veuillez réessayer.");
+            controller.getMessageLabel().setVisible(true);
+    
+            // Réinitialiser l'interface et revenir à l'état initial
+            controller.setDemande(null);
+            controller.setEtat(new DemandeChargee(controller)); // Revenir à l'état initial
         }
-        controller.setDemande(controller.getView().demande);
     }
 
     @Override
@@ -79,24 +101,34 @@ public class DemandeChargee extends Etat {
         fileChooser.setTitle("Ouvrir un plan");
         File file = fileChooser.showOpenDialog(null);
         XMLPlan xmlPlan = new XMLPlan();
+    
         if (file != null) {
-            loadPlan(file.getPath());
-            Plan plan = xmlPlan.parse(file.getPath());
-            controller.setPlan(plan);
-            PlanCharge planCharge = new PlanCharge(controller);
-            controller.setEtat(planCharge);
+            loadPlan(file.getPath()); // Tentative de chargement du plan
         }
     }
-
+    
     private void loadPlan(String filePath) {
         XMLPlan xmlPlan = new XMLPlan();
         Plan plan = xmlPlan.parse(filePath);
-        if (plan != null) {
+    
+        // Vérifie si le plan est chargé et contient des intersections
+        if (plan != null && plan.getListeIntersections().size() > 0) {
+            controller.setPlan(plan);
             view.setPlan(plan);
-            view.displayPlan(controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel(), controller.getMessageLabel(), controller.getCalculerChemin()); // Afficher le plan dans mapPane
-            view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin());
+            view.demande.setNbLivreur(controller.getNbLivreur());
+            view.displayPlan(controller.getMapPane(), controller.getDeliveryInfoVBox(), controller.getLabel(), controller.getMessageLabel(), controller.getCalculerChemin());
+            view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin(), controller.getUndoButton(), controller.getRedoButton());
             controller.getBoutonPlus().setVisible(true);
             controller.getCalculerChemin().setVisible(false);
+            controller.setEtat(new PlanCharge(controller)); // Passer à l'état chargé
+        } else {
+            // Si le plan est invalide, afficher un message et réinitialiser l'état
+            controller.getMessageLabel().setText("Le plan n'a pas pu être chargé. Veuillez réessayer.");
+            controller.getMessageLabel().setVisible(true);
+    
+            // Réinitialiser l'interface et revenir à l'état initial
+            controller.setPlan(null);
+            controller.setEtat(new PlanNonCharge(controller)); // Revenir à l'état initial
         }
     }
 
