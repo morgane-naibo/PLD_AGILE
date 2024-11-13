@@ -469,7 +469,9 @@ public class Demande {
 
         this.listesIndex.get(nbLivreur).add(this.listePointDeLivraison.size());
         creerMatricesPourCluster(nbLivreur);
-        return this.recalculerTrajetApresAjoutPDL(nbLivreur);
+        Trajet trajet = this.recalculerTrajetApresAjoutPDL(nbLivreur);
+        this.livraisons.set(nbLivreur,trajet);
+        return trajet;
     }
 
     public Trajet recalculerTrajetApresAjoutPDL(int numLivreur){
@@ -527,7 +529,7 @@ public class Demande {
         } catch(IDIntersectionException e){
             e.printStackTrace();
         }
-
+        this.livraisons.set(numLivreur,trajet);
         return trajet;
     }
 
