@@ -22,7 +22,7 @@ public class Main {
         demande.setPlan(plan);
         // System.out.println(demande);
         demande.initialiserListePointdeLivraisons();
-        System.out.println("Liste PDL : " + demande.getListePointDeLivraison().toString());
+        //System.out.println("Liste PDL : " + demande.getListePointDeLivraison().toString());
         // demande.initialiserMatriceAdjacence();
         // System.out.println("AAAAAAAAAAAAAAAAAA\r\n");
         // System.out.println(demande.matrixToString(demande.getMatriceAdjacence()));
