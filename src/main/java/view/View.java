@@ -96,6 +96,11 @@ public class View {
 
     private List<Tournee> tournees = new ArrayList<>();
 
+
+    public Demande getDemande() {
+        return demande;
+    }
+
     public boolean isEntrepotExiste() {
         return entrepotExiste;
     }
@@ -164,6 +169,10 @@ public class View {
         return livreurSelectionne;
     }
 
+    public View() {
+        this.demande = new Demande();
+    }
+
 
     public void fileChooser() {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -178,23 +187,33 @@ public class View {
     }
 
     public void setPlan(Plan plan) {
+        setDemande(controller.getDemande());
+        System.out.println(controller.getDemande().getNbLivreurs());
+        this.demande.setNbLivreurs(controller.getDemande().getNbLivreurs());
         intersectionsAjoutees.clear();
         labelsAjoutes.clear();
         intersectionsSupprimees.clear();
         labelsSupprimes.clear();
         this.plan = plan;
         entrepotExiste = false;
-        demande = new Demande();
         latMin = plan.trouverLatitudeMin();
         latMax = plan.trouverLatitudeMax();
         longMin = plan.trouverLongitudeMin();
         longMax = plan.trouverLongitudeMax();
     }
 
-    public void displayPlan(Pane pane, VBox deliveryInfoVBox, Label label, Label messageLabel, Button calculerChemin) {
+    public void displayPlan(Pane pane, VBox deliveryInfoVBox, Label label, Label messageLabel, Button calculerChemin, Button... buttons) {
         pane.getChildren().clear();
+        messageLabel.setText(null);
         deliveryInfoVBox.getChildren().clear();
         tourneeCalculee = false;
+        livreurCouleurs.clear();
+
+        for (Button button : buttons) {
+            button.setVisible(false);
+        }
+
+        System.out.println(demande.getNbLivreurs());
 
 
         for (Troncon troncon : plan.getListeTroncons()) {
@@ -212,6 +231,7 @@ public class View {
 
         deliveryInfoVBox.setVisible(true);
         deliveryInfoVBox.getChildren().add(label);
+        System.out.println(demande.getNbLivreurs());
     }
 
     public void toggleButtons(Button boutonPlus, Button... buttons) {
@@ -284,7 +304,7 @@ public class View {
             entrepot = new Entrepot(intersection.getId(), "8");
             entrepotExiste = true;
 
-            entrepotCircle = new Circle(longitudeToX(intersection.getLongitude()), latitudeToY(intersection.getLatitude()), 5, Color.BLUE);
+            entrepotCircle = new Circle(longitudeToX(intersection.getLongitude()), latitudeToY(intersection.getLatitude()), 7, Color.BLUE);
             pane.getChildren().add(entrepotCircle);
 
             labelEntrepot = new Label("Entrepôt:");
@@ -336,13 +356,13 @@ public class View {
                     Trajet trajet = this.demande.ajouterPDLaMatrice(livreurSelectionne.getId(), pdl);
                     Tournee tournee = new Tournee(trajet.getListeEtapes(), livreurSelectionne);
                     tournees.set((int)livreurSelectionne.getId(), tournee);
-                    reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
+                    reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne, label);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 //System.out.println(commandes);
                 //System.out.println(ajouterPointDeLivraisonCommande.getIntersection());
-                reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
+                //reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
             }
         } catch (IDIntersectionException e) {
             e.printStackTrace();
@@ -351,6 +371,8 @@ public class View {
     }
 
     public void displayDemande(Demande demandeFile, Pane pane, VBox deliveryInfoVBox, Label label) {
+        label.setText(null);
+        
         if (entrepotExiste) {
             pane.getChildren().remove(entrepotCircle);
             deliveryInfoVBox.getChildren().remove(labelEntrepot);
@@ -369,7 +391,7 @@ public class View {
             double lat = latitudeToY(intersection.getLatitude());
             double lon = longitudeToX(intersection.getLongitude());
 
-            entrepotCircle = new Circle(lon, lat, 5, Color.BLUE);
+            entrepotCircle = new Circle(lon, lat, 7, Color.BLUE);
             pane.getChildren().add(entrepotCircle);
 
             List<Troncon> listeTroncons = intersection.getListeTroncons();
@@ -458,7 +480,7 @@ public class View {
                 try {
                     Trajet nouveauTrajet = demande.recalculerTrajetApresSuppressionPDL((int) livreurSelectionne.getId(), pdl);
                     tournees.get((int) livreurSelectionne.getId()).setListeEtapes(nouveauTrajet.getListeEtapes());
-                    reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
+                    reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne, pdlLabel);
                     //supprimerPointDeLivraison(inter, pane, deliveryInfoVBox, pdlLabel, true, null);
                     pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
                     intersectionsSupprimees.push(inter);
@@ -592,7 +614,7 @@ public class View {
     
                 // Update the tour with the new steps and display it
                 tournees.get((int)livreurSelectionne.getId()).setListeEtapes(nouvellesEtapes);
-                afficherTourneeSurCarte(nouvellesEtapes, pane, livreur);
+                afficherTourneeSurCarte(nouvellesEtapes, pane, livreur, label);
             }
         }
     }
@@ -607,23 +629,25 @@ public class View {
         // Réajouter le label au VBox
         label.setStyle("-fx-background-color: #f5f5f5;");
         deliveryInfoVBox.getChildren().add(label);
+        circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
 
         PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), new Livraison(0, intersection.getId(), 5.0, 5.0));
         this.demande.ajouterPointDeLivraison(pdl);
 
         try {
-            this.demande.ajouterPDLaMatrice(livreur.getId(), pdl);
+            Trajet trajet = this.demande.ajouterPDLaMatrice(livreurSelectionne.getId(), pdl);
+            Tournee tournee = new Tournee(trajet.getListeEtapes(), livreurSelectionne);
+            tournees.set((int)livreurSelectionne.getId(), tournee);
+            reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne, label);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Réassocier le clic sur le cercle à la suppression du point de livraison  
-        circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
-        
-        reafficherTournee(pane, deliveryInfoVBox, livreur);
+        // Réassocier le clic sur le cercle à la suppression du point de livraison          
+        //reafficherTournee(pane, deliveryInfoVBox, livreur);
     }
 
-    public void reafficherTournee(Pane pane, VBox deliveryInfoVBox, Livreur livreur) {
+    public void reafficherTournee(Pane pane, VBox deliveryInfoVBox, Livreur livreur, Label messageLabel) {
         // Récupérer la tournée associée au livreur sélectionné
 
         Tournee tournee = tournees.get((int)livreur.getId());
@@ -687,7 +711,7 @@ public class View {
         System.out.println("nouvellesEtapes : " + nouvellesEtapes);
     
         // Afficher la tournée mise à jour
-        afficherTourneeSurCarte(nouvellesEtapes, pane, livreurSelectionne);
+        afficherTourneeSurCarte(nouvellesEtapes, pane, livreurSelectionne, messageLabel);
     }
         
 
@@ -708,7 +732,8 @@ public class View {
     }
 
     public void calculerChemin(Pane pane, VBox deliveryInfoVBox, Trajet trajet, int livreurId, Label messageLabel) {
-        messageLabel.setText("Selectionnez une tournée pour la modifier.");
+        
+        messageLabel.setText("Selectionnez une tournée pour la modifier, en cliquant sur le texte surligné ou sur la tournée graphique.");
         
         Set<String> tronconsAffiches = new HashSet<>();
 
@@ -725,6 +750,9 @@ public class View {
         Color color;
         if (!livreurCouleurs.containsKey(livreur.getId())) {
             double hue = (livreur.getId() * 60) % 360; // Espacement de 60 degrés entre chaque couleur
+            if (hue == 0) {
+            hue += 30; // Éviter le rouge pur
+            }
             color = Color.hsb(hue, 0.7, 0.8);
             livreurCouleurs.put(livreur.getId(), color);
         } else {
@@ -737,16 +765,23 @@ public class View {
         Color lightColor = color.deriveColor(0, 1, 1.3, 0.5); // Increase brightness by 30% and set opacity to 50%
         livreurLabel.setStyle("-fx-background-color: " + toHexString(lightColor) + ";");
         livreurLabel.setOnMouseClicked(event -> {
-            afficherTourneeSurCarte(trajet.getListeEtapes(), pane, livreur);
+            afficherTourneeSurCarte(trajet.getListeEtapes(), pane, livreur, messageLabel);
         });
         deliveryInfoVBox.getChildren().add(livreurLabel);
+        double heureDepartProchainTroncon = 8.0; // Heure de départ du premier tronçon
 
         // Afficher le chemin
         for (Etape etape : trajet.getListeEtapes()) {
-            double temps = etape.getLongueur()*60/15000;
-            double heure = 8 + temps/60;
-            Label labelEtape = new Label("Etape : " + heure);
+            double temps = etape.getLongueur() * 60 / 15000;
+            temps = Math.round(temps * 100.0) / 100.0;
+            double heureFin = heureDepartProchainTroncon + temps / 60;
+            int heures = (int) heureFin;
+            int minutes = (int) ((heureFin - heures) * 60);
+            Label labelEtape = new Label("Etape : " + String.format("%02d:%02d", heures, minutes));
             deliveryInfoVBox.getChildren().add(labelEtape);
+
+            // Utiliser l'heure de fin comme heure de départ pour le prochain tronçon
+            heureDepartProchainTroncon = heureFin;
             for (Troncon troncon : etape.getListeTroncons()) {
                 double startX = longitudeToX(troncon.getOrigine().getLongitude());
                 double startY = latitudeToY(troncon.getOrigine().getLatitude());
@@ -754,7 +789,7 @@ public class View {
                 double endY = latitudeToY(troncon.getDestination().getLatitude());
 
                 Line line = new Line(startX, startY, endX, endY);
-                line.setOnMouseClicked(event -> afficherTourneeSurCarte(trajet.getListeEtapes(), pane, livreur));
+                line.setOnMouseClicked(event -> afficherTourneeSurCarte(trajet.getListeEtapes(), pane, livreur, messageLabel));
                 line.setStrokeWidth(5);
                 line.setStroke(color);
                 pane.getChildren().add(line);
@@ -804,7 +839,9 @@ public class View {
 
 
 
-public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livreur) {
+public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livreur, Label messageLabel) {
+
+    messageLabel.setText("Tournée du livreur " + (livreur.getId() + 1) + " sélectionnée");
 
     // Supprime les anciens tracés de la tournée du plan
     this.livreurSelectionne = livreur;
@@ -824,7 +861,7 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
                 double endY = latitudeToY(troncon.getDestination().getLatitude());
 
                 Line line = new Line(startX, startY, endX, endY);
-                line.setOnMouseClicked(event -> afficherTourneeSurCarte(etapes, pane, livreur));
+                line.setOnMouseClicked(event -> afficherTourneeSurCarte(etapes, pane, livreur, messageLabel));
                 line.setStrokeWidth(5);
                 line.setStroke(livreurCouleurs.get(livreur.getId()));
                 pane.getChildren().add(line);
