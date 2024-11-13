@@ -397,8 +397,6 @@ public class Demande {
             System.out.println(matrixToString(matriceAdjacence));
             this.creerClusters();
             this.creerMatricesParClusters();
-            System.out.println("cluster 0 :" + this.listesIndex.get(0).toString());
-            System.out.println("cluster 1 :" + this.listesIndex.get(1).toString());
             RunTSP run = new RunTSP();
             for (int i = 0; i<nbLivreurs;i++){
                 Trajet trajet = new Trajet();
@@ -540,7 +538,7 @@ public class Demande {
             int index =0;
 
             for (int i = 0; i<trajet.getListeEtapes().size()-1;i++){
-                if (trajet.getListeEtapes().get(i).getArrivee() == inter){
+                if (trajet.getListeEtapes().get(i).getArrivee().getId() == inter.getId()){
                     index = i ;
                 }
             }
