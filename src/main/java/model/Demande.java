@@ -442,7 +442,7 @@ public class Demande {
     
     }
 
-    public Trajet ajouterPDLaMatrice(int nbLivreur, PointDeLivraison newPDL){
+    public Trajet ajouterPDLaMatrice(int nbLivreur, PointDeLivraison newPDL) throws Exception{
         //On ajoute le pdl à la liste des PDL
         this.ajouterPointDeLivraison(newPDL);
         //avant d'appeler cette méthode il faut appeler la méthode ajouterPointDeLivraison pour que newPDL soit déjà pris en compte
@@ -470,13 +470,22 @@ public class Demande {
         }
 
         this.listesIndex.get(nbLivreur).add(this.listePointDeLivraison.size());
-        creerMatricesPourCluster(nbLivreur);
-        Trajet trajet = this.recalculerTrajetApresAjoutPDL(nbLivreur);
-        this.livraisons.set(nbLivreur,trajet);
-        return trajet;
+        try {
+            verifierMatriceAdjacence();
+            creerMatricesPourCluster(nbLivreur);
+            Trajet trajet = this.recalculerTrajetApresAjoutPDL(nbLivreur);
+            this.livraisons.set(nbLivreur,trajet);
+            return trajet;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+        
+        
     }
 
-    public Trajet recalculerTrajetApresAjoutPDL(int numLivreur){
+    public Trajet recalculerTrajetApresAjoutPDL(int numLivreur) throws IDIntersectionException{
         Trajet trajet = this.livraisons.get(numLivreur);
 
         double distMin = Double.MAX_VALUE;
@@ -490,7 +499,10 @@ public class Demande {
             Intersection arrivee = trajet.getListeEtapes().get(0).getArrivee();
 
             for (int i = 0; i<trajet.getListeEtapes().size();i++){
-                double dist = this.plan.chercherPlusCourtChemin(trajet.getListeEtapes().get(i).getDepart(),inter).getLongueur() + this.plan.chercherPlusCourtChemin(inter, trajet.getListeEtapes().get(i).getArrivee()).getLongueur() - trajet.getListeEtapes().get(i).getLongueur() ;
+                double dist3 = this.plan.chercherPlusCourtChemin(trajet.getListeEtapes().get(i).getDepart(),inter).getLongueur() ;
+                double dist2 = this.plan.chercherPlusCourtChemin(inter, trajet.getListeEtapes().get(i).getArrivee()).getLongueur();
+                double dist1 = trajet.getListeEtapes().get(i).getLongueur() ;
+                double dist = dist3+dist2-dist1;
                 if (dist<distMin){
                     distMin = dist;
                     index = i;

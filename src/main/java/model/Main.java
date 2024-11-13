@@ -12,8 +12,8 @@ import exceptions.*;
 public class Main {
 
     public static void main(String[] args) throws Exception{
-        String mapPathPlan = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\grandPlan.xml";
-        String mapPathDemande = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\demandeGrand9.xml";
+        String mapPathPlan = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\moyenPlan.xml";
+        String mapPathDemande = "resources\\fichiersXMLPickupDelivery\\fichiersXMLPickupDelivery\\demandeMoyen5.xml";
         XMLPlan planReader = new XMLPlan();
         Plan plan = planReader.parse(mapPathPlan);
         XMLDemande demandeReader = new XMLDemande();
@@ -44,14 +44,16 @@ public class Main {
         // System.out.println(demande.getListesIndex().get(1).toString());
         //demande.calculerTSP();
 
-        RunTSP run = new RunTSP();
+        //RunTSP run = new RunTSP();
         try {
             demande.calculerTSP();
-            System.out.println(demande.getLivraisons().get(0).getListeEtapes().toString());
-            Intersection inter = plan.chercherIntersectionParId(1042749170);
-            PointDeLivraison pdl= new PointDeLivraison(inter.getId());
+            //System.out.println(demande.getLivraisons().get(0).getListeEtapes().toString());
+            Intersection inter = plan.chercherIntersectionParId(1957527553);
+            System.out.println("inter : "+inter.toString());
+            PointDeLivraison pdl= new PointDeLivraison(inter);
+            System.out.println("pdl : "+pdl.toString());
             demande.ajouterPDLaMatrice(0,pdl);
-            demande.recalculerTrajetApresAjoutPDL(0);
+            //demande.recalculerTrajetApresAjoutPDL(0);
             System.out.println("Nouveau trajet : "+demande.getLivraisons().get(0).getListeEtapes().toString());
         } catch (Exception e){
             System.out.println(e.getMessage());
