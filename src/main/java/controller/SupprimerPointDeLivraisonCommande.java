@@ -16,12 +16,14 @@ public class SupprimerPointDeLivraisonCommande extends Commande {
     private final VBox deliveryInfoVBox;
     private Stack<Intersection> intersectionsSupprimees;
     private Stack<Label> labelsSupprimes;
+    private Label messageLabel;
 
-    public SupprimerPointDeLivraisonCommande(View view, Pane pane, VBox deliveryInfoVBox, Intersection intersection, Label label) {
+    public SupprimerPointDeLivraisonCommande(View view, Pane pane, VBox deliveryInfoVBox, Intersection intersection, Label label, Label messageLabel) {
         super(intersection, label);
         this.view = view;
         this.pane = pane;
         this.deliveryInfoVBox = deliveryInfoVBox;
+        this.messageLabel = messageLabel;
     }
 
     @Override

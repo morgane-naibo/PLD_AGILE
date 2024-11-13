@@ -33,7 +33,7 @@ public class PlanNonCharge extends Etat {
         Plan plan = xmlPlan.parse(filePath);
     
         // Vérifie si le plan est chargé et contient des intersections
-        if (plan != null && plan.getListeIntersections().size() > 0) {
+        if (plan != null && plan.getListeIntersections().size() > 0 && controller.getNbLivreur() > 0) {
             controller.setPlan(plan);
             view.setPlan(plan);
             view.demande.setNbLivreur(controller.getNbLivreur());
@@ -42,6 +42,10 @@ public class PlanNonCharge extends Etat {
             controller.getBoutonPlus().setVisible(true);
             controller.getCalculerChemin().setVisible(false);
             controller.setEtat(new PlanCharge(controller)); // Passer à l'état chargé
+        } else if (controller.getNbLivreur() == 0) {
+            controller.getMessageLabel().setText("Veuillez sélectionner un nombre de livreurs avant de charger un plan.");
+            controller.getMessageLabel().setVisible(true);
+            controller.setEtat(new PlanNonCharge(controller)); // Revenir à l'état initial
         } else {
             // Si le plan est invalide, afficher un message et réinitialiser l'état
             controller.getMessageLabel().setText("Le plan n'a pas pu être chargé. Veuillez réessayer.");

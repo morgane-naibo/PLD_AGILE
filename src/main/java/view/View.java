@@ -348,7 +348,7 @@ public class View {
             if (tourneeCalculee) {
                 intersectionsAjoutees.push(inter);
                 labelsAjoutes.push(pdLabel);
-                AjouterPointDeLivraisonCommande ajouterPointDeLivraisonCommande = new AjouterPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, pdLabel);
+                AjouterPointDeLivraisonCommande ajouterPointDeLivraisonCommande = new AjouterPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, pdLabel, controller.getMessageLabel());
                 commandes.push(ajouterPointDeLivraisonCommande);
                 derniereCommande = ajouterPointDeLivraisonCommande;
                 //this.demande.ajouterPointDeLivraison(pdl);
@@ -519,6 +519,14 @@ public class View {
     }
 
     public void supprimerPointDeLivraison(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label, boolean addCommand, Livreur livreur) {
+        if (addCommand) {
+            intersectionsSupprimees.push(inter);
+            labelsSupprimes.push(label);
+            SupprimerPointDeLivraisonCommande supprimerPointDeLivraisonCommande = new SupprimerPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, label, controller.getMessageLabel());
+            commandes.push(supprimerPointDeLivraisonCommande);
+            derniereCommande = supprimerPointDeLivraisonCommande;
+        }
+        
         if (!tourneeCalculee || inter.getId() == entrepot.getId()) {
             this.demande.supprimerIntersection(inter);
             if (inter.getId() == entrepot.getId()) {
@@ -535,15 +543,11 @@ public class View {
         } else {
             PointDeLivraison pdl = new PointDeLivraison(inter);
             try {
+                pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+                deliveryInfoVBox.getChildren().remove(label);
                 Trajet nouveauTrajet = demande.recalculerTrajetApresSuppressionPDL((int) livreur.getId(), pdl);
                 tournees.get((int) livreur.getId()).setListeEtapes(nouveauTrajet.getListeEtapes());
                 reafficherTournee(pane, deliveryInfoVBox, livreur, label);
-                pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
-                intersectionsSupprimees.push(inter);
-                labelsSupprimes.push(label);
-                SupprimerPointDeLivraisonCommande supprimerPointDeLivraisonCommande = new SupprimerPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, label);
-                commandes.push(supprimerPointDeLivraisonCommande);
-                derniereCommande = supprimerPointDeLivraisonCommande;
             } catch (IDIntersectionException ex) {
                 ex.printStackTrace();
             }
