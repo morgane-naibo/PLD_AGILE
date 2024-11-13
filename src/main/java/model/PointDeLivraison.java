@@ -12,6 +12,11 @@ public class PointDeLivraison extends Intersection{
         
     }
 
+    public PointDeLivraison(Long id) {
+        this.setId(id);
+        
+    }
+
     //getters
     public Livraison getLivraison() {
         return this.livraison;

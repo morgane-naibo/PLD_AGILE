@@ -47,6 +47,12 @@ public class Main {
         RunTSP run = new RunTSP();
         try {
             demande.calculerTSP();
+            System.out.println(demande.getLivraisons().get(0).getListeEtapes().toString());
+            Intersection inter = plan.chercherIntersectionParId(1042749170);
+            PointDeLivraison pdl= new PointDeLivraison(inter.getId());
+            demande.ajouterPDLaMatrice(0,pdl);
+            demande.recalculerTrajetApresAjoutPDL(0);
+            System.out.println("Nouveau trajet : "+demande.getLivraisons().get(0).getListeEtapes().toString());
         } catch (Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -78,10 +84,10 @@ public class Main {
         // }
         
 
-        if (run.getTimeLimit()==1){
-            System.out.println("Time Limit atteint");
-            run.calculerTSPApresTimeLimit(demande.getListeMatriceAdjacence().get(0));
-        }
+        // if (run.getTimeLimit()==1){
+        //     System.out.println("Time Limit atteint");
+        //     run.calculerTSPApresTimeLimit(demande.getListeMatriceAdjacence().get(0));
+        // }
 
         
     }

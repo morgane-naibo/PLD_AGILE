@@ -17,7 +17,8 @@ public class Demande {
     private Trajet tournee;
     private Plan plan;
     private int nbLivreurs;
-    private ArrayList<ArrayList<Integer>> listesIndex;
+    private ArrayList<ArrayList<Integer>> listesIndex;   
+    private List<Trajet> livraisons ;
 
     //constructeur
     public Demande() {
@@ -28,6 +29,7 @@ public class Demande {
         this.nbLivreurs = 2;
         this.listeMatriceAdjacence = new ArrayList<>(this.nbLivreurs);
         this.listesIndex = new ArrayList<>();
+        this.livraisons = new ArrayList<>();
     }
 
     //getters
@@ -61,6 +63,10 @@ public class Demande {
 
     public ArrayList<ArrayList<Integer>> getListesIndex() {
         return this.listesIndex;
+    }
+
+    public List<Trajet> getLivraisons() {
+        return this.livraisons;
     }
 
     //setters
@@ -353,82 +359,6 @@ public class Demande {
 
     }
 
-    // public void creerClusters() {
-    //     ArrayList<Integer> indexAAjouter = new ArrayList<>();
-    //     for (int i = 1; i < this.matriceAdjacence.size(); i++) {
-    //         indexAAjouter.add(i);
-    //     }
-    //     ArrayList<Etape> etapesVisitees = new ArrayList<>();
-        
-    //     for (int init = 0; init < this.listePointDeLivraison.size(); init++) {
-    //         this.listesIndex.add(new ArrayList<Integer>());
-    //     }
-    
-    //     Etape enCours = null;
-    //     Etape opposee = null;
-    
-    //     if (this.nbLivreurs < this.listePointDeLivraison.size()) {
-    //         for (int i = 0; i < this.listePointDeLivraison.size() - this.nbLivreurs; i++) {
-    //             double distanceMin = Double.MAX_VALUE;
-    //             int indexDepart = -1;
-    //             int indexArrivee = -1;
-    
-    //             // Chercher le plus proche non visité
-    //             for (int k = 1; k < this.listePointDeLivraison.size() + 1; k++) {
-    //                 for (int j = 1; j < this.listePointDeLivraison.size() + 1; j++) {
-    //                     Etape etapeCourante = this.matriceAdjacence.get(k).get(j);
-    //                     if (etapeCourante != null && !etapesVisitees.contains(etapeCourante)) {
-    //                         if (distanceMin > etapeCourante.getLongueur()) {
-    //                             distanceMin = etapeCourante.getLongueur();
-    //                             enCours = etapeCourante;
-    //                             opposee = this.matriceAdjacence.get(j).get(k);
-    //                             indexDepart = k;
-    //                             indexArrivee = j;
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    
-    //             boolean clusterMisAJour = false;
-    //             for (int l = 0; l < this.listePointDeLivraison.size(); l++) {
-    //                 if (this.listesIndex.get(l).contains(indexDepart) || this.listesIndex.get(l).contains(indexArrivee)) {
-    //                     int autreIndex = this.listesIndex.get(l).contains(indexDepart) ? indexArrivee : indexDepart;
-    //                     if (!this.listesIndex.get(l).contains(autreIndex)) {
-    //                         this.listesIndex.get(l).add(autreIndex);
-    //                         indexAAjouter.remove(Integer.valueOf(autreIndex));
-    //                         clusterMisAJour = true;
-    //                     }
-    //                     break;
-    //                 } else if (this.listesIndex.get(l).isEmpty()) {
-    //                     this.listesIndex.get(l).add(indexDepart);
-    //                     this.listesIndex.get(l).add(indexArrivee);
-    //                     indexAAjouter.remove(Integer.valueOf(indexDepart));
-    //                     indexAAjouter.remove(Integer.valueOf(indexArrivee));
-    //                     clusterMisAJour = true;
-    //                     break;
-    //                 }
-    //             }
-    
-    //             if (clusterMisAJour) {
-    //                 etapesVisitees.add(enCours);
-    //                 etapesVisitees.add(opposee);
-    //             }
-    //         }
-    
-    //         // Ajouter les indices restants pour compléter les clusters
-    //         for (int k = 0; k < indexAAjouter.size(); k++) {
-    //             ArrayList<Integer> cluster = new ArrayList<>();
-    //             cluster.add(indexAAjouter.get(k));
-    //             this.listesIndex.set(this.nbLivreurs - k - 1, cluster);
-    //         }
-    //     } else {
-    //         for (int loop = 0; loop < this.listePointDeLivraison.size(); loop++) {
-    //             this.listesIndex.get(loop).add(loop + 1);
-    //         }
-    //     }
-    // }
-    
-
 
     public void creerMatricesParClusters() {
         for (int i = 0; i < this.nbLivreurs; i++) {
@@ -468,7 +398,6 @@ public class Demande {
 
 
     public List<Trajet> calculerTSP(){
-        List<Trajet> livraisons = new ArrayList<>(); 
         try {
             this.initialiserMatriceAdjacence();
             this.verifierMatriceAdjacence();
@@ -481,7 +410,7 @@ public class Demande {
             for (int i = 0; i<nbLivreurs;i++){
                 Trajet trajet = new Trajet();
                 trajet = run.calculerTSP(this.listeMatriceAdjacence.get(i));
-                livraisons.add(trajet);
+                this.livraisons.add(trajet);
                 //on a juste à afficher le temps des tournées et à signaler qu'une tournée est hors-temps, 
                 //c'est à l'utilisateur de modifier manuellement les tournées
                 // while (duree>9*60){
@@ -528,23 +457,95 @@ public class Demande {
     
     }
 
-    public void ajouterPDLaMatrice(int nbLivreur){
+    public Trajet ajouterPDLaMatrice(int nbLivreur, PointDeLivraison newPDL){
+        //On ajoute le pdl à la liste des PDL
+        this.ajouterPointDeLivraison(newPDL);
         //avant d'appeler cette méthode il faut appeler la méthode ajouterPointDeLivraison pour que newPDL soit déjà pris en compte
-        PointDeLivraison newPDL = this.listePointDeLivraison.get(this.listePointDeLivraison.size() - 1);
+        int indexNewPDL = this.listePointDeLivraison.size() ;
         this.matriceAdjacence.add(new ArrayList<>(Collections.nCopies(this.matriceAdjacence.size()+1, null)));
-        this.matriceAdjacence.get(this.matriceAdjacence.size()-1).set(0,this.plan.chercherPlusCourtChemin(newPDL, this.entrepot));
+        
+        //initialise [newPDL : entrepot]
+        this.matriceAdjacence.get(indexNewPDL).set(0,this.plan.chercherPlusCourtChemin(newPDL, this.entrepot));
+
+        //initialise [entrepot : newPDL]
         this.matriceAdjacence.get(0).add(null);
-        this.matriceAdjacence.get(0).set(this.matriceAdjacence.size()-1,this.plan.chercherPlusCourtChemin(this.entrepot, newPDL));
-        this.matriceAdjacence.get(this.matriceAdjacence.size()-1).set(this.matriceAdjacence.size()-1, null);
+        this.matriceAdjacence.get(0).set(indexNewPDL,this.plan.chercherPlusCourtChemin(this.entrepot, newPDL));
+
+        //initialise [newPDL : newPDL]
+        this.matriceAdjacence.get(indexNewPDL).set(this.matriceAdjacence.size()-1, null);
 
         for(int i=1 ; i<this.matriceAdjacence.size()-1 ; i++){
+
+                //[i : newPDL]
                 this.matriceAdjacence.get(i).add(null);
-                this.matriceAdjacence.get(i).set(this.listePointDeLivraison.size(), (this.plan.chercherPlusCourtChemin(this.listePointDeLivraison.get(i), newPDL)));
-                this.matriceAdjacence.get(this.listePointDeLivraison.size()).set(i, this.plan.chercherPlusCourtChemin(newPDL, this.listePointDeLivraison.get(i)));
+                this.matriceAdjacence.get(i).set(indexNewPDL , (this.plan.chercherPlusCourtChemin(this.listePointDeLivraison.get(i-1), newPDL)));
+
+                //[newPDL : i]
+                this.matriceAdjacence.get(indexNewPDL).set(i, this.plan.chercherPlusCourtChemin(newPDL, this.listePointDeLivraison.get(i-1)));
         }
 
         this.listesIndex.get(nbLivreur).add(this.listePointDeLivraison.size());
         creerMatricesPourCluster(nbLivreur);
+        return this.recalculerTrajetApresAjoutPDL(nbLivreur);
+    }
+
+    public Trajet recalculerTrajetApresAjoutPDL(int numLivreur){
+        Trajet trajet = this.livraisons.get(numLivreur);
+
+        double distMin = Double.MAX_VALUE;
+
+        PointDeLivraison newPDL = this.listePointDeLivraison.get(this.listePointDeLivraison.size()-1);
+        
+        try {
+            Intersection inter = this.plan.chercherIntersectionParId(newPDL.getId());
+            int index =0;
+            Intersection depart =entrepot;
+            Intersection arrivee = trajet.getListeEtapes().get(0).getArrivee();
+
+            for (int i = 0; i<trajet.getListeEtapes().size();i++){
+                double dist = this.plan.chercherPlusCourtChemin(trajet.getListeEtapes().get(i).getDepart(),inter).getLongueur() + this.plan.chercherPlusCourtChemin(inter, trajet.getListeEtapes().get(i).getArrivee()).getLongueur() - trajet.getListeEtapes().get(i).getLongueur() ;
+                if (dist<distMin){
+                    distMin = dist;
+                    index = i;
+                    depart =trajet.getListeEtapes().get(i).getDepart();
+                    arrivee = trajet.getListeEtapes().get(i).getArrivee();
+                }
+            }
+            trajet.getListeEtapes().remove(index);
+            trajet.getListeEtapes().add(index, this.plan.chercherPlusCourtChemin(depart,inter));
+            trajet.getListeEtapes().add(index+1, this.plan.chercherPlusCourtChemin(inter,arrivee));
+
+        } catch(IDIntersectionException e){
+            e.printStackTrace();
+        }
+
+        return trajet;
+    }
+
+    public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl){
+        this.supprimerPointDeLivraison(pdl);
+        Trajet trajet = this.livraisons.get(numLivreur);
+        
+        try {
+            Intersection inter = this.plan.chercherIntersectionParId(pdl.getId());
+            int index =0;
+
+            for (int i = 0; i<trajet.getListeEtapes().size();i++){
+                if (trajet.getListeEtapes().get(i).getArrivee() == inter){
+                    index = i ;
+                }
+            }
+            Intersection dep = trajet.getListeEtapes().get(index).getDepart() ;
+            Intersection arr = trajet.getListeEtapes().get(index+1).getArrivee();
+            trajet.getListeEtapes().remove(index);
+            trajet.getListeEtapes().add(index, this.plan.chercherPlusCourtChemin(dep, arr));
+            trajet.getListeEtapes().remove(index+1);
+
+        } catch(IDIntersectionException e){
+            e.printStackTrace();
+        }
+
+        return trajet;
     }
 
     
