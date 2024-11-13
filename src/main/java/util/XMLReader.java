@@ -3,6 +3,9 @@ package util;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
+
+import exceptions.IDIntersectionException;
+
 import java.io.File;
 
 
@@ -29,5 +32,5 @@ public abstract class XMLReader {
     }
 
     // Méthode abstraite que les classes dérivées doivent implémenter
-    public abstract <T> T parse(String filePath);
+    public abstract <T> T parse(String filePath) throws NumberFormatException, IDIntersectionException;
 }
