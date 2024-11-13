@@ -86,7 +86,7 @@ public class Plan {
             }
         }
         if (!existence){
-            throw new IDIntersectionException("Cette intersection n'esxiste pas.");
+            throw new IDIntersectionException("Cette intersection n'existe pas.");
         }
         return null;
     }

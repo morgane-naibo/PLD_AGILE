@@ -262,6 +262,10 @@ public class Controller {
         return stackPane;
     }
 
+    public int getNbLivreur() {
+        return nbLivreur;
+    }
+
 
 // Gestionnaire d'événements pour le clic de souris
 private void handleMousePressed(MouseEvent event) {
@@ -333,8 +337,6 @@ private void handleMouseDragged(MouseEvent event) {
     @FXML
     public void calculerChemin() {
         etat.calculerChemin();
-        undoButton.setVisible(true);
-        redoButton.setVisible(true);
         System.out.println(etat);
     }
 

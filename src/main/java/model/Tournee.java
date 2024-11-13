@@ -28,7 +28,14 @@ public class Tournee extends Trajet{
     //toString
     @Override
     public String toString() {
-        return "Tournée: [Livreur: " + livreur + ", Étapes: " + super.toString() + "]";
+        String msg;
+        msg = "Tournée : ";
+        for(int i=0 ; i<this.listeEtapes.size() ; i++){
+            msg += this.listeEtapes.get(i).getDepart().getId();
+            msg+="  -> ";
+        }
+        msg += this.listeEtapes.getLast().getArrivee().getId();
+        return msg;
     }
 
 

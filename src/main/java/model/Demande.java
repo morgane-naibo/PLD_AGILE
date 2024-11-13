@@ -94,6 +94,10 @@ public class Demande {
         this.plan = newPlan;
     }
 
+    public void setNbLivreur(int newNbLivreur){
+        this.nbLivreurs = newNbLivreur;
+    }
+
     // ajout point de livraison
     public void ajouterPointDeLivraison(PointDeLivraison point) {
         if (point != null) {
@@ -210,7 +214,7 @@ public class Demande {
         }
     }
 
-    public void supprimerIntersection(Intersection intersection) {
+    public int supprimerIntersection(Intersection intersection) {
         int position = -1;
 
         // Check if the intersection is the entrepot
@@ -235,7 +239,9 @@ public class Demande {
                 this.initialiserMatriceAdjacence();
             }
         }
+        return position;
     }
+
 
     public void creerClusters(){
         ArrayList<Integer> indexAAjouter = new ArrayList<Integer>();
@@ -361,7 +367,17 @@ public class Demande {
 
 
     public void creerMatricesParClusters() {
-        for (int i = 0; i < this.nbLivreurs; i++) {
+        int size;
+
+        if(this.nbLivreurs > this.listePointDeLivraison.size()){
+            size = this.listePointDeLivraison.size();
+        }
+
+        else{
+            size = this.nbLivreurs;
+        }
+
+        for (int i = 0; i < size; i++) {
             // Initialize the adjacency matrix for each "livreur" as a 2D List of Etape objects
             List<List<Etape>> matrice = new ArrayList<>();
     
@@ -393,7 +409,6 @@ public class Demande {
             // Add this cluster's matrix to the main list
             this.listeMatriceAdjacence.add(matrice);
         }
-    
     }
 
 
@@ -404,18 +419,22 @@ public class Demande {
             System.out.println(matrixToString(matriceAdjacence));
             this.creerClusters();
             this.creerMatricesParClusters();
-            System.out.println("cluster 0 :" + this.listesIndex.get(0).toString());
-            System.out.println("cluster 1 :" + this.listesIndex.get(1).toString());
             RunTSP run = new RunTSP();
-            for (int i = 0; i<nbLivreurs;i++){
+           
+            int size;
+            if(this.nbLivreurs > this.listePointDeLivraison.size()){
+                size = this.listePointDeLivraison.size();
+            }
+            else{
+                size = this.nbLivreurs;
+            }
+
+            for (int i = 0; i<size;i++){
                 Trajet trajet = new Trajet();
                 trajet = run.calculerTSP(this.listeMatriceAdjacence.get(i));
                 this.livraisons.add(trajet);
                 //on a juste à afficher le temps des tournées et à signaler qu'une tournée est hors-temps, 
                 //c'est à l'utilisateur de modifier manuellement les tournées
-                // while (duree>9*60){
-
-                // }
             }
 
         } catch(Exception e){
@@ -536,16 +555,18 @@ public class Demande {
         return trajet;
     }
 
-    public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl) throws IDIntersectionException{
-        this.supprimerIntersection(pdl);
+    public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl) throws Exception {
+        if(this.supprimerIntersection(pdl)==-1){
+            return null;
+        }
         Trajet trajet = this.livraisons.get(numLivreur);
         
         try {
             Intersection inter = this.plan.chercherIntersectionParId(pdl.getId());
             int index =0;
 
-            for (int i = 0; i<trajet.getListeEtapes().size();i++){
-                if (trajet.getListeEtapes().get(i).getArrivee() == inter){
+            for (int i = 0; i<trajet.getListeEtapes().size()-1;i++){
+                if (trajet.getListeEtapes().get(i).getArrivee().getId() == inter.getId()){
                     index = i ;
                 }
             }
