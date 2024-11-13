@@ -11,6 +11,8 @@ import util.XMLPlan;
 public class PlanCharge extends Etat {
     public PlanCharge(Controller controller) {
         super(controller);
+        controller.getChargerFichierButton().setDisable(false);
+        controller.getChargerFichierButton().setStyle("-fx-background-color: #3498db;");
     }
 
     @Override

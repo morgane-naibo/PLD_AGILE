@@ -46,7 +46,7 @@
     
     <!-- VBox d'information à droite -->
     <right>
-        <VBox fx:id="deliveryInfoVBox" visible="false" prefWidth="250.0" spacing="0" maxWidth="Infinity" styleClass="vbox">
+        <VBox fx:id="deliveryInfoVBox" visible="false" prefWidth="230.0" spacing="0" maxWidth="Infinity" styleClass="vbox">
             <Label fx:id="label" text="Liste des Points de Livraison" />
             <Label text="" />
         </VBox>

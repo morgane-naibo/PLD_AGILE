@@ -13,6 +13,8 @@ import util.XMLPlan;
 public class TourneeAffichee extends Etat {
     public TourneeAffichee(Controller controller) {
         super(controller);
+        controller.getChargerFichierButton().setStyle("-fx-background-color: grey;");
+        controller.getChargerFichierButton().setDisable(true);
     }
 
     @Override

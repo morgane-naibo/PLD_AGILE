@@ -459,7 +459,7 @@ public class Demande {
 
     public Trajet ajouterPDLaMatrice(int nbLivreur, PointDeLivraison newPDL) throws Exception{
         //On ajoute le pdl à la liste des PDL
-        this.ajouterPointDeLivraison(newPDL);
+        //this.ajouterPointDeLivraison(newPDL);
         //avant d'appeler cette méthode il faut appeler la méthode ajouterPointDeLivraison pour que newPDL soit déjà pris en compte
         int indexNewPDL = this.listePointDeLivraison.size() ;
         this.matriceAdjacence.add(new ArrayList<>(Collections.nCopies(this.matriceAdjacence.size()+1, null)));
@@ -537,7 +537,7 @@ public class Demande {
     }
 
     public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl) throws IDIntersectionException{
-        this.supprimerPointDeLivraison(pdl);
+        this.supprimerIntersection(pdl);
         Trajet trajet = this.livraisons.get(numLivreur);
         
         try {

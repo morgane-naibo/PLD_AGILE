@@ -301,8 +301,8 @@ public class View {
 
         } else {
             try {
-            Livraison livraison = new Livraison(0, intersection.getId(), 5.0, 5.0);
-            PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), livraison);
+            //Livraison livraison = new Livraison(0, intersection.getId(), 5.0, 5.0);
+            PointDeLivraison pdl = new PointDeLivraison(intersection);
 
             this.demande.ajouterPointDeLivraison(pdl);
             deliveryInfoVBox.setVisible(true);
@@ -331,7 +331,14 @@ public class View {
                 commandes.push(ajouterPointDeLivraisonCommande);
                 derniereCommande = ajouterPointDeLivraisonCommande;
                 //this.demande.ajouterPointDeLivraison(pdl);
-                this.demande.ajouterPDLaMatrice(livreurSelectionne.getId());
+                try {
+                    Trajet trajet = this.demande.ajouterPDLaMatrice(livreurSelectionne.getId(), pdl);
+                    Tournee tournee = new Tournee(trajet.getListeEtapes(), livreurSelectionne);
+                    tournees.set((int)livreurSelectionne.getId(), tournee);
+                    reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 //System.out.println(commandes);
                 //System.out.println(ajouterPointDeLivraisonCommande.getIntersection());
                 reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
@@ -579,7 +586,12 @@ public class View {
 
         PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), new Livraison(0, intersection.getId(), 5.0, 5.0));
         this.demande.ajouterPointDeLivraison(pdl);
-        this.demande.ajouterPDLaMatrice(livreur.getId());
+
+        try {
+            this.demande.ajouterPDLaMatrice(livreur.getId(), pdl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // Réassocier le clic sur le cercle à la suppression du point de livraison  
         circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
@@ -589,8 +601,9 @@ public class View {
 
     public void reafficherTournee(Pane pane, VBox deliveryInfoVBox, Livreur livreur) {
         // Récupérer la tournée associée au livreur sélectionné
-        Tournee tournee = tournees.get((int) livreur.getId());
-    
+
+        Tournee tournee = tournees.get((int)livreur.getId());
+
         // Obtenir la liste des points de livraison à partir des étapes de la tournée
         List<PointDeLivraison> pointsRestants = tournee.getListeEtapes().stream()
             .map(etape -> new PointDeLivraison(etape.getArrivee().getId(), new Livraison(0, etape.getArrivee().getId(), 5.0, 5.0)))
@@ -643,12 +656,12 @@ public class View {
             .collect(Collectors.toList());
     
         // Mettre à jour la tournée avec les nouvelles étapes
-        tournee.setListeEtapes(nouvellesEtapes);
+        tournees.get((int)livreurSelectionne.getId()).setListeEtapes(nouvellesEtapes);
 
         System.out.println("nouvellesEtapes : " + nouvellesEtapes);
     
         // Afficher la tournée mise à jour
-        afficherTourneeSurCarte(nouvellesEtapes, pane, livreur);
+        afficherTourneeSurCarte(nouvellesEtapes, pane, livreurSelectionne);
     }
         
 
@@ -675,6 +688,8 @@ public class View {
 
         Livreur livreur = new Livreur(livreurId);
         livreurs.add(livreur);
+
+        livreurSelectionne = livreur;
 
         tourneeCalculee = true;
         Tournee tournee = new Tournee(trajet.getListeEtapes(), livreur);
@@ -723,7 +738,7 @@ public class View {
 
                 // Création de la flèche
                 Polygon arrowHead = new Polygon(0, 0, -8, 3, -8, -3); // Forme triangulaire
-                arrowHead.setFill(Color.GRAY);
+                arrowHead.setFill(Color.DARKGRAY);
 
                 // Positionnement de la flèche au milieu du segment
                 double arrowX = (startX + endX) / 2;
@@ -753,6 +768,7 @@ public class View {
                     pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
                 }
                 deliveryInfoVBox.getChildren().add(pdLabel);
+                deliveryInfoVBox.requestLayout();
             } catch (IDIntersectionException e) {
                 e.printStackTrace();
             }
@@ -769,8 +785,8 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
 
     System.out.println("Livreur selectionne: " + livreurSelectionne);
 
-    pane.getChildren().removeIf(node -> node instanceof Line && ((Line) node).getStroke() == livreurCouleurs.get(livreur));
-    pane.getChildren().removeIf(node -> node instanceof Polygon && ((Polygon) node).getFill() == Color.GRAY);
+    pane.getChildren().removeIf(node -> node instanceof Line && ((Line) node).getStroke() == livreurCouleurs.get((int)livreur.getId()));
+    pane.getChildren().removeIf(node -> node instanceof Polygon);
 
     // Ajoute les nouvelles lignes de la tournée
     for (Etape etape : etapes) {
@@ -792,7 +808,7 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
 
                 // Création de la flèche
                 Polygon arrowHead = new Polygon(0, 0, -8, 3, -8, -3); // Forme triangulaire
-                arrowHead.setFill(Color.GRAY);
+                arrowHead.setFill(Color.DARKGRAY);
 
                 // Positionnement de la flèche au milieu du segment
                 double arrowX = (startX + endX) / 2;

@@ -19,17 +19,23 @@ public class DemandeChargee extends Etat {
 
     @Override
     public void calculerChemin() {
-        view.demande.setPlan(controller.getPlan());
-        view.demande.initialiserListePointdeLivraisons();
-        List<Trajet> trajets = view.demande.calculerTSP();
-        // view.demande.initialiserMatriceAdjacence();
-        // view.demande.creerClusters();
-        // RunTSP run = new RunTSP();
-        for (int i = 0; i < trajets.size(); i++) {
-            view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajets.get(i), i, controller.getMessageLabel());
+        if (view.isEntrepotExiste()) {
+            view.demande.setPlan(controller.getPlan());
+            view.demande.initialiserListePointdeLivraisons();
+            List<Trajet> trajets = view.demande.calculerTSP();
+            // view.demande.initialiserMatriceAdjacence();
+            // view.demande.creerClusters();
+            // RunTSP run = new RunTSP();
+            for (int i = 0; i < trajets.size(); i++) {
+                view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajets.get(i), i, controller.getMessageLabel());
+            }
+            controller.setEtat(new TourneeAffichee(controller));
+            controller.getCalculerChemin().setVisible(false);
         }
-        controller.setEtat(new TourneeAffichee(controller));
-        controller.getCalculerChemin().setVisible(false);
+        else {
+            controller.getMessageLabel().setText("Veuillez sélectionner un entrepôt");
+            controller.getMessageLabel().setVisible(true);
+        }
     }
 
     @Override
