@@ -202,7 +202,7 @@ public class Demande {
         }
     }
 
-    public void supprimerPointDeLivraison(PointDeLivraison pdl){
+    public int supprimerPointDeLivraison(PointDeLivraison pdl){
         int position=-1;
         for(int i=0; i<this.listePointDeLivraison.size();i++){
             if (listePointDeLivraison.get(i)==pdl) {
@@ -218,6 +218,8 @@ public class Demande {
             this.matriceAdjacence.remove(position);
             this.listePointDeLivraison.remove(position);
         }
+
+        return position;
     }
 
     public void creerClusters(){
@@ -508,7 +510,9 @@ public class Demande {
     }
 
     public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl){
-        this.supprimerPointDeLivraison(pdl);
+        if(this.supprimerPointDeLivraison(pdl)==-1){
+            return null;
+        }
         Trajet trajet = this.livraisons.get(numLivreur);
         
         try {
