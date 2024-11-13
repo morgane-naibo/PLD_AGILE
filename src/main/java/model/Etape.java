@@ -75,14 +75,15 @@ public class Etape {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Etape:\n");
-        sb.append("Départ: ").append(depart).append("\n");
-        sb.append("Arrivée: ").append(arrivee).append("\n");
-        sb.append("Longueur totale: ").append(longueur).append(" m\n");
-        sb.append("Tronçons:\n");
+        sb.append("D: ").append(depart.getId());
+        sb.append(" A: ").append(arrivee.getId());
+        sb.append(" L: ").append(longueur).append(" m\n");
+        sb.append("Tronçons: ");
 
         for (Troncon troncon : listeTroncons) {
-            sb.append(troncon).append("\n");
+            sb.append(troncon.getOrigine().getId()).append(" -> ");
         }
+        sb.append(listeTroncons.getLast().getDestination().getId()).append("\r\n");
 
         return sb.toString();
     }

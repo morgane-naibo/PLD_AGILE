@@ -94,6 +94,10 @@ public class Demande {
         this.plan = newPlan;
     }
 
+    public void setNbLivreur(int newNbLivreur){
+        this.nbLivreurs = newNbLivreur;
+    }
+
     // ajout point de livraison
     public void ajouterPointDeLivraison(PointDeLivraison point) {
         if (point != null) {
@@ -210,7 +214,7 @@ public class Demande {
         }
     }
 
-    public void supprimerIntersection(Intersection intersection) {
+    public int supprimerIntersection(Intersection intersection) {
         int position = -1;
 
         // Check if the intersection is the entrepot
@@ -235,6 +239,8 @@ public class Demande {
                 this.initialiserMatriceAdjacence();
             }
         }
+
+        return position;
     }
 
     public void creerClusters(){
@@ -404,8 +410,6 @@ public class Demande {
             System.out.println(matrixToString(matriceAdjacence));
             this.creerClusters();
             this.creerMatricesParClusters();
-            System.out.println("cluster 0 :" + this.listesIndex.get(0).toString());
-            System.out.println("cluster 1 :" + this.listesIndex.get(1).toString());
             RunTSP run = new RunTSP();
             for (int i = 0; i<nbLivreurs;i++){
                 Trajet trajet = new Trajet();
@@ -536,16 +540,18 @@ public class Demande {
         return trajet;
     }
 
-    public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl) throws IDIntersectionException{
-        this.supprimerIntersection(pdl);
+    public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl) throws IDIntersectionException {
+        if(this.supprimerIntersection(pdl)==-1){
+            return null;
+        }
         Trajet trajet = this.livraisons.get(numLivreur);
         
         try {
             Intersection inter = this.plan.chercherIntersectionParId(pdl.getId());
             int index =0;
 
-            for (int i = 0; i<trajet.getListeEtapes().size();i++){
-                if (trajet.getListeEtapes().get(i).getArrivee() == inter){
+            for (int i = 0; i<trajet.getListeEtapes().size()-1;i++){
+                if (trajet.getListeEtapes().get(i).getArrivee().getId() == inter.getId()){
                     index = i ;
                 }
             }
@@ -559,9 +565,12 @@ public class Demande {
             e.printStackTrace();
         }
         this.livraisons.set(numLivreur,trajet);
+        System.out.println("nb détapes apres supp : "+trajet.getListeEtapes().size());
+        System.out.println("Inter restante : "+trajet.getListeEtapes().get(0).getArrivee());
+        System.out.println("nb détapes apres supp : "+trajet.getListeEtapes().size());
+        System.out.println("Inter restante : "+trajet.getListeEtapes().get(0).getArrivee());
+        System.out.println("nb détapes apres supp : "+trajet.getListeEtapes().size());
+        System.out.println("Inter restante : "+trajet.getListeEtapes().get(0).getArrivee());
         return trajet;
     }
-
-    
-
-}
+    }

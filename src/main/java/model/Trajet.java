@@ -27,6 +27,18 @@ public class Trajet {
 
     //toString
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Trajet :\n");
+
+        for (Etape etape : listeEtapes) {
+            sb.append(etape.toString());
+        }
+
+        return sb.toString();
+    }
+
     //autres methodes
     public void ajouterEtape(Etape etape) {
         this.listeEtapes.add(etape);
