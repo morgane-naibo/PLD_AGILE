@@ -2,6 +2,7 @@ package view;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.Light.Point;
 import javafx.scene.control.Button;
@@ -91,7 +92,7 @@ public class View {
 
     private List<Livreur> livreurs = new ArrayList<>();
 
-    private Livreur livreurSelectionne;
+    private Livreur livreurSelectionne = null;
 
     private List<Tournee> tournees = new ArrayList<>();
 
@@ -417,8 +418,7 @@ public class View {
     public void handleCircleClick(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label) {
         double startX = longitudeToX(inter.getLongitude());
         double startY = latitudeToY(inter.getLatitude());
-
-        if (!popupOuverte) {
+        if (!popupOuverte && ((tourneeCalculee && livreurSelectionne != null) || !tourneeCalculee)) {
             Circle newPdl = new Circle(startX, startY, 8, inter.getId() == entrepot.getId() ? Color.BLUE : Color.RED);
             newPdl.setStrokeWidth(5);
             newPdl.setStroke(inter.getId() == entrepot.getId() ? Color.LIGHTBLUE : Color.CORAL);
@@ -426,6 +426,7 @@ public class View {
             popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox, newPdl, label);
         }
         label.setStyle("-fx-background-color: lightblue;");
+        System.out.println("Intersection clicked: " + inter.getId());
     }
 
 
@@ -439,56 +440,79 @@ public class View {
     }
 
     public void popupDelete(double x, double y, Intersection inter, Circle circle, Pane pane, VBox deliveryInfoVBox, Circle newPdl, Label pdlLabel) {
-        Popup popup = new Popup();
+        System.out.println("Popup delete :" + livreurSelectionne);
+        if (livreurSelectionne != null || !tourneeCalculee) {
+            Popup popup = new Popup();
 
-        // Créer le contenu de la pop-up
-        Label label = new Label("Voulez-vous supprimer ce point de livraison ?");
-        label.setStyle("-fx-background-color: white; -fx-padding: 10;");
+            // Créer le contenu de la pop-up
+            Label label = new Label("Voulez-vous supprimer ce point de livraison ?");
+            label.setStyle("-fx-background-color: white; -fx-padding: 10;");
 
-        // Bouton pour fermer la pop-up
-        Button deleteButton = new Button("Supprimer");
-        deleteButton.setOnAction (e ->  { supprimerPointDeLivraison(inter, pane, deliveryInfoVBox, pdlLabel, true, null);
-            popup.hide();
-            popupOuverte = false;
-        });
+            // Bouton pour fermer la pop-up
+            Button deleteButton = new Button("Supprimer");
+            deleteButton.setOnAction(e -> {
+                if (!tourneeCalculee || inter.getId() == entrepot.getId()) {
+                supprimerPointDeLivraison(inter, pane, deliveryInfoVBox, pdlLabel, true, livreurSelectionne);
+                } else {
+                PointDeLivraison pdl = new PointDeLivraison(inter);
+                try {
+                    Trajet nouveauTrajet = demande.recalculerTrajetApresSuppressionPDL((int) livreurSelectionne.getId(), pdl);
+                    tournees.get((int) livreurSelectionne.getId()).setListeEtapes(nouveauTrajet.getListeEtapes());
+                    reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
+                    //supprimerPointDeLivraison(inter, pane, deliveryInfoVBox, pdlLabel, true, null);
+                    pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+                    intersectionsSupprimees.push(inter);
+                    System.out.println("intersectionsSupprimees pop up: " + intersectionsSupprimees);
+                    labelsSupprimes.push(label);
+                    SupprimerPointDeLivraisonCommande supprimerPointDeLivraisonCommande = new SupprimerPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, label);
+                    commandes.push(supprimerPointDeLivraisonCommande);
+                    derniereCommande = supprimerPointDeLivraisonCommande;
+                } catch (IDIntersectionException ex) {
+                    ex.printStackTrace();
+                }
+                }
+                popup.hide();
+                popupOuverte = false;
+            });
 
-        Button closeButton = new Button("Annuler");
-        closeButton.setOnAction(e -> {
-            popup.hide();
-            pane.getChildren().remove(newPdl);
-            newPdl.setStrokeWidth(0);
-            newPdl.setRadius(5);
-            pane.getChildren().add(newPdl);
-            newPdl.setOnMouseClicked(event -> handleCircleClick(inter, pane, deliveryInfoVBox, pdlLabel));
-            pdlLabel.setStyle("-fx-background-color: #f5f5f5;");
-            popupOuverte = false;
-        });
+            Button closeButton = new Button("Annuler");
+            closeButton.setOnAction(e -> {
+                popup.hide();
+                pane.getChildren().remove(newPdl);
+                newPdl.setStrokeWidth(0);
+                newPdl.setRadius(5);
+                pane.getChildren().add(newPdl);
+                newPdl.setOnMouseClicked(event -> handleCircleClick(inter, pane, deliveryInfoVBox, pdlLabel));
+                pdlLabel.setStyle("-fx-background-color: #f5f5f5;");
+                popupOuverte = false;
+            });
 
-        // Utiliser un HBox pour aligner les boutons côte à côte
-        HBox buttonBox = new HBox(30); // 10 est l'espacement entre les boutons
-        buttonBox.getChildren().addAll(closeButton, deleteButton);
+            // Utiliser un HBox pour aligner les boutons côte à côte
+            HBox buttonBox = new HBox(30); // 10 est l'espacement entre les boutons
+            buttonBox.getChildren().addAll(closeButton, deleteButton);
 
-        // Ajouter les composants dans un VBox
-        VBox popupContent = new VBox(0);
-        popupContent.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-padding: 10;");
-        popupContent.getChildren().addAll(label, buttonBox);
+            // Ajouter les composants dans un VBox
+            VBox popupContent = new VBox(0);
+            popupContent.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-padding: 10;");
+            popupContent.getChildren().addAll(label, buttonBox);
 
-        // Ajouter le VBox à la pop-up
-        popup.getContent().add(popupContent);
+            // Ajouter le VBox à la pop-up
+            popup.getContent().add(popupContent);
 
-        popup.setHeight(100);
-        popup.setWidth(200);
+            popup.setHeight(100);
+            popup.setWidth(200);
 
-        if (x > paneWidth / 2) {
-            popup.setX(x - 60);
+            if (x > paneWidth / 2) {
+                popup.setX(x - 60);
+            }
+            else popup.setX(x + 260);
+            popup.setY(y);
+
+            popupOuverte = true;
+
+            // Afficher la pop-up en relation avec la fenêtre principale
+            popup.show(pane.getScene().getWindow());
         }
-        else popup.setX(x + 260);
-        popup.setY(y);
-
-        popupOuverte = true;
-
-        // Afficher la pop-up en relation avec la fenêtre principale
-        popup.show(pane.getScene().getWindow());
     }
 
     public void supprimerPointDeLivraison(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label, boolean addCommand, Livreur livreur) {
@@ -603,11 +627,13 @@ public class View {
         // Récupérer la tournée associée au livreur sélectionné
 
         Tournee tournee = tournees.get((int)livreur.getId());
+        System.out.println(tournee.toString());
 
         // Obtenir la liste des points de livraison à partir des étapes de la tournée
         List<PointDeLivraison> pointsRestants = tournee.getListeEtapes().stream()
             .map(etape -> new PointDeLivraison(etape.getArrivee().getId(), new Livraison(0, etape.getArrivee().getId(), 5.0, 5.0)))
             .collect(Collectors.toList());
+
 
         System.out.println("pointsRestants : " + pointsRestants);
         
@@ -689,7 +715,7 @@ public class View {
         Livreur livreur = new Livreur(livreurId);
         livreurs.add(livreur);
 
-        livreurSelectionne = livreur;
+        //livreurSelectionne = livreur;
 
         tourneeCalculee = true;
         Tournee tournee = new Tournee(trajet.getListeEtapes(), livreur);
