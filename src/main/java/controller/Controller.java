@@ -3,6 +3,7 @@ package controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -16,6 +17,7 @@ import model.Intersection;
 import model.Plan;
 import model.Demande;
 import view.View;
+import javafx.scene.control.ComboBox;
 
 public class Controller {
 
@@ -64,6 +66,12 @@ public class Controller {
     @FXML
     private HBox hboxUndoRedo;
 
+    @FXML
+    private Label title;
+
+    @FXML
+    private ComboBox<Integer> nbLivreurs;
+
     private View view;
 
     private Demande demande;
@@ -84,6 +92,7 @@ public class Controller {
     private static final double MAX_X = 550; // Remplacez par la limite maximale souhaitée pour X
     private static final double MAX_Y = 600; // Remplacez par la limite maximale souhaitée pour Y
 
+    private int nbLivreur;
 
     private Etat etat;
 
@@ -99,6 +108,14 @@ public class Controller {
     // Méthode d'initialisation appelée après le chargement du FXML
     
     public void initialize() {
+        nbLivreurs.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                System.out.println("Option sélectionnée : " + newValue);
+                nbLivreur = newValue;
+                demande.setNbLivreurs(nbLivreur);
+            }
+        });
+        nbLivreurs.getItems().addAll(1, 2, 3, 4, 5);
         Platform.runLater(() -> {
             Stage stage = (Stage) deliveryInfoVBox.getScene().getWindow();
             stage.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -210,6 +227,10 @@ public class Controller {
 
     public HBox getHboxUndoRedo() {
         return hboxUndoRedo;
+    }
+
+    public Label getTitle() {
+        return title;
     }
 
 

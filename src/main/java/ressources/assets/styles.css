@@ -50,3 +50,8 @@
     -fx-position: absolute; /* Absolute positioning */
     -fx-right: 0; /* Positioned to the right */
 }
+
+.title {
+    -fx-font-size: 24px; /* Font size */
+    -fx-font-weight: bold; /* Bold text */
+}

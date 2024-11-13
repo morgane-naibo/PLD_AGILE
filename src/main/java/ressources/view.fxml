@@ -14,6 +14,7 @@
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.ComboBox?>
 
 <BorderPane fx:id="pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller" prefHeight="600" prefWidth = "800" stylesheets="@/assets/styles.css" styleClass="border-pane">
     
@@ -30,7 +31,9 @@
                 <!-- Ajouter ici les éléments du plan -->
                 <children>
                     <StackPane prefHeight="450" prefWidth="800">
-                        <Button fx:id="chargerPlan" text="Charger un plan" styleClass="plan-button" onAction="#handleLoadPlan" />
+                        <Label fx:id="title" text="Deliver'IF" styleClass="title" visible="true" StackPane.alignment="TOP_CENTER" />
+                        <Button fx:id="chargerPlan" text="Charger un plan" styleClass="plan-button" onAction="#handleLoadPlan" StackPane.alignment="CENTER" />
+                        <ComboBox fx:id="nbLivreurs" prefWidth="250.0" promptText="Choisissez un nombre de livreurs" StackPane.alignment="BOTTOM_CENTER"/>
                     </StackPane>
                     <Button fx:id="boutonPlus" text="+" styleClass="plus-button" onAction="#handleButtonClick" visible="false" layoutY="55" />
                     <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton" visible="false" layoutY="95"/>

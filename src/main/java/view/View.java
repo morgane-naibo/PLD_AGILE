@@ -95,6 +95,11 @@ public class View {
 
     private List<Tournee> tournees = new ArrayList<>();
 
+
+    public Demande getDemande() {
+        return demande;
+    }
+
     public boolean isEntrepotExiste() {
         return entrepotExiste;
     }
@@ -105,6 +110,10 @@ public class View {
 
     public boolean isTourneeCalculee() {
         return tourneeCalculee;
+    }
+
+    public void setNbLivreurs(int nbLivreurs) {
+        this.demande.setNbLivreurs(nbLivreurs);
     }
 
     public void setTourneeCalculee(boolean tourneeCalculee) {
@@ -163,6 +172,10 @@ public class View {
         return livreurSelectionne;
     }
 
+    public View() {
+        this.demande = new Demande();
+    }
+
 
     public void fileChooser() {
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -177,17 +190,20 @@ public class View {
     }
 
     public void setPlan(Plan plan) {
+        setDemande(controller.getDemande());
+        System.out.println(controller.getDemande().getNbLivreurs());
+        this.demande.setNbLivreurs(controller.getDemande().getNbLivreurs());
         intersectionsAjoutees.clear();
         labelsAjoutes.clear();
         intersectionsSupprimees.clear();
         labelsSupprimes.clear();
         this.plan = plan;
         entrepotExiste = false;
-        demande = new Demande();
         latMin = plan.trouverLatitudeMin();
         latMax = plan.trouverLatitudeMax();
         longMin = plan.trouverLongitudeMin();
         longMax = plan.trouverLongitudeMax();
+        livreurCouleurs.clear();
     }
 
     public void displayPlan(Pane pane, VBox deliveryInfoVBox, Label label, Label messageLabel, Button calculerChemin) {
@@ -211,6 +227,7 @@ public class View {
 
         deliveryInfoVBox.setVisible(true);
         deliveryInfoVBox.getChildren().add(label);
+        System.out.println(demande.getNbLivreurs());
     }
 
     public void toggleButtons(Button boutonPlus, Button... buttons) {
@@ -341,7 +358,7 @@ public class View {
                 }
                 //System.out.println(commandes);
                 //System.out.println(ajouterPointDeLivraisonCommande.getIntersection());
-                reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
+                //reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
             }
         } catch (IDIntersectionException e) {
             e.printStackTrace();
