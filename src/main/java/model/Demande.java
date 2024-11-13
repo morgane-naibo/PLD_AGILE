@@ -65,6 +65,10 @@ public class Demande {
         return this.livraisons;
     }
 
+    public int getNbLivreurs(){
+        return this.nbLivreurs;
+    }
+
     //setters
     public void setEntrepot(Entrepot newEntrepot) {
         this.entrepot = newEntrepot;
@@ -84,6 +88,10 @@ public class Demande {
 
     public void setPlan(Plan newPlan) {
         this.plan = newPlan;
+    }
+
+    public void setNbLivreur(int newNbLivreur){
+        this.nbLivreurs = newNbLivreur;
     }
 
     // ajout point de livraison
@@ -521,7 +529,7 @@ public class Demande {
         return trajet;
     }
 
-    public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl){
+    public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl) throws Exception {
         if(this.supprimerPointDeLivraison(pdl)==-1){
             return null;
         }
@@ -531,7 +539,7 @@ public class Demande {
             Intersection inter = this.plan.chercherIntersectionParId(pdl.getId());
             int index =0;
 
-            for (int i = 0; i<trajet.getListeEtapes().size();i++){
+            for (int i = 0; i<trajet.getListeEtapes().size()-1;i++){
                 if (trajet.getListeEtapes().get(i).getArrivee() == inter){
                     index = i ;
                 }
