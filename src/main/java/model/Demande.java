@@ -19,6 +19,7 @@ public class Demande {
     private int nbLivreurs;
     private ArrayList<ArrayList<Integer>> listesIndex;   
     private List<Trajet> livraisons ;
+    private List<RunTSP> listeRun;
 
     //constructeur
     public Demande() {
@@ -30,6 +31,7 @@ public class Demande {
         this.listeMatriceAdjacence = new ArrayList<>(this.nbLivreurs);
         this.listesIndex = new ArrayList<>();
         this.livraisons = new ArrayList<>();
+        this.listeRun = new ArrayList<RunTSP>();
     }
 
     //getters
@@ -67,6 +69,10 @@ public class Demande {
 
     public int getNbLivreurs(){
         return this.nbLivreurs;
+    }
+
+    public List<RunTSP> getListeRunTSP(){
+        return this.listeRun;
     }
 
     //setters
@@ -407,7 +413,6 @@ public class Demande {
             System.out.println(matrixToString(matriceAdjacence));
             this.creerClusters();
             this.creerMatricesParClusters();
-            RunTSP run = new RunTSP();
            
             int size;
             if(this.nbLivreurs > this.listePointDeLivraison.size()){
@@ -418,8 +423,9 @@ public class Demande {
             }
 
             for (int i = 0; i<size;i++){
+                listeRun.add(new RunTSP());
                 Trajet trajet = new Trajet();
-                trajet = run.calculerTSP(this.listeMatriceAdjacence.get(i));
+                trajet = listeRun.get(i).calculerTSP(this.listeMatriceAdjacence.get(i));
                 this.livraisons.add(trajet);
                 //on a juste à afficher le temps des tournées et à signaler qu'une tournée est hors-temps, 
                 //c'est à l'utilisateur de modifier manuellement les tournées
