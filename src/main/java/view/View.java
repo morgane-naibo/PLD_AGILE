@@ -473,26 +473,7 @@ public class View {
             // Bouton pour fermer la pop-up
             Button deleteButton = new Button("Supprimer");
             deleteButton.setOnAction(e -> {
-                if (!tourneeCalculee || inter.getId() == entrepot.getId()) {
                 supprimerPointDeLivraison(inter, pane, deliveryInfoVBox, pdlLabel, true, livreurSelectionne);
-                } else {
-                PointDeLivraison pdl = new PointDeLivraison(inter);
-                try {
-                    Trajet nouveauTrajet = demande.recalculerTrajetApresSuppressionPDL((int) livreurSelectionne.getId(), pdl);
-                    tournees.get((int) livreurSelectionne.getId()).setListeEtapes(nouveauTrajet.getListeEtapes());
-                    reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne, pdlLabel);
-                    //supprimerPointDeLivraison(inter, pane, deliveryInfoVBox, pdlLabel, true, null);
-                    pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
-                    intersectionsSupprimees.push(inter);
-                    System.out.println("intersectionsSupprimees pop up: " + intersectionsSupprimees);
-                    labelsSupprimes.push(label);
-                    SupprimerPointDeLivraisonCommande supprimerPointDeLivraisonCommande = new SupprimerPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, label);
-                    commandes.push(supprimerPointDeLivraisonCommande);
-                    derniereCommande = supprimerPointDeLivraisonCommande;
-                } catch (IDIntersectionException ex) {
-                    ex.printStackTrace();
-                }
-                }
                 popup.hide();
                 popupOuverte = false;
             });
@@ -538,83 +519,33 @@ public class View {
     }
 
     public void supprimerPointDeLivraison(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label, boolean addCommand, Livreur livreur) {
-        // Remove the delivery point from the request
-        this.demande.supprimerIntersection(inter);
-
-    
-        // Only add the command to the stack if the addCommand flag is true
-        if (addCommand) {
-            intersectionsSupprimees.push(inter);
-            labelsSupprimes.push(label);
-            SupprimerPointDeLivraisonCommande supprimerPointDeLivraisonCommande = new SupprimerPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, label);
-            commandes.push(supprimerPointDeLivraisonCommande);
-            derniereCommande = supprimerPointDeLivraisonCommande;
-        }
-    
-        if (inter.getId() == entrepot.getId()) {
-            if (!tourneeCalculee) {
+        if (!tourneeCalculee || inter.getId() == entrepot.getId()) {
+            this.demande.supprimerIntersection(inter);
+            if (inter.getId() == entrepot.getId()) {
                 entrepotExiste = false;
                 entrepotCircle = null;
                 deliveryInfoVBox.getChildren().remove(labelEntrepot);
                 pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+            } else {
+                pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+                deliveryInfoVBox.getChildren().remove(label);
+                intersectionsSupprimees.push(inter);
+                labelsSupprimes.push(label);
             }
         } else {
-            // Remove the delivery point from the plan
-            pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
-    
-            // Remove the label of the delivery point
-            deliveryInfoVBox.getChildren().remove(label);
-    
-            if (tourneeCalculee) {
-                List<Etape> etapes = this.tournees.stream().filter(t -> t.getLivreur().getId() == livreur.getId()).findFirst().get().getListeEtapes();
-                List<PointDeLivraison> pointsRestants = demande.getListePointDeLivraison();
-
-                for (int i = 0; i < etapes.size(); i++) {
-                    Etape etape = etapes.get(i);
-                    Intersection intersection = etape.getArrivee();
-                    PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), new Livraison(0, intersection.getId(), 5.0, 5.0));
-                    //pointsRestants.add(pdl);
-                }
-                List<Etape> nouvellesEtapes = new ArrayList<>();
-    
-                // Set the origin intersection to the warehouse
-                Intersection origine;
-                try {
-                    origine = plan.chercherIntersectionParId(entrepot.getId());
-                } catch (IDIntersectionException e) {
-                    e.printStackTrace();
-                    return;
-                }
-    
-                // For each remaining point, recalculate the optimal path from the origin and update the origin at each iteration
-                for (PointDeLivraison pdl : pointsRestants) {
-                    Intersection destination;
-                    try {
-                        destination = plan.chercherIntersectionParId(pdl.getId());
-                    } catch (IDIntersectionException e) {
-                        e.printStackTrace();
-                        continue;
-                    }
-                    if (destination != null) {
-                        Etape etape = plan.chercherPlusCourtChemin(origine, destination);
-                        nouvellesEtapes.add(etape);
-                        origine = destination; // Update the origin for the next step
-                    }
-                }
-    
-                // If the warehouse exists, add the final step for the return to the warehouse
-                if (entrepotExiste) {
-                    try {
-                        Etape retourEntrepot = plan.chercherPlusCourtChemin(origine, plan.chercherIntersectionParId(entrepot.getId()));
-                        nouvellesEtapes.add(retourEntrepot);
-                    } catch (IDIntersectionException e) {
-                        e.printStackTrace();
-                    }
-                }
-    
-                // Update the tour with the new steps and display it
-                tournees.get((int)livreurSelectionne.getId()).setListeEtapes(nouvellesEtapes);
-                afficherTourneeSurCarte(nouvellesEtapes, pane, livreur, label);
+            PointDeLivraison pdl = new PointDeLivraison(inter);
+            try {
+                Trajet nouveauTrajet = demande.recalculerTrajetApresSuppressionPDL((int) livreur.getId(), pdl);
+                tournees.get((int) livreur.getId()).setListeEtapes(nouveauTrajet.getListeEtapes());
+                reafficherTournee(pane, deliveryInfoVBox, livreur, label);
+                pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
+                intersectionsSupprimees.push(inter);
+                labelsSupprimes.push(label);
+                SupprimerPointDeLivraisonCommande supprimerPointDeLivraisonCommande = new SupprimerPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, label);
+                commandes.push(supprimerPointDeLivraisonCommande);
+                derniereCommande = supprimerPointDeLivraisonCommande;
+            } catch (IDIntersectionException ex) {
+                ex.printStackTrace();
             }
         }
     }
@@ -628,7 +559,9 @@ public class View {
 
         // Réajouter le label au VBox
         label.setStyle("-fx-background-color: #f5f5f5;");
-        deliveryInfoVBox.getChildren().add(label);
+        if (!deliveryInfoVBox.getChildren().contains(label)) {
+            deliveryInfoVBox.getChildren().add(label);
+        }
         circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
 
         PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), new Livraison(0, intersection.getId(), 5.0, 5.0));

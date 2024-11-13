@@ -26,8 +26,8 @@ public class SupprimerPointDeLivraisonCommande extends Commande {
 
     @Override
     public void redoCommande(Intersection intersection, Label label) {
-        intersectionsSupprimees.push(this.getIntersection());
-        labelsSupprimes.push(this.getLabel());
+        //intersectionsSupprimees.push(this.getIntersection());
+        //labelsSupprimes.push(this.getLabel());
         view.getIntersectionsSupprimees().push(this.getIntersection());
         view.getLabelsSupprimes().push(this.getLabel());
         view.supprimerPointDeLivraison(intersection, pane, deliveryInfoVBox, label, false, view.getLivreurSelectionne());
@@ -43,8 +43,8 @@ public class SupprimerPointDeLivraisonCommande extends Commande {
             view.getLabelsSupprimes().remove(labelARestaurer);
             view.reafficherPointDeLivraison(intersectionARestaurer, pane, deliveryInfoVBox, labelARestaurer, view.getLivreurSelectionne());
         }
-        intersectionsSupprimees.pop();
-        labelsSupprimes.pop();
+        //intersectionsSupprimees.pop();
+        //labelsSupprimes.pop();
     }
     // Pas de surcharge de handleActionB ou handleActionC car elles ne sont pas disponibles dans cet état
 }

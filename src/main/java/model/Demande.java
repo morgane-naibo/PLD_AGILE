@@ -500,8 +500,6 @@ public class Demande {
             e.printStackTrace();
             return null;
         }
-        
-        
     }
 
     public Trajet recalculerTrajetApresAjoutPDL(int numLivreur) throws IDIntersectionException{
