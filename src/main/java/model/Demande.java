@@ -354,7 +354,17 @@ public class Demande {
 
 
     public void creerMatricesParClusters() {
-        for (int i = 0; i < this.nbLivreurs; i++) {
+        int size;
+
+        if(this.nbLivreurs > this.listePointDeLivraison.size()){
+            size = this.listePointDeLivraison.size();
+        }
+
+        else{
+            size = this.nbLivreurs;
+        }
+
+        for (int i = 0; i < size; i++) {
             // Initialize the adjacency matrix for each "livreur" as a 2D List of Etape objects
             List<List<Etape>> matrice = new ArrayList<>();
     
@@ -398,15 +408,21 @@ public class Demande {
             this.creerClusters();
             this.creerMatricesParClusters();
             RunTSP run = new RunTSP();
-            for (int i = 0; i<nbLivreurs;i++){
+           
+            int size;
+            if(this.nbLivreurs > this.listePointDeLivraison.size()){
+                size = this.listePointDeLivraison.size();
+            }
+            else{
+                size = this.nbLivreurs;
+            }
+
+            for (int i = 0; i<size;i++){
                 Trajet trajet = new Trajet();
                 trajet = run.calculerTSP(this.listeMatriceAdjacence.get(i));
                 this.livraisons.add(trajet);
                 //on a juste à afficher le temps des tournées et à signaler qu'une tournée est hors-temps, 
                 //c'est à l'utilisateur de modifier manuellement les tournées
-                // while (duree>9*60){
-
-                // }
             }
 
         } catch(Exception e){
