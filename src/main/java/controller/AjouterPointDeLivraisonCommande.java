@@ -24,8 +24,8 @@ public class AjouterPointDeLivraisonCommande extends Commande {
 
     @Override
     public void redoCommande(Intersection intersection, Label label) {
-        intersectionsAjoutees.push(this.getIntersection());
-        labelsAjoutes.push(this.getLabel());
+        // intersectionsAjoutees.push(this.getIntersection());
+        // labelsAjoutes.push(this.getLabel());
         view.getIntersectionsAjoutees().push(this.getIntersection());
         view.getLabelsAjoutes().push(this.getLabel());
         view.reafficherPointDeLivraison(intersection, pane, deliveryInfoVBox, label, view.getLivreurSelectionne());
@@ -38,8 +38,8 @@ public class AjouterPointDeLivraisonCommande extends Commande {
             Label labelARestaurer = view.getLabelsAjoutes().pop();
             view.supprimerPointDeLivraison(intersectionASupprimer, pane, deliveryInfoVBox, labelARestaurer, false, view.getLivreurSelectionne());
         }
-        intersectionsAjoutees.pop();
-        labelsAjoutes.pop();
+        //intersectionsAjoutees.pop();
+        //labelsAjoutes.pop();
     }
 
     // Pas de surcharge de handleActionB ou handleActionC car elles ne sont pas disponibles dans cet état
