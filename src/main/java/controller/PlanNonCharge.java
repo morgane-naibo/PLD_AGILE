@@ -41,6 +41,8 @@ public class PlanNonCharge extends Etat {
             view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin(), controller.getUndoButton(), controller.getRedoButton());
             controller.getBoutonPlus().setVisible(true);
             controller.getCalculerChemin().setVisible(false);
+            controller.getUndoButton().setVisible(false);
+            controller.getRedoButton().setVisible(false);
             controller.setEtat(new PlanCharge(controller)); // Passer à l'état chargé
         } else if (controller.getNbLivreur() == 0) {
             controller.getMessageLabel().setText("Veuillez sélectionner un nombre de livreurs avant de charger un plan.");

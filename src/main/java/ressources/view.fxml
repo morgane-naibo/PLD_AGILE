@@ -42,8 +42,8 @@
                     <Button fx:id="selectionnerPointButton" text="Sélectionner un point sur la carte" styleClass="file-button" onAction="#handleSelectButton" visible="false" layoutY="135" layoutX="250"/>
                     <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan" visible="false" layoutY="175" layoutX="250"/>
                     <Button fx:id="calculerChemin" text="Calculer un chemin" styleClass="file-button" onAction="#calculerChemin" visible="false" layoutY="550" layoutX="450"/>
-                    <Button fx:id="undoButton" text="Annuler" styleClass="file-button" onAction="#undo" visible="false" layoutY="550"  layoutX="250"/>
-                    <Button fx:id="redoButton" text="Refaire" styleClass="file-button" onAction="#redo" visible="false" layoutY="550" layoutX="350"/>
+                    <Button fx:id="undoButton" text="Annuler" styleClass="file-button" onAction="#undo" visible="false" layoutY="550"  layoutX="600"/>
+                    <Button fx:id="redoButton" text="Refaire" styleClass="file-button" onAction="#redo" visible="false" layoutY="550" layoutX="700"/>
                 </children>
             </Pane>
         </ScrollPane>

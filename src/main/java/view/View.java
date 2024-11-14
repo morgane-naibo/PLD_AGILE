@@ -187,7 +187,7 @@ public class View {
     }
 
     public void setPlan(Plan plan) {
-        setDemande(controller.getDemande());
+        demande = new Demande();
         System.out.println(controller.getDemande().getNbLivreurs());
         this.demande.setNbLivreurs(controller.getDemande().getNbLivreurs());
         intersectionsAjoutees.clear();
@@ -322,51 +322,49 @@ public class View {
 
         } else {
             try {
-            //Livraison livraison = new Livraison(0, intersection.getId(), 5.0, 5.0);
-            PointDeLivraison pdl = new PointDeLivraison(intersection);
-
-            this.demande.ajouterPointDeLivraison(pdl);
-            deliveryInfoVBox.setVisible(true);
-
-            Intersection inter = plan.chercherIntersectionParId(pdl.getId());
-            double startX = longitudeToX(inter.getLongitude());
-            double startY = latitudeToY(inter.getLatitude());
-
-            Label pdLabel = new Label("Point de Livraison:");
-            for (Troncon troncon : inter.getListeTroncons()) {
-                pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ",");
-            }
-            deliveryInfoVBox.getChildren().add(pdLabel);
-
-            Circle newPdl = new Circle(startX, startY, 5, Color.RED);
-            newPdl.setOnMouseClicked(event2 -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
-
-            pane.getChildren().add(newPdl);
-
-            pdLabel.setOnMouseClicked(event2 -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
-       
-            if (tourneeCalculee) {
-                intersectionsAjoutees.push(inter);
-                labelsAjoutes.push(pdLabel);
-                AjouterPointDeLivraisonCommande ajouterPointDeLivraisonCommande = new AjouterPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, pdLabel, controller.getMessageLabel());
-                commandes.push(ajouterPointDeLivraisonCommande);
-                derniereCommande = ajouterPointDeLivraisonCommande;
-                //this.demande.ajouterPointDeLivraison(pdl);
-                try {
-                    Trajet trajet = this.demande.ajouterPDLaMatrice(livreurSelectionne.getId(), pdl);
-                    Tournee tournee = new Tournee(trajet.getListeEtapes(), livreurSelectionne);
-                    tournees.set((int)livreurSelectionne.getId(), tournee);
-                    reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne, label);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (tourneeCalculee && livreurSelectionne == null) {
+                    controller.getMessageLabel().setText("Veuillez sélectionner un livreur.");
+                    return;
                 }
-                //System.out.println(commandes);
-                //System.out.println(ajouterPointDeLivraisonCommande.getIntersection());
-                //reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne);
+    
+                PointDeLivraison pdl = new PointDeLivraison(intersection);
+                this.demande.ajouterPointDeLivraison(pdl);
+                deliveryInfoVBox.setVisible(true);
+    
+                Intersection inter = plan.chercherIntersectionParId(pdl.getId());
+                double startX = longitudeToX(inter.getLongitude());
+                double startY = latitudeToY(inter.getLatitude());
+    
+                Label pdLabel = new Label("Point de Livraison:");
+                for (Troncon troncon : inter.getListeTroncons()) {
+                    pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ",");
+                }
+                deliveryInfoVBox.getChildren().add(pdLabel);
+    
+                Circle newPdl = new Circle(startX, startY, 5, Color.RED);
+                newPdl.setOnMouseClicked(event2 -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
+                pane.getChildren().add(newPdl);
+                pdLabel.setOnMouseClicked(event2 -> handleCircleClick(inter, pane, deliveryInfoVBox, pdLabel));
+    
+                if (tourneeCalculee && livreurSelectionne != null) {
+                    intersectionsAjoutees.push(inter);
+                    labelsAjoutes.push(pdLabel);
+                    AjouterPointDeLivraisonCommande ajouterPointDeLivraisonCommande = new AjouterPointDeLivraisonCommande(this, pane, deliveryInfoVBox, inter, pdLabel, controller.getMessageLabel());
+                    commandes.push(ajouterPointDeLivraisonCommande);
+                    derniereCommande = ajouterPointDeLivraisonCommande;
+    
+                    try {
+                        Trajet trajet = this.demande.ajouterPDLaMatrice(livreurSelectionne.getId(), pdl);
+                        Tournee tournee = new Tournee(trajet.getListeEtapes(), livreurSelectionne);
+                        tournees.set((int) livreurSelectionne.getId(), tournee);
+                        reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne, label);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (IDIntersectionException e) {
+                e.printStackTrace();
             }
-        } catch (IDIntersectionException e) {
-            e.printStackTrace();
-        }
         }
     }
 
@@ -573,9 +571,15 @@ public class View {
 
         try {
             Trajet trajet = this.demande.ajouterPDLaMatrice(livreurSelectionne.getId(), pdl);
-            Tournee tournee = new Tournee(trajet.getListeEtapes(), livreurSelectionne);
-            tournees.set((int)livreurSelectionne.getId(), tournee);
-            reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne, label);
+            if (trajet != null) {
+                Tournee tournee = new Tournee(trajet.getListeEtapes(), livreurSelectionne);
+                tournees.set((int)livreurSelectionne.getId(), tournee);
+                reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne, label);
+            }
+            else {
+                System.out.println("Trajet null");
+                controller.getMessageLabel().setText("Impossible de recalculer le trajet.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -588,7 +592,7 @@ public class View {
         // Récupérer la tournée associée au livreur sélectionné
 
         Tournee tournee = tournees.get((int)livreur.getId());
-        System.out.println(tournee.toString());
+        //System.out.println(tournee.toString());
 
         // Obtenir la liste des points de livraison à partir des étapes de la tournée
         List<PointDeLivraison> pointsRestants = tournee.getListeEtapes().stream()
@@ -645,7 +649,7 @@ public class View {
         // Mettre à jour la tournée avec les nouvelles étapes
         tournees.get((int)livreurSelectionne.getId()).setListeEtapes(nouvellesEtapes);
 
-        System.out.println("nouvellesEtapes : " + nouvellesEtapes);
+        //System.out.println("nouvellesEtapes : " + nouvellesEtapes);
     
         // Afficher la tournée mise à jour
         afficherTourneeSurCarte(nouvellesEtapes, pane, livreurSelectionne, messageLabel);
