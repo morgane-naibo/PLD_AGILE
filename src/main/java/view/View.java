@@ -553,21 +553,40 @@ public class View {
     }
 
     public void reafficherPointDeLivraison(Intersection intersection, Pane pane, VBox deliveryInfoVBox, Label label, Livreur livreur) {
-        // Recréer le cercle représentant le point de livraison
-        double x = longitudeToX(intersection.getLongitude());
-        double y = latitudeToY(intersection.getLatitude());
-        Circle circle = new Circle(x, y, 5, Color.RED);
-        pane.getChildren().add(circle);
-
-        // Réajouter le label au VBox
-        label.setStyle("-fx-background-color: #f5f5f5;");
-        if (!deliveryInfoVBox.getChildren().contains(label)) {
-            deliveryInfoVBox.getChildren().add(label);
-        }
-        circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
-
         PointDeLivraison pdl = new PointDeLivraison(intersection.getId(), new Livraison(0, intersection.getId(), 5.0, 5.0));
-        this.demande.ajouterPointDeLivraison(pdl);
+
+        try {
+            Trajet trajet = this.demande.ajouterPDLaMatrice(livreurSelectionne.getId(), pdl);
+            if (trajet != null) {
+                // Recréer le cercle représentant le point de livraison
+                double x = longitudeToX(intersection.getLongitude());
+                double y = latitudeToY(intersection.getLatitude());
+                Circle circle = new Circle(x, y, 5, Color.RED);
+                pane.getChildren().add(circle);
+
+                // Réajouter le label au VBox
+                label.setStyle("-fx-background-color: #f5f5f5;");
+                if (!deliveryInfoVBox.getChildren().contains(label)) {
+                    deliveryInfoVBox.getChildren().add(label);
+                }
+                circle.setOnMouseClicked(event -> handleCircleClick(intersection, pane, deliveryInfoVBox, label));
+
+                this.demande.ajouterPointDeLivraison(pdl);
+
+                Tournee tournee = new Tournee(trajet.getListeEtapes(), livreurSelectionne);
+                tournees.set((int)livreurSelectionne.getId(), tournee);
+                reafficherTournee(pane, deliveryInfoVBox, livreurSelectionne, label);
+            }
+            else {
+                System.out.println("Trajet null");
+                controller.getMessageLabel().setText("Impossible de recalculer le trajet.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        
+        
 
         try {
             Trajet trajet = this.demande.ajouterPDLaMatrice(livreurSelectionne.getId(), pdl);
