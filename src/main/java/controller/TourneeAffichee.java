@@ -1,6 +1,9 @@
 package controller;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javafx.stage.FileChooser;
 import model.Demande;
@@ -8,7 +11,11 @@ import model.Plan;
 import model.Trajet;
 import tsp.RunTSP;
 import util.XMLDemande;
+import util.XMLExport;
 import util.XMLPlan;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 
 public class TourneeAffichee extends Etat {
     public TourneeAffichee(Controller controller) {
@@ -58,6 +65,60 @@ public class TourneeAffichee extends Etat {
             loadPlan(file.getPath()); // Tentative de chargement du plan
         }
     }
+
+    @Override
+    public void handleExportXML(){
+        XMLExport export = new XMLExport();
+        export.exportDemande(controller.getDemande(), "docs\\export.xml");
+        VBox deliveryInfoVBox = controller.getDeliveryInfoVBox();
+        if (deliveryInfoVBox != null && !deliveryInfoVBox.getChildren().isEmpty()) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("docs\\tournees.txt"))) {
+                // Parcourt chaque enfant de la VBox
+                for (Node node : deliveryInfoVBox.getChildren()) {
+                    // Vérifie si le noeud est un Label pour accéder à son texte
+                    if (node instanceof Label) {
+                        Label label = (Label) node;
+                        writer.write(label.getText() + "\n");
+                    } else {
+                        writer.write(node.getClass().getSimpleName() + "\n");
+                    }
+                }
+                System.out.println("Contenu de deliveryInfoVBox écrit dans tournees.txt.");
+            } catch (IOException e) {
+                System.err.println("Erreur lors de l'écriture dans le fichier tournees.txt : " + e.getMessage());
+            }
+        } else {
+            System.out.println("deliveryInfoVBox est vide ou non initialisée.");
+        }
+        /*
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("docs\\tournees.txt"))) {
+            VBox deliveryInfoVBox = controller.getDeliveryInfoVBox();
+            if (deliveryInfoVBox != null && !deliveryInfoVBox.getChildren().isEmpty()) {
+                System.out.println("Contenu de deliveryInfoVBox :");
+                
+                // Parcours de chaque enfant de la VBox
+                for (Node node : deliveryInfoVBox.getChildren()) {
+                    // Vérifiez si le noeud est un Label pour accéder à son texte
+                    if (node instanceof Label) {
+                        Label label = (Label) node;
+                        System.out.println("Label - Texte : " + label.getText());
+                    } else {
+                        System.out.println("Node type inconnu : " + node.getClass().getSimpleName());
+                    }
+                }
+            } else {
+                System.out.println("deliveryInfoVBox est vide ou non initialisée.");
+            }
+
+            for (Trajet trajet : view.getTournees()) {
+                writer.write(trajet.toString());
+                writer.write("\n"); // ajouter une nouvelle ligne entre chaque trajet pour la lisibilité
+            }
+            System.out.println("Exportation réussie vers le fichier : " + "docs\\tournees.txt");
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'exportation des trajets : " + e.getMessage());
+        }*/
+    }
     
     private void loadPlan(String filePath) {
         XMLPlan xmlPlan = new XMLPlan();
@@ -75,6 +136,7 @@ public class TourneeAffichee extends Etat {
             controller.getUndoButton().setVisible(false);
             controller.getRedoButton().setVisible(false);
             controller.setEtat(new PlanCharge(controller)); // Passer à l'état chargé
+            controller.getExport().setVisible(false);
         } else {
             // Si le plan est invalide, afficher un message et réinitialiser l'état
             controller.getMessageLabel().setText("Le plan n'a pas pu être chargé. Veuillez réessayer.");

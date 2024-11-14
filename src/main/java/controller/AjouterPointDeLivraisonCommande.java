@@ -26,8 +26,8 @@ public class AjouterPointDeLivraisonCommande extends Commande {
 
     @Override
     public void redoCommande(Intersection intersection, Label label) {
-        //intersectionsAjoutees.push(this.getIntersection());
-        //labelsAjoutes.push(this.getLabel());
+        // intersectionsAjoutees.push(this.getIntersection());
+        // labelsAjoutes.push(this.getLabel());
         view.getIntersectionsAjoutees().push(this.getIntersection());
         view.getLabelsAjoutes().push(this.getLabel());
         view.reafficherPointDeLivraison(intersection, pane, deliveryInfoVBox, label, view.getLivreurSelectionne());

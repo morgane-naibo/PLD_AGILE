@@ -33,6 +33,7 @@ public class DemandeChargee extends Etat {
             controller.getCalculerChemin().setVisible(false);
             controller.getUndoButton().setVisible(true);
             controller.getRedoButton().setVisible(true);
+            controller.getExport().setVisible(true);
         }
         else {
             controller.getMessageLabel().setText("Veuillez sélectionner un entrepôt");
