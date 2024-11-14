@@ -344,7 +344,7 @@ public class View {
     
                 Label pdLabel = new Label("Point de Livraison:");
                 for (Troncon troncon : inter.getListeTroncons()) {
-                    pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ",");
+                    pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
                 }
                 deliveryInfoVBox.getChildren().add(pdLabel);
     
@@ -576,7 +576,7 @@ public class View {
 
             Label pdLabel = new Label("Point de Livraison:");
             for (Troncon troncon : inter.getListeTroncons()) {
-                pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ",");
+                pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
             }
             deliveryInfoVBox.getChildren().add(pdLabel);
 
@@ -794,6 +794,8 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
 
     messageLabel.setText("Tournée du livreur " + (livreur.getId() + 1) + " sélectionnée");
 
+    Set<String> tronconsAffiches = new HashSet<>();
+
     // Supprime les anciens tracés de la tournée du plan
     this.livreurSelectionne = livreur;
 
@@ -836,6 +838,74 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
                 arrowHead.setRotate(angle);
 
                 pane.getChildren().add(arrowHead);
+            }
+        }
+    }
+    controller.getDeliveryInfoVBox().getChildren().clear();
+    controller.getDeliveryInfoVBox().getChildren().add(new Label("Liste des Points de Livraison"));
+    try {
+        Intersection intersection = plan.chercherIntersectionParId(entrepot.getId());
+        List<Troncon> listeTroncons = intersection.getListeTroncons();
+        System.out.println(entrepot);
+        labelEntrepot = new Label("Entrepôt:");
+        for (Troncon troncon : listeTroncons) {
+            labelEntrepot.setText(labelEntrepot.getText() + troncon.getNomRue() + ", ");
+        }
+        controller.getDeliveryInfoVBox().getChildren().add(labelEntrepot);
+    } catch (IDIntersectionException e) {
+        e.printStackTrace();
+    }
+    for (PointDeLivraison pdl : demande.getListePointDeLivraison()) {
+        try {
+            Intersection inter = plan.chercherIntersectionParId(pdl.getId());
+            Label pdLabel = new Label("Point de Livraison:");
+            for (Troncon troncon : inter.getListeTroncons()) {
+                pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
+            }
+            controller.getDeliveryInfoVBox().getChildren().add(pdLabel);
+        } catch (IDIntersectionException e) {
+            e.printStackTrace();
+        }
+    }
+    //controller.getDeliveryInfoVBox().getChildren().add(new Label(""));
+    for (Tournee tournee : tournees) {
+        Color color = livreurCouleurs.get(tournee.getLivreur().getId());
+        Label vide = new Label(" ");
+        controller.getDeliveryInfoVBox().getChildren().add(vide);
+        Label livreurLabel = new Label("Livreur " + (livreur.getId() + 1) + ": " + String.format("%.2f", tournee.calculerDureeTrajet()) + " minutes");
+        Color lightColor = color.deriveColor(0, 1, 1.3, 0.5); // Increase brightness by 30% and set opacity to 50%
+        livreurLabel.setStyle("-fx-background-color: " + toHexString(lightColor) + ";");
+        livreurLabel.setOnMouseClicked(event -> {
+            afficherTourneeSurCarte(tournee.getListeEtapes(), pane, livreur, messageLabel);
+        });
+        controller.getDeliveryInfoVBox().getChildren().add(livreurLabel);        
+        double heureDepartProchainTroncon = 8.0;
+        for (Etape etape : tournee.getListeEtapes()) {
+            double temps = etape.getLongueur() * 60 / 15000;
+            temps = Math.round(temps * 100.0) / 100.0;
+            double heureFin = heureDepartProchainTroncon + temps / 60;
+            int heures = (int) heureFin;
+            int minutes = (int) ((heureFin - heures) * 60);
+            Label labelEtape = new Label("Etape : " + String.format("%02d:%02d", heures, minutes));
+            controller.getDeliveryInfoVBox().getChildren().add(labelEtape);
+            heureDepartProchainTroncon = heureFin;
+            for (Troncon troncon : etape.getListeTroncons()) {
+                Label label = new Label("    Troncon: " + troncon.getNomRue());
+                if (!tronconsAffiches.contains(troncon.getNomRue())) {
+                    controller.getDeliveryInfoVBox().getChildren().add(label);
+                    tronconsAffiches.add(troncon.getNomRue());
+                }
+            }
+            tronconsAffiches.clear();
+            try {
+                Intersection pdl = plan.chercherIntersectionParId(etape.getArrivee().getId());
+                Label pdLabel = new Label("    Point de Livraison:");
+                for (Troncon troncon : pdl.getListeTroncons()) {
+                    pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
+                }
+                controller.getDeliveryInfoVBox().getChildren().add(pdLabel);
+            } catch (IDIntersectionException e) {
+                e.printStackTrace();
             }
         }
     }
