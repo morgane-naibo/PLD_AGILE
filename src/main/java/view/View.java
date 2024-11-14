@@ -872,7 +872,7 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
         Color color = livreurCouleurs.get(tournee.getLivreur().getId());
         Label vide = new Label(" ");
         controller.getDeliveryInfoVBox().getChildren().add(vide);
-        Label livreurLabel = new Label("Livreur " + (livreur.getId() + 1) + ": " + String.format("%.2f", tournee.calculerDureeTrajet()) + " minutes");
+        Label livreurLabel = new Label("Livreur " + (tournee.getLivreur().getId() + 1) + ": " + String.format("%.2f", tournee.calculerDureeTrajet()) + " minutes");
         Color lightColor = color.deriveColor(0, 1, 1.3, 0.5); // Increase brightness by 30% and set opacity to 50%
         livreurLabel.setStyle("-fx-background-color: " + toHexString(lightColor) + ";");
         livreurLabel.setOnMouseClicked(event -> {

@@ -69,7 +69,7 @@ public class TourneeAffichee extends Etat {
     @Override
     public void handleExportXML(){
         XMLExport export = new XMLExport();
-        export.exportDemande(controller.getDemande(), "docs\\export.xml");
+        export.exportDemande(view.getDemande(), "docs\\export.xml");
         VBox deliveryInfoVBox = controller.getDeliveryInfoVBox();
         if (deliveryInfoVBox != null && !deliveryInfoVBox.getChildren().isEmpty()) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("docs\\tournees.txt"))) {
