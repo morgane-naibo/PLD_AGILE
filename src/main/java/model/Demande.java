@@ -19,6 +19,7 @@ public class Demande {
     private int nbLivreurs;
     private ArrayList<ArrayList<Integer>> listesIndex;   
     private List<Trajet> livraisons ;
+    private List<RunTSP> listeRun;
 
     //constructeur
     public Demande() {
@@ -30,15 +31,12 @@ public class Demande {
         this.listeMatriceAdjacence = new ArrayList<>(this.nbLivreurs);
         this.listesIndex = new ArrayList<>();
         this.livraisons = new ArrayList<>();
+        this.listeRun = new ArrayList<RunTSP>();
     }
 
     //getters
     public Entrepot getEntrepot() {
         return this.entrepot;
-    }
-
-    public int getNbLivreurs() {
-        return this.nbLivreurs;
     }
 
     public List<PointDeLivraison> getListePointDeLivraison() {
@@ -67,6 +65,14 @@ public class Demande {
 
     public List<Trajet> getLivraisons() {
         return this.livraisons;
+    }
+
+    public int getNbLivreurs(){
+        return this.nbLivreurs;
+    }
+
+    public List<RunTSP> getListeRunTSP(){
+        return this.listeRun;
     }
 
     //setters
@@ -279,7 +285,6 @@ public class Demande {
                         //prendre les distances nulles comme distances max (comment ajouter à enCours??)
                     }
                 }
-                //System.out.println("distance entre"+indexDepart+ "et " + indexArrivee + "distance : "+ distanceMin);
                 
                 for (int l=0;l<this.listePointDeLivraison.size();l++){
                     if (this.listesIndex.get(l).contains(indexDepart)){
@@ -330,7 +335,6 @@ public class Demande {
                 etapesVisitees.add(enCours);
                 etapesVisitees.add(opposee);
                 for (int l=0;l<this.listesIndex.size();l++){
-                    //System.out.println(this.listesIndex.size());
                     if (!listesIndex.get(l).isEmpty()){
                         for (int k= 0; k<this.listesIndex.get(l).size();k++){
                             for (int t= 0; t<this.listesIndex.get(l).size();t++){
@@ -407,13 +411,21 @@ public class Demande {
         try {
             this.initialiserMatriceAdjacence();
             this.verifierMatriceAdjacence();
-            System.out.println(matrixToString(matriceAdjacence));
             this.creerClusters();
             this.creerMatricesParClusters();
-            RunTSP run = new RunTSP();
-            for (int i = 0; i<nbLivreurs;i++){
+           
+            int size;
+            if(this.nbLivreurs > this.listePointDeLivraison.size()){
+                size = this.listePointDeLivraison.size();
+            }
+            else{
+                size = this.nbLivreurs;
+            }
+
+            for (int i = 0; i<size;i++){
+                listeRun.add(new RunTSP());
                 Trajet trajet = new Trajet();
-                trajet = run.calculerTSP(this.listeMatriceAdjacence.get(i));
+                trajet = listeRun.get(i).calculerTSP(this.listeMatriceAdjacence.get(i));
                 this.livraisons.add(trajet);
                 //on a juste à afficher le temps des tournées et à signaler qu'une tournée est hors-temps, 
                 //c'est à l'utilisateur de modifier manuellement les tournées
@@ -538,10 +550,55 @@ public class Demande {
         return trajet;
     }
 
-    public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl) throws IDIntersectionException {
-        if(this.supprimerIntersection(pdl)==-1){
+    public Trajet supprimerPDL(int nbLivreur, PointDeLivraison oldPDL) throws Exception{
+        int indexOldPDL = -1 ;
+        for(int i=0 ; i<this.listePointDeLivraison.size() ; i++){
+            if (this.listePointDeLivraison.get(i).getId() == oldPDL.getId()) {
+                indexOldPDL = i ;
+                break ;
+            }
+        }
+
+        if (indexOldPDL != -1){
+            this.matriceAdjacence.remove(indexOldPDL);
+
+            for(int i=1 ; i<this.matriceAdjacence.size()-1 ; i++){
+                this.matriceAdjacence.get(i).remove(indexOldPDL);
+            }
+
+            this.listesIndex.get(nbLivreur).remove(Integer.valueOf(indexOldPDL+1));
+            for(int j=0 ; j<this.listesIndex.get(nbLivreur).size() ; j++){
+                if (this.listesIndex.get(nbLivreur).get(j) >= indexOldPDL) {
+                    int index = this.listesIndex.get(nbLivreur).get(j);
+                    this.listesIndex.get(nbLivreur).set(j, index-1);
+                }
+            }
+
+            this.listePointDeLivraison.remove(indexOldPDL);
+        }
+        
+        else{
             return null;
         }
+        
+
+        try {
+            verifierMatriceAdjacence();
+            creerMatricesPourCluster(nbLivreur);
+            Trajet trajet = this.recalculerTrajetApresSuppressionPDL(nbLivreur, oldPDL);
+            this.livraisons.set(nbLivreur,trajet);
+            return trajet;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+        
+        
+    }
+
+    public Trajet recalculerTrajetApresSuppressionPDL(int numLivreur, PointDeLivraison pdl) throws Exception {
+
         Trajet trajet = this.livraisons.get(numLivreur);
         
         try {
