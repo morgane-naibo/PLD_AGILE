@@ -326,7 +326,11 @@ private void handleMouseDragged(MouseEvent event) {
     @FXML
     public void handleButtonClick() {
         // Affiche ou masque les boutons
-        view.toggleButtons(boutonPlus, chargerFichierButton, selectionnerPointButton, chargerNouveauPlan);
+        if (view.isTourneeCalculee()) {
+            view.toggleButtons(boutonPlus, chargerFichierButton, selectionnerPointButton, chargerNouveauPlan, exportXML);
+        } else {
+            view.toggleButtons(boutonPlus, chargerFichierButton, selectionnerPointButton, chargerNouveauPlan);
+        }
     }
 
     @FXML
