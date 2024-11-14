@@ -274,6 +274,7 @@ public class Controller {
     }
 
 
+
 // Gestionnaire d'événements pour le clic de souris
 private void handleMousePressed(MouseEvent event) {
     initialMouseX = event.getSceneX();

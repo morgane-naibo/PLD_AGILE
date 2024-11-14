@@ -620,12 +620,13 @@ public class Demande {
             e.printStackTrace();
         }
         this.livraisons.set(numLivreur,trajet);
-        System.out.println("nb détapes apres supp : "+trajet.getListeEtapes().size());
+        /*System.out.println("nb détapes apres supp : "+trajet.getListeEtapes().size());
         System.out.println("Inter restante : "+trajet.getListeEtapes().get(0).getArrivee());
         System.out.println("nb détapes apres supp : "+trajet.getListeEtapes().size());
         System.out.println("Inter restante : "+trajet.getListeEtapes().get(0).getArrivee());
         System.out.println("nb détapes apres supp : "+trajet.getListeEtapes().size());
         System.out.println("Inter restante : "+trajet.getListeEtapes().get(0).getArrivee());
+        */
         return trajet;
     }
     }
