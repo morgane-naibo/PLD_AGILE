@@ -716,7 +716,9 @@ public class View {
         Color lightColor = color.deriveColor(0, 1, 1.3, 0.5); // Increase brightness by 30% and set opacity to 50%
         livreurLabel.setStyle("-fx-background-color: " + toHexString(lightColor) + ";");
         livreurLabel.setOnMouseClicked(event -> {
+            this.livreurSelectionne = livreur; // Mettez à jour le livreur sélectionné
             afficherTourneeSurCarte(trajet.getListeEtapes(), pane, livreur, messageLabel);
+            System.out.println("Livreur selectionne: " + livreurSelectionne);
         });
         deliveryInfoVBox.getChildren().add(livreurLabel);
         double heureDepartProchainTroncon = 8.0; // Heure de départ du premier tronçon
@@ -757,7 +759,7 @@ public class View {
                 double arrowY = (startY + endY) / 2;
 
 
-                arrowHead.setLayoutX(arrowX+5);
+                arrowHead.setLayoutX(arrowX+4);
                 arrowHead.setLayoutY(arrowY );
 
                 // Rotation de la flèche pour qu'elle pointe dans la direction du tronçon
@@ -831,7 +833,7 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
                 double arrowY = (startY + endY) / 2;
 
 
-                arrowHead.setLayoutX(arrowX+5);
+                arrowHead.setLayoutX(arrowX+4);
                 arrowHead.setLayoutY(arrowY );
 
                 // Rotation de la flèche pour qu'elle pointe dans la direction du tronçon
@@ -876,7 +878,8 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
         Color lightColor = color.deriveColor(0, 1, 1.3, 0.5); // Increase brightness by 30% and set opacity to 50%
         livreurLabel.setStyle("-fx-background-color: " + toHexString(lightColor) + ";");
         livreurLabel.setOnMouseClicked(event -> {
-            afficherTourneeSurCarte(tournee.getListeEtapes(), pane, livreur, messageLabel);
+            this.livreurSelectionne = tournee.getLivreur(); // Mettez à jour le livreur sélectionné
+            afficherTourneeSurCarte(tournee.getListeEtapes(), pane, livreurSelectionne, messageLabel);
         });
         controller.getDeliveryInfoVBox().getChildren().add(livreurLabel);        
         double heureDepartProchainTroncon = 8.0;
