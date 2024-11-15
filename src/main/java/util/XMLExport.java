@@ -16,8 +16,19 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Classe utilitaire pour exporter une demande de livraisons en un fichier XML.
+ * Permet de générer un fichier XML à partir des données d'un objet {@link Demande}.
+ */
 public class XMLExport {
 
+    /**
+     * Exporte une demande de livraisons dans un fichier XML au chemin spécifié.
+     *
+     * @param demande  L'objet {@link Demande} contenant les informations à exporter.
+     * @param filePath Le chemin du fichier dans lequel écrire le contenu XML.
+     * @throws Exception si une erreur survient lors de la création ou de l'écriture du fichier XML.
+     */
     public void exportDemande(Demande demande, String filePath) {
         try {
             // Initialisation du document XML

@@ -8,8 +8,19 @@ import model.Entrepot;
 import model.Livraison;
 import model.PointDeLivraison;
 
+/**
+ * Classe utilitaire pour analyser les fichiers XML contenant des demandes de livraison.
+ * Cette classe hérite de {@link XMLReader} pour fournir des méthodes spécifiques au format des demandes.
+ */
 public class XMLDemande extends XMLReader {
 
+    /**
+     * Analyse un fichier XML et extrait les informations pour créer un objet {@link Demande}.
+     *
+     * @param filePath Chemin vers le fichier XML à analyser.
+     * @return Un objet {@link Demande} contenant les informations extraites du fichier.
+     * @throws RuntimeException si une erreur survient lors du chargement ou de l'analyse du fichier.
+     */
     @Override
     public Demande parse(String filePath) {
         Demande demande = new Demande();
