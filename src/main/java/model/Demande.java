@@ -366,7 +366,14 @@ public class Demande {
 
 
     public void creerMatricesParClusters() {
-        for (int i = 0; i < this.nbLivreurs; i++) {
+        int size;
+        if(this.nbLivreurs > this.listePointDeLivraison.size()){
+            size = this.listePointDeLivraison.size();
+        }
+        else{
+            size = this.nbLivreurs;
+        }
+        for (int i = 0; i < size; i++) {
             // Initialize the adjacency matrix for each "livreur" as a 2D List of Etape objects
             List<List<Etape>> matrice = new ArrayList<>();
     
@@ -557,7 +564,7 @@ public class Demande {
         if (indexOldPDL != -1){
             this.matriceAdjacence.remove(indexOldPDL);
 
-            for(int i=1 ; i<this.matriceAdjacence.size()-1 ; i++){
+            for(int i=0 ; i<this.matriceAdjacence.size() ; i++){
                 this.matriceAdjacence.get(i).remove(indexOldPDL);
             }
 
@@ -570,6 +577,7 @@ public class Demande {
             }
 
             this.listePointDeLivraison.remove(indexOldPDL);
+            System.out.println(matrixToString(matriceAdjacence));
         }
         
         else{

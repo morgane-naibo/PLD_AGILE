@@ -23,10 +23,17 @@ public class DemandeChargee extends Etat {
             view.demande.setPlan(controller.getPlan());
             view.demande.initialiserListePointdeLivraisons();
             List<Trajet> trajets = view.demande.calculerTSP();
+            int size;
+            if (view.demande.getNbLivreurs()< view.demande.getListePointDeLivraison().size()) {
+                size = view.demande.getNbLivreurs();
+            }
+            else {
+                size = view.demande.getListePointDeLivraison().size();
+            }
             // view.demande.initialiserMatriceAdjacence();
             // view.demande.creerClusters();
             // RunTSP run = new RunTSP();
-            for (int i = 0; i < trajets.size(); i++) {
+            for (int i = 0; i < size; i++) {
                 view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajets.get(i), i, controller.getMessageLabel());
             }
             controller.setEtat(new TourneeAffichee(controller));
@@ -82,6 +89,7 @@ public class DemandeChargee extends Etat {
             controller.setDemande(demandeFile); // Mettre à jour la demande dans le contrôleur
             controller.getCalculerChemin().setVisible(true);
             controller.setEtat(new DemandeChargee(controller)); // Passer à l'état "DemandeChargee"
+            view.toggleButtons(controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan());
         } else {
             // Si la demande est invalide, afficher un message et réinitialiser l'état
             controller.getMessageLabel().setText("Le fichier de demande n'a pas pu être chargé. Veuillez réessayer.");
