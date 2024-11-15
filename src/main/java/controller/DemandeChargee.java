@@ -6,55 +6,66 @@ import javafx.stage.FileChooser;
 import model.Demande;
 import model.Plan;
 import model.Trajet;
-import tsp.RunTSP;
 import util.XMLDemande;
 import util.XMLPlan;
-import javafx.scene.control.Label;
 import java.util.List;
 
+/**
+ * La classe DemandeChargee représente l'état où une demande de livraison a été chargée.
+ * Elle hérite de la classe Etat et gère les interactions et les calculs liés à cet état.
+ */
 public class DemandeChargee extends Etat {
+
+    /**
+     * Constructeur de la classe DemandeChargee.
+     * 
+     * @param controller Le contrôleur principal de l'application.
+     */
     public DemandeChargee(Controller controller) {
         super(controller);
     }
 
+    /**
+     * Calcule le chemin optimal pour les livraisons en utilisant l'algorithme TSP.
+     * Affiche les trajets calculés sur la carte et met à jour l'état de l'application.
+     */
     @Override
     public void calculerChemin() {
+        // Vérifie si un entrepôt est sélectionné
         if (view.isEntrepotExiste()) {
             view.demande.setPlan(controller.getPlan());
             view.demande.initialiserListePointdeLivraisons();
             List<Trajet> trajets = view.demande.calculerTSP();
             int size;
-            if (view.demande.getNbLivreurs()< view.demande.getListePointDeLivraison().size()) {
+            if (view.demande.getNbLivreurs() < view.demande.getListePointDeLivraison().size()) {
                 size = view.demande.getNbLivreurs();
-            }
-            else {
+            } else {
                 size = view.demande.getListePointDeLivraison().size();
             }
-            // view.demande.initialiserMatriceAdjacence();
-            // view.demande.creerClusters();
-            // RunTSP run = new RunTSP();
             if (size == 0) {
                 controller.getMessageLabel().setText("Il n'y a pas de livraison à effectuer");
                 controller.getMessageLabel().setVisible(true);
                 return;
-            }
-            else {
-            for (int i = 0; i < size; i++) {
-                view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajets.get(i), i, controller.getMessageLabel());
-            }
+            } else {
+                for (int i = 0; i < size; i++) {
+                    view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajets.get(i), i, controller.getMessageLabel());
+                }
 
-            controller.setEtat(new TourneeAffichee(controller));
-            controller.getCalculerChemin().setVisible(false);
-            controller.getUndoButton().setVisible(true);
-            controller.getRedoButton().setVisible(true);
-        }
-        }
-        else {
+                controller.setEtat(new TourneeAffichee(controller));
+                controller.getCalculerChemin().setVisible(false);
+                controller.getUndoButton().setVisible(true);
+                controller.getRedoButton().setVisible(true);
+            }
+        } else {
             controller.getMessageLabel().setText("Veuillez sélectionner un entrepôt");
             controller.getMessageLabel().setVisible(true);
         }
     }
 
+    /**
+     * Gère l'événement du bouton de sélection.
+     * Active ou désactive le mode de sélection et met à jour l'état de l'application.
+     */
     @Override
     public void handleSelectButton() {
         controller.getMessageLabel().setVisible(true);
@@ -62,10 +73,15 @@ public class DemandeChargee extends Etat {
         if (view.isTourneeCalculee()) {
             controller.setEtat(new TourneeAffichee(controller));
             controller.getCalculerChemin().setVisible(false);
+        } else {
+            controller.setEtat(new DemandeChargee(controller));
         }
-        else controller.setEtat(new DemandeChargee(controller));
     }
 
+    /**
+     * Gère l'événement du bouton de chargement de fichier.
+     * Affiche une boîte de dialogue pour sélectionner un fichier de demande et charge la demande.
+     */
     @Override
     public void handleFileButton() {
         view.displayButtons(controller.getPane(), controller.getDeliveryInfoVBox(), controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan(), controller.getCalculerChemin());
@@ -77,12 +93,17 @@ public class DemandeChargee extends Etat {
             loadDemande(file.getPath());
         }
     }
-    
+
+    /**
+     * Charge une demande de livraison à partir d'un fichier XML.
+     * 
+     * @param filePath Le chemin du fichier XML de la demande.
+     */
     private void loadDemande(String filePath) {
         XMLDemande xmlDemande = new XMLDemande();
         Demande demandeFile = xmlDemande.parse(filePath);
     
-        // Vérifiez si la demande est valide et contient des points de livraison
+        // Vérifie si la demande est valide et contient des points de livraison
         if (demandeFile != null && demandeFile.getListePointDeLivraison() != null && !demandeFile.getListePointDeLivraison().isEmpty()) {
             
             // Initialiser la demande dans le contrôleur si elle est null
@@ -109,6 +130,10 @@ public class DemandeChargee extends Etat {
         }
     }
 
+    /**
+     * Gère l'événement du bouton de chargement de plan.
+     * Affiche une boîte de dialogue pour sélectionner un fichier de plan et charge le plan.
+     */
     @Override
     public void handleLoadPlan() {
         view.setDemande(null);
@@ -122,7 +147,12 @@ public class DemandeChargee extends Etat {
             loadPlan(file.getPath()); // Tentative de chargement du plan
         }
     }
-    
+
+    /**
+     * Charge un plan à partir d'un fichier XML.
+     * 
+     * @param filePath Le chemin du fichier XML du plan.
+     */
     private void loadPlan(String filePath) {
         XMLPlan xmlPlan = new XMLPlan();
         Plan plan = xmlPlan.parse(filePath);
@@ -151,6 +181,4 @@ public class DemandeChargee extends Etat {
             controller.setEtat(new PlanNonCharge(controller)); // Revenir à l'état initial
         }
     }
-
-    // Pas de surcharge de handleActionB ou handleActionC car elles ne sont pas disponibles dans cet état
 }

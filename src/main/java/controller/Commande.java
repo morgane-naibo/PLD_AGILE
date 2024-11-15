@@ -3,6 +3,10 @@ package controller;
 import javafx.scene.control.Label;
 import model.Intersection;
 
+/**
+ * La classe abstraite Commande représente une commande générique avec une intersection et un label.
+ * Elle fournit des méthodes pour annuler et refaire une commande, qui peuvent être surchargées par les sous-classes.
+ */
 public abstract class Commande {
 
     private Intersection intersection;

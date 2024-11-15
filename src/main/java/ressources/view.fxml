@@ -15,6 +15,9 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <BorderPane fx:id="pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller" prefHeight="600" prefWidth = "800" stylesheets="@/assets/styles.css" styleClass="border-pane">
     
@@ -34,6 +37,11 @@
                 <children>
                     <StackPane fx:id="stackPane" prefHeight="450" maxWidth="Infinity" BorderPane.alignment="TOP_CENTER">
                         <Label fx:id="title" text="Deliver'IF" styleClass="title" visible="true" StackPane.alignment="TOP_CENTER" />
+                        <ImageView fx:id="logoImage" fitHeight="300" fitWidth="300" pickOnBounds="true" preserveRatio="true" StackPane.alignment="TOP_CENTER">
+                            <image>
+                                <Image url="@/assets/logo.png" />
+                            </image>
+                        </ImageView>
                         <Button fx:id="chargerPlan" text="Charger un plan" styleClass="plan-button" onAction="#handleLoadPlan" StackPane.alignment="CENTER" />
                         <ComboBox fx:id="nbLivreurs" prefWidth="250.0" promptText="Choisissez un nombre de livreurs" StackPane.alignment="BOTTOM_CENTER"/>
                     </StackPane>

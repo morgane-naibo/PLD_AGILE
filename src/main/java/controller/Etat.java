@@ -3,6 +3,11 @@ package controller;
 import view.View;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * La classe abstraite Etat représente un état générique dans le contrôleur.
+ * Chaque état spécifique doit hériter de cette classe et peut redéfinir les méthodes
+ * pour gérer les actions principales.
+ */
 public abstract class Etat {
 
     public View view;

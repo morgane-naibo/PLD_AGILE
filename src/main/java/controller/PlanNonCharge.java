@@ -2,18 +2,29 @@ package controller;
 
 import java.io.File;
 
-import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
 import util.XMLPlan;
 import model.Plan;
-import view.View;
 
+/**
+ * La classe PlanNonCharge représente l'état où aucun plan n'est chargé.
+ * Elle hérite de la classe Etat et gère le chargement d'un plan.
+ */
 public class PlanNonCharge extends Etat {
 
+    /**
+     * Constructeur de la classe PlanNonCharge.
+     *
+     * @param controller Le contrôleur principal de l'application.
+     */
     public PlanNonCharge(Controller controller) {
         super(controller);
     }
 
+    /**
+     * Gère l'action de chargement d'un plan.
+     * Ouvre une boîte de dialogue pour sélectionner un fichier XML de plan.
+     */
     @Override
     public void handleLoadPlan() {
         view.setDemande(null);
@@ -28,6 +39,12 @@ public class PlanNonCharge extends Etat {
         }
     }
     
+    /**
+     * Charge le plan à partir du chemin de fichier spécifié.
+     * Met à jour l'état et l'interface utilisateur en fonction du succès ou de l'échec du chargement.
+     *
+     * @param filePath Le chemin du fichier XML du plan.
+     */
     private void loadPlan(String filePath) {
         XMLPlan xmlPlan = new XMLPlan();
         Plan plan = xmlPlan.parse(filePath);
@@ -45,7 +62,6 @@ public class PlanNonCharge extends Etat {
             controller.getRedoButton().setVisible(false);
             controller.setEtat(new PlanCharge(controller)); // Passer à l'état chargé
             controller.getExport().setVisible(false);
-            //view.toggleButtons(controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan());
         } else if (controller.getNbLivreur() == 0) {
             controller.getMessageLabel().setText("Veuillez sélectionner un nombre de livreurs avant de charger un plan.");
             controller.getMessageLabel().setVisible(true);
@@ -61,5 +77,4 @@ public class PlanNonCharge extends Etat {
         }
     }
 
-    // Pas de surcharge de handleActionB ou handleActionC car elles ne sont pas disponibles dans cet état
 }

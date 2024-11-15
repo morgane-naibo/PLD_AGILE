@@ -19,75 +19,146 @@ import model.Intersection;
 import model.Plan;
 import model.Demande;
 import view.View;
-import javafx.scene.control.ComboBox;
 import javafx.scene.layout.StackPane;
 
+/**
+ * La classe Controller gère les interactions entre la vue et le modèle.
+ */
 public class Controller {
 
+    /**
+     * Bouton pour afficher les autres boutons.
+     */
     @FXML
     private Button boutonPlus;
 
+    /**
+     * Pane principal de la vue.
+     */
     @FXML
     private BorderPane pane;
 
+    /**
+     * Pane ancré pour la disposition des éléments.
+     */
     @FXML
     private AnchorPane anchorPane;
 
+    /**
+     * Bouton pour charger un fichier.
+     */
     @FXML
     private Button chargerFichierButton;
 
+    /**
+     * Bouton pour sélectionner un point.
+     */
     @FXML
     private Button selectionnerPointButton;
 
+    /**
+     * Bouton pour charger un plan.
+     */
     @FXML
     private Button chargerPlan;
 
+    /**
+     * VBox pour afficher les informations de livraison.
+     */
     @FXML
     private VBox deliveryInfoVBox;
 
+    /**
+     * Bouton pour charger un nouveau plan.
+     */
     @FXML
     private Button chargerNouveauPlan;
 
+    /**
+     * Bouton pour calculer le chemin.
+     */
     @FXML
     private Button calculerChemin;
 
+    /**
+     * Bouton pour exporter en XML.
+     */
     @FXML
     private Button exportXML;
 
+    /**
+     * Label pour afficher des informations.
+     */
     @FXML
     private Label label;
 
-    @FXML 
+    /**
+     * Label pour afficher des messages.
+     */
+    @FXML
     private Label messageLabel;
 
+    /**
+     * Pane pour afficher la carte.
+     */
     @FXML
     private Pane mapPane;
 
+    /**
+     * Bouton pour annuler la dernière action.
+     */
     @FXML
     private Button undoButton;
 
+    /**
+     * Bouton pour rétablir la dernière action annulée.
+     */
     @FXML
     private Button redoButton;
 
+    /**
+     * HBox pour contenir les boutons d'annulation et de rétablissement.
+     */
     @FXML
     private HBox hboxUndoRedo;
 
+    /**
+     * Label pour afficher le titre.
+     */
     @FXML
     private Label title;
 
+    /**
+     * ComboBox pour sélectionner le nombre de livreurs.
+     */
     @FXML
     private ComboBox<Integer> nbLivreurs;
 
+    /**
+     * StackPane pour empiler les éléments.
+     */
     @FXML
     private StackPane stackPane;
 
+    /**
+     * Vue associée au contrôleur.
+     */
     private View view;
 
+    /**
+     * Demande associée au contrôleur.
+     */
     private Demande demande;
 
+    /**
+     * Plan associé au contrôleur.
+     */
     private Plan plan;
 
-    private Scale scale = new Scale(1.0, 1.0, 0, 0); // Zoom initial à 1 (100%)
+    /**
+     * Transformation de zoom initialisée à 1 (100%).
+     */
+    private Scale scale = new Scale(1.0, 1.0, 0, 0);
 
     // Variables pour le drag de la carte
     private double initialMouseX;
@@ -96,22 +167,21 @@ public class Controller {
     private double initialTranslateY;
 
     // Variables pour le drag de `deliveryInfoVBox`
-    private double vboxInitialX;
-    private double vboxInitialY;
-    private double mouseInitialX;
     private double mouseInitialY;
 
-    // Variables pour définir les limites maximales de déplacement
-    private static final double MIN_X = 0;
-    private static final double MIN_Y = 0;
-    private static final double MAX_X = 550; // Remplacez par la limite maximale souhaitée pour X
-    private static final double MAX_Y = 600; // Remplacez par la limite maximale souhaitée pour Y
-
+    /**
+     * Nombre de livreurs sélectionné.
+     */
     private int nbLivreur;
 
+    /**
+     * État actuel du contrôleur.
+     */
     private Etat etat;
 
-    // Constructeur
+    /**
+     * Constructeur de la classe Controller.
+     */
     public Controller() {
         this.view = new View();
         view.setController(this);
@@ -120,9 +190,11 @@ public class Controller {
         this.etat = new PlanNonCharge(this);
     }
 
-    // Méthode d'initialisation appelée après le chargement du FXML
-    
+    /**
+     * Méthode d'initialisation appelée après le chargement du FXML.
+     */
     public void initialize() {
+        // Code d'initialisation
         deliveryInfoVBox.setLayoutY(50);
         nbLivreurs.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -164,165 +236,311 @@ public class Controller {
             mapPane.setOnMouseDragged(this::handleMouseDragged);
         }
     }
-    
+
+    /**
+     * Définit l'état du contrôleur.
+     * 
+     * @param etat L'état à définir.
+     */
     public void setEtat(Etat etat) {
         this.etat = etat;
     }
 
+    /**
+     * Définit la vue associée au contrôleur.
+     * 
+     * @param view La vue à définir.
+     */
     public void setView(View view) {
         this.view = view;
     }
 
+    /**
+     * Définit le plan associé au contrôleur.
+     * 
+     * @param plan Le plan à définir.
+     */
     public void setPlan(Plan plan) {
         this.plan = plan;
     }
 
+    /**
+     * Définit la demande associée au contrôleur.
+     * 
+     * @param demande La demande à définir.
+     */
     public void setDemande(Demande demande) {
         this.demande = demande;
     }
 
+    /**
+     * Retourne le plan associé au contrôleur.
+     * 
+     * @return Le plan.
+     */
     public Plan getPlan() {
         return this.plan;
     }
 
+    /**
+     * Retourne la demande associée au contrôleur.
+     * 
+     * @return La demande.
+     */
     public Demande getDemande() {
         return this.demande;
     }
 
+    /**
+     * Retourne la vue associée au contrôleur.
+     * 
+     * @return La vue.
+     */
     public View getView() {
         return this.view;
     }
 
+    /**
+     * Retourne le bouton pour ajouter un élément.
+     * 
+     * @return Le bouton.
+     */
     public Button getBoutonPlus() {
         return boutonPlus;
     }
 
+    /**
+     * Retourne le pane principal de la vue.
+     * 
+     * @return Le pane.
+     */
     public BorderPane getPane() {
         return pane;
     }
 
+    /**
+     * Retourne le pane ancré pour la disposition des éléments.
+     * 
+     * @return Le pane.
+     */
     public AnchorPane getAnchorPane() {
         return anchorPane;
     }
 
+    /**
+     * Retourne le bouton pour charger un fichier.
+     * 
+     * @return Le bouton.
+     */
     public Button getChargerFichierButton() {
         return chargerFichierButton;
     }
 
+    /**
+     * Retourne le bouton pour sélectionner un point.
+     * 
+     * @return Le bouton.
+     */
     public Button getSelectionnerPointButton() {
         return selectionnerPointButton;
     }
 
+    /**
+     * Retourne le bouton pour charger un plan.
+     * 
+     * @return Le bouton.
+     */
     public Button getChargerPlan() {
         return chargerPlan;
     }
 
+    /**
+     * Retourne la VBox pour afficher les informations de livraison.
+     * 
+     * @return La VBox.
+     */
     public VBox getDeliveryInfoVBox() {
         return deliveryInfoVBox;
     }
 
+    /**
+     * Retourne le bouton pour charger un nouveau plan.
+     * 
+     * @return Le bouton.
+     */
     public Button getChargerNouveauPlan() {
         return chargerNouveauPlan;
     }
 
+    /**
+     * Retourne le bouton pour calculer le chemin.
+     * 
+     * @return Le bouton.
+     */
     public Button getCalculerChemin() {
         return calculerChemin;
     }
 
+    /**
+     * Retourne le bouton pour exporter en XML.
+     * 
+     * @return Le bouton.
+     */
     public Button getExport() {
         return exportXML;
     }
 
+    /**
+     * Retourne le label pour afficher des informations.
+     * 
+     * @return Le label.
+     */
     public Label getLabel() {
         return label;
     }
 
+    /**
+     * Retourne le label pour afficher des messages.
+     * 
+     * @return Le label.
+     */
     public Label getMessageLabel() {
         return messageLabel;
     }
 
+    /**
+     * Retourne le pane pour afficher la carte.
+     * 
+     * @return Le pane.
+     */
     public Pane getMapPane() {
         return mapPane;
     }
 
+    /**
+     * Retourne l'état actuel du contrôleur.
+     * 
+     * @return L'état.
+     */
     public Etat getEtat() {
         return etat;
     }
 
+    /**
+     * Retourne le bouton pour annuler la dernière action.
+     * 
+     * @return Le bouton.
+     */
     public Button getUndoButton() {
         return undoButton;
     }
 
+    /**
+     * Retourne le bouton pour rétablir la dernière action annulée.
+     * 
+     * @return Le bouton.
+     */
     public Button getRedoButton() {
         return redoButton;
     }
 
+    /**
+     * Retourne la HBox pour contenir les boutons d'annulation et de rétablissement.
+     * 
+     * @return La HBox.
+     */
     public HBox getHboxUndoRedo() {
         return hboxUndoRedo;
     }
 
+    /**
+     * Retourne le label pour afficher le titre.
+     * 
+     * @return Le label.
+     */
     public Label getTitle() {
         return title;
     }
 
+    /**
+     * Retourne le StackPane pour empiler les éléments.
+     * 
+     * @return Le StackPane.
+     */
     public StackPane getStackPane() {
         return stackPane;
     }
 
+    /**
+     * Retourne le nombre de livreurs sélectionné.
+     * 
+     * @return Le nombre de livreurs.
+     */
     public int getNbLivreur() {
         return nbLivreur;
     }
 
-
-
-// Gestionnaire d'événements pour le clic de souris
-private void handleMousePressed(MouseEvent event) {
-    initialMouseX = event.getSceneX();
-    initialMouseY = event.getSceneY();
-    initialTranslateX = mapPane.getTranslateX();
-    initialTranslateY = mapPane.getTranslateY();
-}
-
-private void handleMouseDragged(MouseEvent event) {
-    double deltaX = event.getSceneX() - initialMouseX;
-    double deltaY = event.getSceneY() - initialMouseY;
-
-    // Coordonnées potentielles après le glissement
-    double newTranslateX = initialTranslateX + deltaX;
-    double newTranslateY = initialTranslateY + deltaY;
-
-    // Dimensions de mapPane et de son conteneur (ex. AnchorPane ou autre parent)
-    double paneWidth = mapPane.getBoundsInParent().getWidth();
-    double paneHeight = mapPane.getBoundsInParent().getHeight();
-    double containerWidth = ((Pane) mapPane.getParent()).getWidth();
-    double containerHeight = ((Pane) mapPane.getParent()).getHeight();
-
-    // Limiter le déplacement pour que la carte reste visible
-    if (newTranslateX > 0) {
-        newTranslateX = 0;
-    } else if (newTranslateX < containerWidth - paneWidth) {
-        newTranslateX = containerWidth - paneWidth;
+    /**
+     * Gestionnaire d'événements pour le clic de souris.
+     * 
+     * @param event L'événement de clic de souris.
+     */
+    private void handleMousePressed(MouseEvent event) {
+        initialMouseX = event.getSceneX();
+        initialMouseY = event.getSceneY();
+        initialTranslateX = mapPane.getTranslateX();
+        initialTranslateY = mapPane.getTranslateY();
     }
 
-    if (newTranslateY > 0) {
-        newTranslateY = 0;
-    } else if (newTranslateY < containerHeight - paneHeight) {
-        newTranslateY = containerHeight - paneHeight;
+    /**
+     * Gestionnaire d'événements pour le glissement de la souris.
+     * 
+     * @param event L'événement de glissement de la souris.
+     */
+    private void handleMouseDragged(MouseEvent event) {
+        double deltaX = event.getSceneX() - initialMouseX;
+        double deltaY = event.getSceneY() - initialMouseY;
+
+        // Coordonnées potentielles après le glissement
+        double newTranslateX = initialTranslateX + deltaX;
+        double newTranslateY = initialTranslateY + deltaY;
+
+        // Dimensions de mapPane et de son conteneur
+        double paneWidth = mapPane.getBoundsInParent().getWidth();
+        double paneHeight = mapPane.getBoundsInParent().getHeight();
+        double containerWidth = ((Pane) mapPane.getParent()).getWidth();
+        double containerHeight = ((Pane) mapPane.getParent()).getHeight();
+
+        // Limiter le déplacement pour que la carte reste visible
+        if (newTranslateX > 0) {
+            newTranslateX = 0;
+        } else if (newTranslateX < containerWidth - paneWidth) {
+            newTranslateX = containerWidth - paneWidth;
+        }
+
+        if (newTranslateY > 0) {
+            newTranslateY = 0;
+        } else if (newTranslateY < containerHeight - paneHeight) {
+            newTranslateY = containerHeight - paneHeight;
+        }
+
+        // Appliquer les nouvelles coordonnées
+        mapPane.setTranslateX(newTranslateX);
+        mapPane.setTranslateY(newTranslateY);
     }
 
-    // Appliquer les nouvelles coordonnées
-    mapPane.setTranslateX(newTranslateX);
-    mapPane.setTranslateY(newTranslateY);
-}
-
-
-    // Click sur le bouton "charger un (nouveau) plan"
+    /**
+     * Gestionnaire d'événements pour le clic sur le bouton "charger un (nouveau) plan".
+     */
     @FXML
     public void handleLoadPlan() {
         etat.handleLoadPlan();
         System.out.println(etat);
     }
 
+    /**
+     * Gestionnaire d'événements pour le clic sur le bouton plus.
+     */
     @FXML
     public void handleButtonClick() {
         // Affiche ou masque les boutons
@@ -333,31 +551,45 @@ private void handleMouseDragged(MouseEvent event) {
         }
     }
 
+    /**
+     * Gestionnaire d'événements pour le clic sur le bouton de sélection.
+     */
     @FXML
     public void handleSelectButton() {
         etat.handleSelectButton();
         System.out.println(etat);
-
     }
 
+    /**
+     * Gestionnaire d'événements pour le clic sur le bouton de fichier.
+     */
     @FXML
     public void handleFileButton() {
         etat.handleFileButton();
         System.out.println(etat);
-    }  
+    }
 
+    /**
+     * Calculer le chemin.
+     */
     @FXML
     public void calculerChemin() {
         etat.calculerChemin();
         System.out.println(etat);
     }
 
+    /**
+     * Gestionnaire d'événements pour l'exportation en XML.
+     */
     @FXML
     public void handleExportXML() {
         etat.handleExportXML();
         System.out.println(etat);
     }
 
+    /**
+     * Annuler la dernière commande.
+     */
     @FXML
     public void undo() {
         // Vérifiez si la pile des commandes n'est pas vide
@@ -403,35 +635,42 @@ private void handleMouseDragged(MouseEvent event) {
         }
     }
 
-
+    /**
+     * Rétablir la dernière commande annulée.
+     */
     @FXML
-public void redo() {
-    // Vérifiez s'il y a des commandes annulées pouvant être rejouées
-    if (!view.getCommandesAnnulees().isEmpty()) {
-        // Récupérez la dernière commande annulée
-        Commande derniereCommandeAnnulee = view.getCommandesAnnulees().pop();
+    public void redo() {
+        // Vérifiez s'il y a des commandes annulées pouvant être rejouées
+        if (!view.getCommandesAnnulees().isEmpty()) {
+            // Récupérez la dernière commande annulée
+            Commande derniereCommandeAnnulee = view.getCommandesAnnulees().pop();
 
-        System.out.println("Dernière commande annulée : " + derniereCommandeAnnulee);
+            System.out.println("Dernière commande annulée : " + derniereCommandeAnnulee);
 
-        // Utilisez les attributs Intersection et Label de la commande
-        Intersection intersection = derniereCommandeAnnulee.getIntersection(); // méthode à ajouter dans Commande
-        Label label = derniereCommandeAnnulee.getLabel(); // méthode à ajouter dans Commande
+            // Utilisez les attributs Intersection et Label de la commande
+            Intersection intersection = derniereCommandeAnnulee.getIntersection(); // méthode à ajouter dans Commande
+            Label label = derniereCommandeAnnulee.getLabel(); // méthode à ajouter dans Commande
 
-        // Rejouez la commande avec les arguments requis
-        derniereCommandeAnnulee.redoCommande(intersection, label);
+            // Rejouez la commande avec les arguments requis
+            derniereCommandeAnnulee.redoCommande(intersection, label);
 
-        // Remettez la commande dans la pile des commandes effectuées
-        view.getCommandes().push(derniereCommandeAnnulee);
+            // Remettez la commande dans la pile des commandes effectuées
+            view.getCommandes().push(derniereCommandeAnnulee);
 
-        // Mettez à jour la dernière commande
-        view.setDerniereCommande(derniereCommandeAnnulee);
+            // Mettez à jour la dernière commande
+            view.setDerniereCommande(derniereCommandeAnnulee);
 
-        System.out.println("Commande rejouée : " + derniereCommandeAnnulee);
-    } else {
-        System.out.println("Aucune commande à rejouer.");
+            System.out.println("Commande rejouée : " + derniereCommandeAnnulee);
+        } else {
+            System.out.println("Aucune commande à rejouer.");
+        }
     }
-}
 
+    /**
+     * Gestionnaire d'événements pour le zoom.
+     * 
+     * @param deltaY La variation de la molette de la souris.
+     */
     private void handleZoom(double deltaY) {
         double zoomFactor = 1.05;
         double minZoom = 1.0;
@@ -485,5 +724,5 @@ public void redo() {
             mapPane.setTranslateY(containerHeight - mapHeight);
         }
     }
- 
 }
+
