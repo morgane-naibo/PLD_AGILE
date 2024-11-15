@@ -55,3 +55,9 @@
     -fx-font-size: 24px; /* Font size */
     -fx-font-weight: bold; /* Bold text */
 }
+
+
+.vbox {
+    -fx-font-family: "Montserrat";
+    -fx-font-size: 14px;
+}

@@ -799,7 +799,7 @@ public class View {
 
 public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livreur, Label messageLabel) {
 
-    messageLabel.setText("Tournée du livreur " + (livreur.getId() + 1) + " sélectionnée");
+    messageLabel.setText("Tournée du livreur " + (livreur.getId() + 1) + " sélectionnée. Cliquez sur un point pour le supprimer, ou sur le bouton + pour ajouter un nouveau point.");
 
     Set<String> tronconsAffiches = new HashSet<>();
 
@@ -868,6 +868,9 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
             Label pdLabel = new Label("Point de Livraison:");
             for (Troncon troncon : inter.getListeTroncons()) {
                 pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
+                pdLabel.setOnMouseClicked(event -> {
+                    handleCircleClick(inter, pane, controller.getDeliveryInfoVBox(), pdLabel);
+                });
             }
             controller.getDeliveryInfoVBox().getChildren().add(pdLabel);
         } catch (IDIntersectionException e) {
