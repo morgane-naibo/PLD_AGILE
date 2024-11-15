@@ -33,13 +33,21 @@ public class DemandeChargee extends Etat {
             // view.demande.initialiserMatriceAdjacence();
             // view.demande.creerClusters();
             // RunTSP run = new RunTSP();
+            if (size == 0) {
+                controller.getMessageLabel().setText("Il n'y a pas de livraison à effectuer");
+                controller.getMessageLabel().setVisible(true);
+                return;
+            }
+            else {
             for (int i = 0; i < size; i++) {
                 view.calculerChemin(controller.getMapPane(), controller.getDeliveryInfoVBox(), trajets.get(i), i, controller.getMessageLabel());
             }
+
             controller.setEtat(new TourneeAffichee(controller));
             controller.getCalculerChemin().setVisible(false);
             controller.getUndoButton().setVisible(true);
             controller.getRedoButton().setVisible(true);
+        }
         }
         else {
             controller.getMessageLabel().setText("Veuillez sélectionner un entrepôt");

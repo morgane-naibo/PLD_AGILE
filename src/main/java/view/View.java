@@ -244,6 +244,12 @@ public class View {
 
     public void toggleButtons(Button boutonPlus, Button... buttons) {
         if (!button_visible) {
+            if (!entrepotExiste) {
+                controller.getSelectionnerPointButton().setText("Selectionner un entrepot sur la carte");
+            }
+            else {
+                controller.getSelectionnerPointButton().setText("Ajouter un point de livraison sur la carte");
+            }
             boutonPlus.setText("x");
             boutonPlus.setStyle("-fx-background-color:GRAY");
             for (Button button : buttons) {
@@ -454,7 +460,7 @@ public class View {
             .map(Etape::getArrivee)
             .distinct()
             .count();
-            System.out.println("Nombre de points de livraison restants: " + (remainingPoints - 1));
+            //System.out.println("Nombre de points de livraison restants: " + (remainingPoints - 1));
 
         }
 
@@ -488,7 +494,7 @@ public class View {
     }
 
     public void popupDelete(double x, double y, Intersection inter, Circle circle, Pane pane, VBox deliveryInfoVBox, Circle newPdl, Label pdlLabel) {
-        System.out.println("Popup delete :" + livreurSelectionne);
+        //System.out.println("Popup delete :" + livreurSelectionne);
         if (livreurSelectionne != null || !tourneeCalculee) {
             Popup popup = new Popup();
 
@@ -632,7 +638,7 @@ public class View {
             .collect(Collectors.toList());
 
 
-        System.out.println("pointsRestants : " + pointsRestants);
+        //System.out.println("pointsRestants : " + pointsRestants);
         
         List<Etape> nouvellesEtapes = new ArrayList<>();
         

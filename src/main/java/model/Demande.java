@@ -577,7 +577,7 @@ public class Demande {
             }
 
             this.listePointDeLivraison.remove(indexOldPDL);
-            System.out.println(matrixToString(matriceAdjacence));
+            //System.out.println(matrixToString(matriceAdjacence));
         }
         
         else{
