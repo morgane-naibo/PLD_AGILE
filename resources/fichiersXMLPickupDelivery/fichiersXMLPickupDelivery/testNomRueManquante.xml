@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<reseau>
+    <!-- Test pour le nom de rue manquant -->
+    <noeud id="1" latitude="45.75406" longitude="4.857418"/>
+    <noeud id="3" latitude="45.6" longitude="4.857418"/>
+    <troncon destination="3" longueur="10" origine="1"/>
+</reseau>

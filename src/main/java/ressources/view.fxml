@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane fx:id="pane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller" prefHeight="600" prefWidth = "800" stylesheets="@/assets/styles.css" styleClass="border-pane">
+    
+    <!-- Message en haut -->
+    <top>
+        <HBox alignment="TOP_RIGHT">
+            <Label fx:id="messageLabel" visible="false" text="" prefHeight="50" styleClass="message-label"/>    
+        </HBox>
+    </top>
+
+
+    <!-- Plan au centre -->
+    <right>
+       <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
+            <Pane fx:id="mapPane" prefWidth="550" prefHeight="500" styleClass="map-pane"> <!-- Nouveau Pane pour le plan -->
+                <!-- Ajouter ici les éléments du plan -->
+                <children>
+                    <StackPane fx:id="stackPane" prefHeight="450" maxWidth="Infinity" BorderPane.alignment="TOP_CENTER">
+                        <Label fx:id="title" text="Deliver'IF" styleClass="title" visible="true" StackPane.alignment="TOP_CENTER" />
+                        <ImageView fx:id="logoImage" fitHeight="300" fitWidth="300" pickOnBounds="true" preserveRatio="true" StackPane.alignment="TOP_CENTER">
+                            <image>
+                                <Image url="@/assets/logo.png" />
+                            </image>
+                        </ImageView>
+                        <Button fx:id="chargerPlan" text="Charger un plan" styleClass="plan-button" onAction="#handleLoadPlan" StackPane.alignment="CENTER" />
+                        <ComboBox fx:id="nbLivreurs" prefWidth="250.0" promptText="Choisissez un nombre de livreurs" StackPane.alignment="BOTTOM_CENTER"/>
+                    </StackPane>
+                    <Button fx:id="boutonPlus" text="+" styleClass="plus-button" onAction="#handleButtonClick" visible="false" layoutY="55" layoutX="250" />
+                    <Button fx:id="chargerFichierButton" text="Charger un fichier de demandes" styleClass="file-button" onAction="#handleFileButton" visible="false" layoutY="95" layoutX="250"/>
+                    <Button fx:id="selectionnerPointButton" text="Ajouter un point de livraison sur la carte" styleClass="select-button" onAction="#handleSelectButton" visible="false" layoutY="135" layoutX="250"/>
+                    <Button fx:id="chargerNouveauPlan" text="Charger un nouveau plan" styleClass="file-button" onAction="#handleLoadPlan" visible="false" layoutY="175" layoutX="250"/>
+                    <Button fx:id="calculerChemin" text="Calculer un chemin" styleClass="file-button" onAction="#calculerChemin" visible="false" layoutY="550" layoutX="450"/>
+                    <Button fx:id="exportXML" text="Exporter le résultat" styleClass="file-button" onAction="#handleExportXML" visible="false" layoutY="215" layoutX="250"/>
+                    <Button fx:id="undoButton" text="Annuler" styleClass="file-button" onAction="#undo" visible="false" layoutY="550"  layoutX="600"/>
+                    <Button fx:id="redoButton" text="Refaire" styleClass="file-button" onAction="#redo" visible="false" layoutY="550" layoutX="700"/>
+                </children>
+            </Pane>
+        </ScrollPane>
+    </right>
+    
+    <!-- VBox d'information à droite -->
+    <left>
+        <Pane fx:id="containerPane">
+                <VBox fx:id="deliveryInfoVBox" visible="false" prefWidth="230.0" spacing="0" maxWidth="Infinity" styleClass="vbox">
+                    <Label fx:id="label" text="Liste des Points de Livraison" />
+                    <Label text="" />
+                </VBox>
+        </Pane>
+   </left>
+    
+    <bottom>
+    </bottom>
+
+
+</BorderPane>

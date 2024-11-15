@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<demande>
+    <entrepot adresse="1"/> <!-- Manque l'attribut heureDepart -->
+    <livraison adresseEnlevement="2" adresseLivraison="3"/> <!-- Manque les attributs dureeEnlevement et dureeLivraison -->
+</demande>
