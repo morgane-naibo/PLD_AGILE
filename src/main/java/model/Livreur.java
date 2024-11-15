@@ -1,30 +1,52 @@
 package model;
 
+/**
+ * Classe représentant un livreur dans le système.
+ * Un livreur est défini par un identifiant unique.
+ */
 public class Livreur {
+
+    /** Identifiant unique du livreur. */
     private int id;
 
-    // Constructeur
+    /**
+     * Constructeur du livreur.
+     * 
+     * @param id l'identifiant unique du livreur.
+     */
     public Livreur(int id) {
-        this.id=id;
+        this.id = id;
     }
 
-    //getter
+    /**
+     * Récupère l'identifiant du livreur.
+     * 
+     * @return l'identifiant du livreur.
+     */
     public int getId() {
         return this.id;
     }
 
-    //setter
+    /**
+     * Modifie l'identifiant du livreur.
+     * 
+     * @param newId le nouvel identifiant à attribuer.
+     */
     public void setId(int newId) {
         this.id = newId;
     }
 
-    //toString
+    /**
+     * Retourne une représentation sous forme de chaîne de caractères du livreur.
+     * Cette représentation inclut l'identifiant du livreur.
+     * 
+     * @return une chaîne de caractères décrivant le livreur.
+     */
     @Override
     public String toString() {
         return "Livreur [ID: " + id + "]";
     }
 
-
-    //autres methodes
+    // Méthodes supplémentaires à implémenter selon les besoins spécifiques.
 
 }
