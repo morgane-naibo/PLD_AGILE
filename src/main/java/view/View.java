@@ -197,6 +197,7 @@ public class View {
         demande = new Demande();
         System.out.println(controller.getDemande().getNbLivreurs());
         this.demande.setNbLivreurs(controller.getDemande().getNbLivreurs());
+        this.demande.setPlan(plan);
         intersectionsAjoutees.clear();
         labelsAjoutes.clear();
         intersectionsSupprimees.clear();
@@ -243,6 +244,12 @@ public class View {
 
     public void toggleButtons(Button boutonPlus, Button... buttons) {
         if (!button_visible) {
+            if (!entrepotExiste) {
+                controller.getSelectionnerPointButton().setText("Selectionner un entrepot sur la carte");
+            }
+            else {
+                controller.getSelectionnerPointButton().setText("Ajouter un point de livraison sur la carte");
+            }
             boutonPlus.setText("x");
             boutonPlus.setStyle("-fx-background-color:GRAY");
             for (Button button : buttons) {
@@ -446,16 +453,32 @@ public class View {
     public void handleCircleClick(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label) {
         double startX = longitudeToX(inter.getLongitude());
         double startY = latitudeToY(inter.getLatitude());
-        if (!popupOuverte && ((tourneeCalculee && livreurSelectionne != null && inter.getId() != entrepot.getId()) || !tourneeCalculee)) {
+        long remainingPoints = 0;
+        if (livreurSelectionne != null) {
+        Tournee tournee = tournees.get((int) livreurSelectionne.getId());
+        remainingPoints = tournee.getListeEtapes().stream()
+            .map(Etape::getArrivee)
+            .distinct()
+            .count();
+            //System.out.println("Nombre de points de livraison restants: " + (remainingPoints - 1));
+
+        }
+
+        if (!popupOuverte && ((tourneeCalculee && livreurSelectionne != null && inter.getId() != entrepot.getId() && (remainingPoints - 1)!=1) || !tourneeCalculee)) {
+            //popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox, newPdl, label);
+
             Circle newPdl = new Circle(startX, startY, 8, inter.getId() == entrepot.getId() ? Color.BLUE : Color.RED);
             newPdl.setStrokeWidth(5);
             newPdl.setStroke(inter.getId() == entrepot.getId() ? Color.LIGHTBLUE : Color.CORAL);
             pane.getChildren().add(newPdl);
-            popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox, newPdl, label);
             label.setStyle("-fx-background-color: lightblue;");
+            popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox, newPdl, label);
         }
         else if (tourneeCalculee && livreurSelectionne != null && inter.getId() == entrepot.getId()) {
             controller.getMessageLabel().setText("Vous ne pouvez pas supprimer l'entrepôt.");
+        }
+        else if (remainingPoints-1 == 1) {
+            controller.getMessageLabel().setText("Vous ne pouvez pas supprimer le seul point de livraison.");
         }
         System.out.println("Intersection clicked: " + inter.getId());
     }
@@ -471,7 +494,7 @@ public class View {
     }
 
     public void popupDelete(double x, double y, Intersection inter, Circle circle, Pane pane, VBox deliveryInfoVBox, Circle newPdl, Label pdlLabel) {
-        System.out.println("Popup delete :" + livreurSelectionne);
+        //System.out.println("Popup delete :" + livreurSelectionne);
         if (livreurSelectionne != null || !tourneeCalculee) {
             Popup popup = new Popup();
 
@@ -615,7 +638,7 @@ public class View {
             .collect(Collectors.toList());
 
 
-        System.out.println("pointsRestants : " + pointsRestants);
+        //System.out.println("pointsRestants : " + pointsRestants);
         
         List<Etape> nouvellesEtapes = new ArrayList<>();
         
@@ -785,6 +808,9 @@ public class View {
                 Label pdLabel = new Label("    Point de Livraison:");
                 for (Troncon troncon : pdl.getListeTroncons()) {
                     pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
+                    pdLabel.setOnMouseClicked(event -> {
+                        handleCircleClick(pdl, pane, deliveryInfoVBox, pdLabel);
+                    });
                 }
                 deliveryInfoVBox.getChildren().add(pdLabel);
                 deliveryInfoVBox.requestLayout();
@@ -913,6 +939,9 @@ public void afficherTourneeSurCarte(List<Etape> etapes, Pane pane, Livreur livre
                 Label pdLabel = new Label("    Point de Livraison:");
                 for (Troncon troncon : pdl.getListeTroncons()) {
                     pdLabel.setText(pdLabel.getText() + troncon.getNomRue() + ", ");
+                    pdLabel.setOnMouseClicked(event -> {
+                        handleCircleClick(pdl, pane, controller.getDeliveryInfoVBox(), pdLabel);
+                    });
                 }
                 controller.getDeliveryInfoVBox().getChildren().add(pdLabel);
             } catch (IDIntersectionException e) {

@@ -28,6 +28,7 @@
     -fx-left-padding: 35; /* Padding inside the button */
     -fx-right-padding: 35; /* Padding inside the button */
     -fx-font-size: 16px; /* Font size */
+    -fx-alignment: center-left; /* Align text to the left */
 }
 
 .plan-button {
@@ -58,6 +59,6 @@
 
 
 .vbox {
-    -fx-font-family: "Montserrat";
+    -fx-font-family: "Poppins";
     -fx-font-size: 14px;
 }

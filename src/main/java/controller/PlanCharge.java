@@ -54,6 +54,7 @@ public class PlanCharge extends Etat {
             controller.setDemande(demandeFile); // Mettre à jour la demande dans le contrôleur
             controller.getCalculerChemin().setVisible(true);
             controller.setEtat(new DemandeChargee(controller)); // Passer à l'état "DemandeChargee"
+            view.toggleButtons(controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan());
         } else {
             // Si la demande est invalide, afficher un message et réinitialiser l'état
             controller.getMessageLabel().setText("Le fichier de demande n'a pas pu être chargé. Veuillez réessayer.");
