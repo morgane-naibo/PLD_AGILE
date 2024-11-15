@@ -447,7 +447,18 @@ public class View {
     public void handleCircleClick(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label) {
         double startX = longitudeToX(inter.getLongitude());
         double startY = latitudeToY(inter.getLatitude());
-        if (!popupOuverte && ((tourneeCalculee && livreurSelectionne != null && inter.getId() != entrepot.getId()) || !tourneeCalculee)) {
+        long remainingPoints = 0;
+        if (livreurSelectionne != null) {
+        Tournee tournee = tournees.get((int) livreurSelectionne.getId());
+        remainingPoints = tournee.getListeEtapes().stream()
+            .map(Etape::getArrivee)
+            .distinct()
+            .count();
+            System.out.println("Nombre de points de livraison restants: " + (remainingPoints - 1));
+
+        }
+
+        if (!popupOuverte && ((tourneeCalculee && livreurSelectionne != null && inter.getId() != entrepot.getId() && (remainingPoints - 1)!=1) || !tourneeCalculee)) {
             //popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox, newPdl, label);
 
             Circle newPdl = new Circle(startX, startY, 8, inter.getId() == entrepot.getId() ? Color.BLUE : Color.RED);
@@ -455,24 +466,13 @@ public class View {
             newPdl.setStroke(inter.getId() == entrepot.getId() ? Color.LIGHTBLUE : Color.CORAL);
             pane.getChildren().add(newPdl);
             label.setStyle("-fx-background-color: lightblue;");
-            
-            Tournee tournee = tournees.get((int) livreurSelectionne.getId());
-            long remainingPoints = tournee.getListeEtapes().stream()
-                .map(Etape::getArrivee)
-                .distinct()
-                .count();
-            System.out.println("Nombre de points de livraison restants: " + (remainingPoints - 1));
-            
-            if ((remainingPoints - 1) == 1) {
-                controller.getMessageLabel().setText("Vous ne pouvez pas supprimer le seul point de livraison.");
-                //controller.getMessageLabel().setStyle("-fx-text-fill: red;");
-            }
-            else {
-                popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox, newPdl, label);
-            }
+            popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox, newPdl, label);
         }
         else if (tourneeCalculee && livreurSelectionne != null && inter.getId() == entrepot.getId()) {
             controller.getMessageLabel().setText("Vous ne pouvez pas supprimer l'entrepôt.");
+        }
+        else if (remainingPoints-1 == 1) {
+            controller.getMessageLabel().setText("Vous ne pouvez pas supprimer le seul point de livraison.");
         }
         System.out.println("Intersection clicked: " + inter.getId());
     }
