@@ -772,6 +772,38 @@ public class Demande {
     }
 
 
+    /**
+     * Supprime une intersection de la demande.
+     *
+     * @param intersection L'intersection à supprimer.
+     * @return La position de l'intersection supprimée dans la liste des points de livraison,
+     *         ou -1 si l'intersection n'était pas présente ou si c'était l'entrepôt.
+     */
+    public int supprimerIntersection(Intersection intersection) {
+        int position = -1;
+
+        // Check if the intersection is the entrepot
+        if (this.entrepot.getId() == intersection.getId()) {
+            this.entrepot = null;
+        } else {
+            // Check if the intersection is a point de livraison
+            for (int i = 0; i < this.listePointDeLivraison.size(); i++) {
+                if (this.listePointDeLivraison.get(i).getId() == intersection.getId()) {
+                    position = i;
+                    break;
+                }
+            }
+
+            if (position != -1) {
+                this.listePointDeLivraison.remove(position);
+                this.initialiserMatriceAdjacence();
+            }
+        }
+
+        return position;
+    }
+
+
          /**
      * Supprime un point de livraison (PDL) de la matrice d'adjacence et met à jour les trajets des livreurs.
      * 

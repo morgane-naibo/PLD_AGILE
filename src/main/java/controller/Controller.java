@@ -200,7 +200,7 @@ public class Controller {
             if (newValue != null) {
                 System.out.println("Option sélectionnée : " + newValue);
                 nbLivreur = newValue;
-                demande.setNbLivreurs(nbLivreur);
+                demande.setNbLivreur(nbLivreur);
             }
         });
         nbLivreurs.getItems().addAll(1, 2, 3, 4, 5);

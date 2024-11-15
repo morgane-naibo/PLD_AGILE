@@ -348,7 +348,7 @@ public class View {
     public void setPlan(Plan plan) {
         demande = new Demande();
         System.out.println(controller.getDemande().getNbLivreurs());
-        this.demande.setNbLivreurs(controller.getDemande().getNbLivreurs());
+        this.demande.setNbLivreur(controller.getDemande().getNbLivreurs());
         this.demande.setPlan(plan);
         intersectionsAjoutees.clear();
         labelsAjoutes.clear();
