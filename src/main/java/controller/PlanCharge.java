@@ -19,7 +19,7 @@ public class PlanCharge extends Etat {
     @Override
     public void handleSelectButton() {
         controller.setEtat(new DemandeChargee(controller));
-        controller.getView().toggleSelectionMode(controller.getMessageLabel(), controller.getSelectionnerPointButton(), controller.getChargerFichierButton(), controller.getChargerNouveauPlan(), controller.getDeliveryInfoVBox());
+        controller.getView().toggleSelectionMode(controller.getMessageLabel(), controller.getSelectionnerPointButton(), controller.getChargerFichierButton(), controller.getChargerNouveauPlan(), controller.getExport(), controller.getDeliveryInfoVBox());
         controller.getMessageLabel().setVisible(true);
     }
 

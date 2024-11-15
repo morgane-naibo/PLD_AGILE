@@ -271,11 +271,12 @@ public class View {
         }
     }
 
-    public void toggleSelectionMode(Label label, Button selectionnerPointButton, Button chargerFichierButton, Button chargerNouveauPlan, VBox deliveryInfoVBox) {
+    public void toggleSelectionMode(Label label, Button selectionnerPointButton, Button chargerFichierButton, Button chargerNouveauPlan, Button exportXML, VBox deliveryInfoVBox) {
         selectionModeEnabled = !selectionModeEnabled;
         chargerFichierButton.setVisible(false);
         selectionnerPointButton.setVisible(false);
         chargerNouveauPlan.setVisible(false);
+        exportXML.setVisible(false);
         if (!selectionModeEnabled) {
             label.setText("Cliquer sur un point existant pour le supprimer.");
         } else if (entrepotExiste) {
@@ -445,14 +446,17 @@ public class View {
     public void handleCircleClick(Intersection inter, Pane pane, VBox deliveryInfoVBox, Label label) {
         double startX = longitudeToX(inter.getLongitude());
         double startY = latitudeToY(inter.getLatitude());
-        if (!popupOuverte && ((tourneeCalculee && livreurSelectionne != null) || !tourneeCalculee)) {
+        if (!popupOuverte && ((tourneeCalculee && livreurSelectionne != null && inter.getId() != entrepot.getId()) || !tourneeCalculee)) {
             Circle newPdl = new Circle(startX, startY, 8, inter.getId() == entrepot.getId() ? Color.BLUE : Color.RED);
             newPdl.setStrokeWidth(5);
             newPdl.setStroke(inter.getId() == entrepot.getId() ? Color.LIGHTBLUE : Color.CORAL);
             pane.getChildren().add(newPdl);
             popupDelete(startX, startY, inter, newPdl, pane, deliveryInfoVBox, newPdl, label);
+            label.setStyle("-fx-background-color: lightblue;");
         }
-        label.setStyle("-fx-background-color: lightblue;");
+        else if (tourneeCalculee && livreurSelectionne != null && inter.getId() == entrepot.getId()) {
+            controller.getMessageLabel().setText("Vous ne pouvez pas supprimer l'entrepôt.");
+        }
         System.out.println("Intersection clicked: " + inter.getId());
     }
 
@@ -546,7 +550,7 @@ public class View {
                 labelsSupprimes.push(label);
             }
         } else {
-            PointDeLivraison pdl = new PointDeLivraison(inter);
+                PointDeLivraison pdl = new PointDeLivraison(inter);
                 pane.getChildren().removeIf(node -> node instanceof Circle && ((Circle) node).getCenterX() == longitudeToX(inter.getLongitude()) && ((Circle) node).getCenterY() == latitudeToY(inter.getLatitude()));
                 deliveryInfoVBox.getChildren().remove(label);
                 try {

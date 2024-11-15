@@ -43,7 +43,7 @@ public class TourneeAffichee extends Etat {
     @Override
     public void handleSelectButton() {
         controller.getMessageLabel().setVisible(true);
-        controller.getView().toggleSelectionMode(controller.getMessageLabel(), controller.getSelectionnerPointButton(), controller.getChargerFichierButton(), controller.getChargerNouveauPlan(), controller.getDeliveryInfoVBox());
+        controller.getView().toggleSelectionMode(controller.getMessageLabel(), controller.getSelectionnerPointButton(), controller.getChargerFichierButton(), controller.getChargerNouveauPlan(), controller.getExport(), controller.getDeliveryInfoVBox());
         if (view.isTourneeCalculee()) {
             controller.setEtat(new TourneeAffichee(controller));
             controller.getCalculerChemin().setVisible(false);
