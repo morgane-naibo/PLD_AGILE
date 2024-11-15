@@ -225,12 +225,7 @@ public class Demande {
 
         // Check if the intersection is the entrepot
         if (this.entrepot.getId() == intersection.getId()) {
-            this.entrepot = new Entrepot();
-            // Remove the first row and column in the adjacency matrix
-            for (int i = 0; i < this.matriceAdjacence.size(); i++) {
-                this.matriceAdjacence.get(i).remove(0);
-            }
-            this.matriceAdjacence.remove(0);
+            this.entrepot = null;
         } else {
             // Check if the intersection is a point de livraison
             for (int i = 0; i < this.listePointDeLivraison.size(); i++) {

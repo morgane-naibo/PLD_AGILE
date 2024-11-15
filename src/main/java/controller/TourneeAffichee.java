@@ -136,7 +136,8 @@ public class TourneeAffichee extends Etat {
             controller.getUndoButton().setVisible(false);
             controller.getRedoButton().setVisible(false);
             controller.setEtat(new PlanCharge(controller)); // Passer à l'état chargé
-            //controller.getExport().setVisible(false);
+            controller.getExport().setVisible(false);
+            view.toggleButtons(controller.getBoutonPlus(), controller.getChargerFichierButton(), controller.getSelectionnerPointButton(), controller.getChargerNouveauPlan());
         } else {
             // Si le plan est invalide, afficher un message et réinitialiser l'état
             controller.getMessageLabel().setText("Le plan n'a pas pu être chargé. Veuillez réessayer.");

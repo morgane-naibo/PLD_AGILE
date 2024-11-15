@@ -599,6 +599,7 @@ public class View {
             }
         } catch (IDIntersectionException e) {
             e.printStackTrace();
+            controller.getMessageLabel().setText("Erreur lors du calcul de la tournée.");
         }
     }
 
