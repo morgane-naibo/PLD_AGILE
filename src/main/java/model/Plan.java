@@ -7,35 +7,70 @@ import java.util.List;
 
 import exceptions.IDIntersectionException;
 
+/**
+ * Classe représentant un plan composé d'intersections et de tronçons de route.
+ * Un plan permet de gérer un ensemble d'intersections et de tronçons, 
+ * ainsi que d'effectuer des calculs sur les chemins entre les intersections.
+ */
 public class Plan {
+
+    /** Liste des intersections dans le plan. */
     private List<Intersection> listeIntersections;
+    
+    /** Liste des tronçons dans le plan. */
     private List<Troncon> listeTroncons;
 
-    // Constructeur
+    /**
+     * Constructeur de la classe Plan.
+     * Initialise une nouvelle instance de Plan avec des listes vides pour les intersections et les tronçons.
+     */
     public Plan() {
         this.listeIntersections = new ArrayList<Intersection>();
         this.listeTroncons = new ArrayList<Troncon>();
     }
 
-    //getters
+    /**
+     * Récupère la liste des intersections du plan.
+     * 
+     * @return La liste des intersections.
+     */
     public List<Intersection> getListeIntersections() {
         return this.listeIntersections;
     }
 
+    /**
+     * Récupère la liste des tronçons du plan.
+     * 
+     * @return La liste des tronçons.
+     */
     public List<Troncon> getListeTroncons() {
         return this.listeTroncons;
     }
 
-    //setters
+    /**
+     * Modifie la liste des intersections du plan.
+     * 
+     * @param newListeIntersections La nouvelle liste d'intersections.
+     */
     public void setListeIntersections(List<Intersection> newListeIntersections) {
-        this.listeIntersections = newListeIntersections ;
+        this.listeIntersections = newListeIntersections;
     }
 
+    /**
+     * Modifie la liste des tronçons du plan.
+     * 
+     * @param newListeTroncons La nouvelle liste de tronçons.
+     */
     public void setListeTroncon(List<Troncon> newListeTroncons) {
         this.listeTroncons = newListeTroncons;
     }
 
-    //toString
+    /**
+     * Retourne une représentation sous forme de chaîne de caractères du plan.
+     * Inclut les informations sur les intersections et les tronçons du plan.
+     * 
+     * @return La chaîne représentant le plan.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -55,158 +90,213 @@ public class Plan {
         return sb.toString();
     }
 
-    //autres methodes
+    // Autres méthodes de gestion du plan
+
+    /**
+     * Ajoute une intersection au plan en lui assignant un numéro unique.
+     * 
+     * @param intersection L'intersection à ajouter.
+     */
     public void ajouterIntersection(Intersection intersection){
         intersection.setNumero(this.listeIntersections.size());
         this.listeIntersections.add(intersection);
     }
 
+    /**
+     * Ajoute une liste d'intersections au plan.
+     * 
+     * @param listeIntersections La liste des intersections à ajouter.
+     */
     public void ajouterIntersection(List<Intersection> listeIntersections) {
         for (Intersection i : listeIntersections) {
             this.listeIntersections.add(i);
         }
     }
 
+    /**
+     * Ajoute un tronçon au plan.
+     * 
+     * @param troncon Le tronçon à ajouter.
+     */
     public void ajouterTroncon(Troncon troncon) {
         this.listeTroncons.add(troncon);
     }
 
+    /**
+     * Ajoute une liste de tronçons au plan.
+     * 
+     * @param listeTroncons La liste des tronçons à ajouter.
+     */
     public void ajouterTroncon(List<Troncon> listeTroncons) {
         for (Troncon t : listeTroncons) {
             this.listeTroncons.add(t);
         }
     }
 
+    /**
+     * Cherche une intersection dans le plan par son identifiant.
+     * 
+     * @param id L'identifiant de l'intersection à rechercher.
+     * @return L'intersection correspondante.
+     * @throws IDIntersectionException Si l'intersection n'existe pas.
+     */
     public Intersection chercherIntersectionParId(long id) throws IDIntersectionException{
-        boolean existence=false;
         for(Intersection iteratorIntersection : this.listeIntersections){
             if (iteratorIntersection.getId() == id) {
-                existence=true;
                 return iteratorIntersection;
             }
         }
-        if (!existence){
-            throw new IDIntersectionException("Cette intersection n'existe pas.");
-        }
-        return null;
+        throw new IDIntersectionException("Cette intersection n'existe pas.");
     }
 
-    public Etape chercherPlusCourtChemin(Intersection origine, Intersection destination){
-        //initialisation
+    /**
+     * Cherche le plus court chemin entre deux intersections en utilisant l'algorithme de Dijkstra.
+     * 
+     * @param origine L'intersection de départ.
+     * @param destination L'intersection d'arrivée.
+     * @return Une étape contenant le plus court chemin sous forme de tronçons entre les deux intersections.
+     */
+    public Etape chercherPlusCourtChemin(Intersection origine, Intersection destination) {
+        // Initialisation
         Intersection actuel = origine;
         double[] distance = new double[this.listeIntersections.size()];
-        for (int i=0 ; i<this.listeIntersections.size(); i++){
+        for (int i = 0; i < this.listeIntersections.size(); i++) {
             distance[i] = Double.MAX_VALUE;
         }
         distance[origine.getNumero()] = 0;
         Troncon[] predecesseurs = new Troncon[this.listeIntersections.size()];
         predecesseurs[origine.getNumero()] = null;
-        List<Integer> sommetsGris = new ArrayList<Integer>();
+        List<Integer> sommetsGris = new ArrayList<>();
         sommetsGris.add(origine.getNumero());
-        List<Integer> sommetsNoirs = new ArrayList<Integer>();
+        List<Integer> sommetsNoirs = new ArrayList<>();
 
-        //tant qu'il y a encore des sommets (intersections) à visiter
-        while (sommetsGris.size() != 0){
-            double dist_min = Double.MAX_VALUE;
+        // Algorithme de Dijkstra pour calculer le plus court chemin
+        while (!sommetsGris.isEmpty()) {
+            double distMin = Double.MAX_VALUE;
             int posMin = 0;
 
-            //chercher le sommet gris (intersection) minimisant la ditance
-            for (int i=0 ; i<this.listeIntersections.size(); i++){
-                if (distance[i]<dist_min && sommetsGris.contains(i)){
+            // Cherche le sommet gris avec la distance minimale
+            for (int i = 0; i < this.listeIntersections.size(); i++) {
+                if (distance[i] < distMin && sommetsGris.contains(i)) {
                     posMin = i;
-                    dist_min = distance[i];
+                    distMin = distance[i];
                 }
             }
             actuel = this.listeIntersections.get(posMin);
 
-            //pour les successeurs de ce sommet, relâcher les arcs (troncons)
-            for (Troncon iteratorTroncon : actuel.getListeTroncons()){
-                if (! sommetsNoirs.contains(iteratorTroncon.getDestination().getNumero())){
-                    if (iteratorTroncon.getLongueur()+distance[actuel.getNumero()] < distance[iteratorTroncon.getDestination().getNumero()]){
-                        distance[iteratorTroncon.getDestination().getNumero()]= iteratorTroncon.getLongueur()+distance[actuel.getNumero()];
-                        predecesseurs[iteratorTroncon.getDestination().getNumero()] = iteratorTroncon;
-                        if (! sommetsGris.contains(iteratorTroncon.getDestination().getNumero())){
-                            sommetsGris.add(iteratorTroncon.getDestination().getNumero());
+            // Relâche les arcs pour les successeurs
+            for (Troncon troncon : actuel.getListeTroncons()) {
+                if (!sommetsNoirs.contains(troncon.getDestination().getNumero())) {
+                    if (troncon.getLongueur() + distance[actuel.getNumero()] < distance[troncon.getDestination().getNumero()]) {
+                        distance[troncon.getDestination().getNumero()] = troncon.getLongueur() + distance[actuel.getNumero()];
+                        predecesseurs[troncon.getDestination().getNumero()] = troncon;
+                        if (!sommetsGris.contains(troncon.getDestination().getNumero())) {
+                            sommetsGris.add(troncon.getDestination().getNumero());
                         }
                     }
                 }
             }
 
-            // enlever actuel des gris
+            // Retire le sommet actuel des sommets gris et ajoute-le aux sommets noirs
             sommetsGris.remove(Integer.valueOf(actuel.getNumero()));
             sommetsNoirs.add(actuel.getNumero());
-
         }
 
-        //remettre les troncons dans l'ordre et créer l'étape à retourner
-        List<Troncon> troncons = new ArrayList<Troncon>();
-        if (predecesseurs[destination.getNumero()] == null){
+        // Reconstruit le chemin et crée l'étape à retourner
+        List<Troncon> troncons = new ArrayList<>();
+        if (predecesseurs[destination.getNumero()] == null) {
             return null;
         }
         Troncon tronconActuel = predecesseurs[destination.getNumero()];
-        
-        //System.out.println( predecesseurs[destination.getNumero()].toString());
         troncons.add(tronconActuel);
-        while (predecesseurs[tronconActuel.getOrigine().getNumero()] != null){
+        while (predecesseurs[tronconActuel.getOrigine().getNumero()] != null) {
             tronconActuel = predecesseurs[tronconActuel.getOrigine().getNumero()];
             troncons.add(tronconActuel);
         }
         Collections.reverse(troncons);
         double longueur = distance[destination.getNumero()];
-        Etape plusCourtChemin = new Etape(troncons,origine,destination, longueur);
-        //System.out.println(plusCourtChemin.toString());
+        Etape plusCourtChemin = new Etape(troncons, origine, destination, longueur);
         return plusCourtChemin;
     }
 
-    public double trouverLatitudeMin(){
+    // Méthodes pour trouver les coordonnées minimales et maximales
+
+    /**
+     * Trouve la latitude minimale parmi toutes les intersections du plan.
+     * 
+     * @return La latitude minimale.
+     */
+    public double trouverLatitudeMin() {
         double latitudeMin = 100;
-        for(Intersection iteratorIntersection : this.listeIntersections){
-            if (iteratorIntersection.getLatitude() < latitudeMin) {
-                latitudeMin = iteratorIntersection.getLatitude();
+        for (Intersection intersection : this.listeIntersections) {
+            if (intersection.getLatitude() < latitudeMin) {
+                latitudeMin = intersection.getLatitude();
             }
         }
         return latitudeMin;
     }
 
-    public double trouverLongitudeMin(){
+    /**
+     * Trouve la longitude minimale parmi toutes les intersections du plan.
+     * 
+     * @return La longitude minimale.
+     */
+    public double trouverLongitudeMin() {
         double longitudeMin = 100;
-        for(Intersection iteratorIntersection : this.listeIntersections){
-            if (iteratorIntersection.getLongitude() < longitudeMin) {
-                longitudeMin = iteratorIntersection.getLongitude();
+        for (Intersection intersection : this.listeIntersections) {
+            if (intersection.getLongitude() < longitudeMin) {
+                longitudeMin = intersection.getLongitude();
             }
         }
         return longitudeMin;
     }
 
-    public double trouverLatitudeMax(){
+    /**
+     * Trouve la latitude maximale parmi toutes les intersections du plan.
+     * 
+     * @return La latitude maximale.
+     */
+    public double trouverLatitudeMax() {
         double latitudeMax = -100;
-        for(Intersection iteratorIntersection : this.listeIntersections){
-            if (iteratorIntersection.getLatitude() > latitudeMax) {
-                latitudeMax = iteratorIntersection.getLatitude();
+        for (Intersection intersection : this.listeIntersections) {
+            if (intersection.getLatitude() > latitudeMax) {
+                latitudeMax = intersection.getLatitude();
             }
         }
         return latitudeMax;
     }
 
-    public double trouverLongitudeMax(){
+    /**
+     * Trouve la longitude maximale parmi toutes les intersections du plan.
+     * 
+     * @return La longitude maximale.
+     */
+    public double trouverLongitudeMax() {
         double longitudeMax = -100;
-        for(Intersection iteratorIntersection : this.listeIntersections){
-            if (iteratorIntersection.getLongitude() > longitudeMax) {
-                longitudeMax = iteratorIntersection.getLongitude();
+        for (Intersection intersection : this.listeIntersections) {
+            if (intersection.getLongitude() > longitudeMax) {
+                longitudeMax = intersection.getLongitude();
             }
         }
         return longitudeMax;
     }
 
+    /**
+     * Cherche l'intersection la plus proche d'une position donnée par latitude et longitude.
+     * 
+     * @param latitude La latitude de la position.
+     * @param longitude La longitude de la position.
+     * @return L'intersection la plus proche.
+     */
     public Intersection chercherIntersectionLaPlusProche(double latitude, double longitude) {
         if (listeIntersections.isEmpty()) {
             return null;
         }
-    
+
         Intersection intersectionLaPlusProche = null;
         double distanceMin = Double.MAX_VALUE;
-    
-        // boucle pour trouver l'intersection la plus proche
+
+        // Recherche de l'intersection la plus proche
         for (Intersection intersection : listeIntersections) {
             double distance = calculerDistance(latitude, longitude, intersection.getLatitude(), intersection.getLongitude());
             
@@ -215,22 +305,28 @@ public class Plan {
                 intersectionLaPlusProche = intersection;
             }
         }
-    
+
         return intersectionLaPlusProche;
     }
-    
-    private double calculerDistance(double lat1, double lon1, double lat2, double lon2) {
-        //distance cartésienne
-        //return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
 
-        //avec la formule de Harsevine pour calculer des distances sur Terre
+    /**
+     * Calcule la distance entre deux points géographiques (latitude, longitude)
+     * en utilisant la formule de Haversine pour des coordonnées sur Terre.
+     * 
+     * @param lat1 La latitude du premier point.
+     * @param lon1 La longitude du premier point.
+     * @param lat2 La latitude du deuxième point.
+     * @param lon2 La longitude du deuxième point.
+     * @return La distance en mètres entre les deux points.
+     */
+    private double calculerDistance(double lat1, double lon1, double lat2, double lon2) {
         double lat1Rad = Math.toRadians(lat1);
         double lat2Rad = Math.toRadians(lat2);
         double lon1Rad = Math.toRadians(lon1);
         double lon2Rad = Math.toRadians(lon2);
 
-        double rayonTerreMetre = 6371000.0 ;
-        double dLat = lat2Rad-lat1Rad;
+        double rayonTerreMetre = 6371000.0; // Rayon de la Terre en mètres
+        double dLat = lat2Rad - lat1Rad;
         double dLong = lon2Rad - lon1Rad;
 
         return 2 * rayonTerreMetre * Math.asin(
@@ -238,8 +334,7 @@ public class Plan {
                 (Math.sin(dLat / 2) * Math.sin(dLat / 2)
                 + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLong / 2) * Math.sin(dLong / 2)
                 )
-                )
-            );
+            )
+        );
     }
-
 }

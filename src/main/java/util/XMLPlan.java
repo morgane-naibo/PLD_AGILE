@@ -9,8 +9,21 @@ import model.Plan;
 import model.Troncon;
 import exceptions.IDIntersectionException;
 
+/**
+ * Classe utilitaire pour analyser les fichiers XML contenant la description d'un plan de ville.
+ * Cette classe hérite de {@link XMLReader} pour fournir des méthodes spécifiques à la lecture et au traitement des plans.
+ */
 public class XMLPlan extends XMLReader {
 
+    /**
+     * Analyse un fichier XML pour extraire les intersections et les tronçons et créer un objet {@link Plan}.
+     *
+     * @param filePath Chemin vers le fichier XML à analyser.
+     * @return Un objet {@link Plan} contenant les données extraites du fichier XML.
+     * @throws RuntimeException si une erreur survient lors du chargement ou de l'analyse du fichier XML.
+     * @throws NumberFormatException si un attribut numérique dans le fichier XML est invalide ou manquant.
+     * @throws IDIntersectionException si une intersection requise pour un tronçon est introuvable dans le plan.
+     */
     @Override
     public Plan parse(String filePath) {
         Plan plan = new Plan();
@@ -64,11 +77,6 @@ public class XMLPlan extends XMLReader {
                 if (longueur < 0) {
                     throw new IllegalArgumentException("La longueur du tronçon ne peut pas être négative.");
                 }
-
-                // Vérification si le nom de rue est manquant ou invalide
-             /*   if (nomRue == null || nomRue.trim().isEmpty()) {
-                    throw new IllegalArgumentException("Le nom de rue ne peut pas être vide.");
-                }*/ 
 
                 Intersection interOrigine = plan.chercherIntersectionParId(idOrigine);
                 Intersection interDestination = plan.chercherIntersectionParId(idDestination);
